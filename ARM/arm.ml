@@ -102,26 +102,32 @@ let rotate_left v =
 let decompose_immediate i =
   let imm = of_int i in
   let rec aux n imm =
-    if n > int4 then raise Invalid
+    if n > int4 then []
     else
+      let others = aux (n+1) (rotate_left (rotate_left imm)) in
       let imm8 = logand imm mask8 in
-      if equal imm8 imm then (n, imm8)
-      else aux (n+1) (rotate_left (rotate_left imm))
+      if equal imm8 imm then (n, imm8)::others else others
   in
-  aux 0 imm
+  let res = aux 0 imm in
+  if res = [] then raise Invalid else res
 
 let addr_mode_1 rs =
-  let (imm, v) =
+  let possibilities =
     match rs with
     | Immediate i ->
-      let (rr, imm8) = decompose_immediate i in
-      (1, logor imm8 (shift_left (of_int rr) 8))
+      decompose_immediate i
+      |> List.map (fun (rr, imm8) ->
+        (1, logor imm8 (shift_left (of_int rr) 8))
+      )
     | Register (rm) ->
-      (0, of_int rm)
+      [(0, of_int rm)]
     | ScaledRegister _ -> failwith "Not implemented"
   in
-  let i = shift_left (of_int imm) 25 in
-  logor v i
+  possibilities |>
+  List.map (fun (imm, v) ->
+    let i = shift_left (of_int imm) 25 in
+    logor v i
+  )
 
 let addr_mode_2 ro = (* Load and store of word and ubyte *)
   let (sign, reg, v) =
@@ -182,7 +188,7 @@ let ldr_str_to_binary is_ldr typ cond rd rn =
     | B | W -> addr_mode_2 rn
     | H | SH | SB -> addr_mode_3 rn
   in
-  logor v addr_mode
+  [logor v addr_mode]
 
 let mov_mvn_to_binary is_mov s cond rd rs =
   let opcode = if is_mov
@@ -194,8 +200,9 @@ let mov_mvn_to_binary is_mov s cond rd rs =
     add_condition_code cond |>
     add_rd_code rd |>
     logor scode in
-  let addr_mode = addr_mode_1 rs in
-  logor v addr_mode
+  addr_mode_1 rs |>
+  List.map (fun addr_mode -> logor v addr_mode)
+
 
 let calculation_to_binary typ s cond rd rn op2 =
   let opcode = match typ with
@@ -211,14 +218,14 @@ let calculation_to_binary typ s cond rd rn op2 =
     add_rd_code rd |>
     add_rn_code rn |>
     logor scode in
-  let addr_mode = addr_mode_1 op2 in
-  logor v addr_mode
+  addr_mode_1 op2 |>
+  List.map (fun addr_mode -> logor v addr_mode)
 
 let bx_to_binary cond rm =
   let opcode = 0b0001_0010_0000_0000_0000_0001_0000 in
-  of_int opcode |>
+  [of_int opcode |>
   add_condition_code cond |>
-  logor (of_int rm)
+  logor (of_int rm)]
 
 let arm_to_binary arm =
   match arm with

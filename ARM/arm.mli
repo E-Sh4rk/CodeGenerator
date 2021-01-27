@@ -51,5 +51,5 @@ val sp : register (* lower end of the current stack frame *)
 val lr : register (* link register/scratch register *)
 val pc : register (* program counter *)
 
-val arm_to_binary : arm -> int32
+val arm_to_binary : arm -> int32 list
 val reverse_endianness  : int32 -> int32

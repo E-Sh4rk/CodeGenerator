@@ -12,6 +12,7 @@ let program =
     STR {typ=H; cond=AL; rd=12; rn=OImmediate(11, 37)} ;
 
     (* Multiple ways to assemble the expressions below... find the good one *)
+    (* TODO: fix irregularities with the provided example *)
     ADC {s=true; cond=AL; rd=12; rn=pc; op2=Immediate(0x34)} ;
     MVN {s=false; cond=AL; rd=11; rs=Immediate(0xE1)} ;
     BIC {s=false; cond=AL; rd=11; rn=11; op2=Immediate(0xED00000)} ;
@@ -23,16 +24,22 @@ let program =
     BIC {s=false; cond=AL; rd=0; rn=12; op2=Immediate(0xD6)} ;
   ]
 
-let treat_command arm =
-  let hex = arm_to_binary arm in
-  Format.printf "%a\t%a@."
-    Arm_printer.pp_hex hex
-    Arm_printer.pp_arm arm ;
-  try (
-    let chars = Name.chars_for_command hex in
-    Format.printf "%a@." Name.pp_chars chars
-  ) with Name.Unwritable -> Format.printf "Unwritable@."
+let rec print_first_valid hexs =
+  match hexs with
+  | [] -> Format.printf "Unwritable\t\t\t"
+  | hex::hexs ->
+     try (
+      let chars = Name.chars_for_command hex in
+      Format.printf "%a\t%a\t"
+        Arm_printer.pp_hex hex
+        Name.pp_chars chars
+    ) with Name.Unwritable -> print_first_valid hexs
 
+let treat_command arm =
+  let hexs = arm_to_binary arm in
+  print_first_valid hexs ;
+  Format.printf "%a@." Arm_printer.pp_arm arm
+  
 (*let () =
   let arm = ADC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0x2840)} in
   treat_command arm*)
