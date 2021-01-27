@@ -43,7 +43,7 @@ let mask4 = int4 |> of_int
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
 let int12 = 0b111111111111
-let mask12 = int12 |> of_int
+(*let mask12 = int12 |> of_int*)
 
 let sign_of i = if i >= 0 then (sign_plus, i) else (sign_minus, -i)
 
@@ -71,10 +71,10 @@ let register_of_register_offset ro =
   match ro with
   | OImmediate (r, _) | ORegister (r, _, _) | OScaledRegister (r, _, _, _) -> r
 
-let rotate_right v =
+(*let rotate_right v =
   let lb = logand v mask1 in
   let v = shift_right_logical v 1 in
-  logor v (shift_left lb 31)
+  logor v (shift_left lb 31)*)
 
 let rotate_left v =
   let hb = logand v (shift_left mask1 31) in
