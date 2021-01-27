@@ -52,3 +52,4 @@ val lr : register (* link register/scratch register *)
 val pc : register (* program counter *)
 
 val arm_to_binary : arm -> int32
+val reverse_endianness  : int32 -> int32

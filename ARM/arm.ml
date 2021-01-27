@@ -230,3 +230,13 @@ let arm_to_binary arm =
   | SBC {s;cond;rd;rn;op2} -> calculation_to_binary "sbc" s cond rd rn op2
   | BIC {s;cond;rd;rn;op2} -> calculation_to_binary "bic" s cond rd rn op2
   | BX {cond;rm} -> bx_to_binary cond rm
+
+let reverse_endianness v =
+  let v1 = shift_left (logand mask8 v) (3*8) in
+  let v = shift_right_logical v 8 in
+  let v2 = shift_left (logand mask8 v) (2*8) in
+  let v = shift_right_logical v 8 in
+  let v3 = shift_left (logand mask8 v) (1*8) in
+  let v = shift_right_logical v 8 in
+  let v4 = logand mask8 v in
+  logor v1 v2 |> logor v3 |> logor v4
