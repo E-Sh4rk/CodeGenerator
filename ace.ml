@@ -7,12 +7,11 @@ let program =
     ADC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0x2840)} ;
     SBC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0xDF)} ;
     STR {typ=H; cond=AL; rd=12; rn=OImmediate(11, 21)} ;
-    MOV {s=false; cond=AL; rd=12; rs=Immediate(0xBC00)} ;
+    MOV {s=true; cond=AL; rd=12; rs=Immediate(0xBC00)} ;
     ADC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0x384)} ;
     STR {typ=H; cond=AL; rd=12; rn=OImmediate(11, 37)} ;
 
-    (* Multiple ways to assemble the expressions below... find the good one *)
-    (* TODO: fix irregularities with the provided example *)
+    (* TODO: support pre-indexed/post-indexed load/store in order to fix the STR below *)
     ADC {s=true; cond=AL; rd=12; rn=pc; op2=Immediate(0x34)} ;
     MVN {s=false; cond=AL; rd=11; rs=Immediate(0xE1)} ;
     BIC {s=false; cond=AL; rd=11; rn=11; op2=Immediate(0xED00000)} ;
