@@ -1,5 +1,6 @@
 
-type pkmn_char = Unused | Unavailable of string | Available of string
+type pkmn_char = Unused | Unreadable of string
+               | Unavailable of string | Available of string
 
 (* This corresponds to the charset of English Emerald *)
 let charset =
@@ -31,8 +32,8 @@ let charset =
   Unused          ; Unused          ; Unused          ; Unused          ;
   (* 0x5. *)
   Unavailable "▯"   ; Unavailable "¿"    ; Unavailable "¡"  ; Unavailable "PK"   ;
-  Unavailable "MN"   ; Unavailable "PO"   ; Unavailable "Ké" ; Unavailable "0x57" ;
-  Unavailable "0x58" ; Unavailable "0x59" ; Unavailable "Í"  ; Unavailable "%"    ;
+  Unavailable "MN"   ; Unavailable "PO"   ; Unavailable "Ké" ; Unreadable "0x57"  ;
+  Unreadable  "0x58" ; Unreadable "0x59"  ; Unavailable "Í"  ; Unavailable "%"    ;
   Unavailable "("    ; Unavailable ")"    ; Unused           ; Unused             ;
   (* 0x6. *)
   Unused          ; Unused          ; Unused          ; Unused          ;
@@ -80,8 +81,28 @@ let charset =
   Available "t"    ; Available "u"   ; Available "v" ; Available "w"     ;
   Available "x"    ; Available "y"   ; Available "z" ; Unavailable "▶"  ;
   (* 0xF. *)
-  Unavailable ":"    ; Available "Ä"      ; Available "Ö"      ; Available "Ü"      ;
-  Available "ä"      ; Available "ö"      ; Available "ü"      ; Unused             ;
-  Unused             ; Unused             ; Unavailable "0xFA" ; Unavailable "0xFB" ;
-  Unavailable "0xFC" ; Unavailable "0xFD" ; Unavailable "0xFE" ; Unavailable "0xFF" ;
+  Unavailable ":"   ; Available "Ä"     ; Available "Ö"     ; Available "Ü"     ;
+  Available "ä"     ; Available "ö"     ; Available "ü"     ; Unused            ;
+  Unused            ; Unused            ; Unreadable "0xFA" ; Unreadable "0xFB" ;
+  Unreadable "0xFC" ; Unreadable "0xFD" ; Unreadable "0xFE" ; Unreadable "0xFF" ;
   |]
+
+let is_code_available code =
+  match charset.(code) with
+  | Available _ -> true
+  | Unavailable _ | Unreadable _ | Unused -> false
+
+let is_code_readable code =
+  match charset.(code) with
+  | Available _ | Unavailable _ -> true
+  | Unreadable _ | Unused -> false
+
+let is_code_used code =
+  match charset.(code) with
+  | Available _ | Unavailable _ | Unreadable _ -> true
+  | Unused -> false
+
+let char_at code =
+  match charset.(code) with
+  | Available str | Unavailable str | Unreadable str -> str
+  | Unused -> assert false

@@ -26,8 +26,29 @@ type arm =
 
   | BX of { cond: conditional ; rm: register }
 
+exception Invalid
+
 val sign_plus : sign
 val sign_minus : sign
-val pc : register
-val sp : register
+
+val a1 : register
+val a2 : register
+val a3 : register
+val a4 : register
+val v1 : register
+val v2 : register
+val v3 : register
+val v4 : register
+val v5 : register
+val v6 : register
+val v7 : register
+val v8 : register
+val sb : register (* static base *)
+val sl : register (* stack limit/stack chunk handle *)
+val fp : register (* frame pointer *)
+val ip : register (* scratch register *)
+val sp : register (* lower end of the current stack frame *)
+val lr : register (* link register/scratch register *)
+val pc : register (* program counter *)
+
 val arm_to_binary : arm -> int32

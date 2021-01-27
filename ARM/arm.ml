@@ -30,8 +30,26 @@ open Int32
 
 exception Invalid
 
-let pc = 15
+
+let a1 = 0
+let a2 = 1
+let a3 = 2
+let a4 = 3
+let v1 = 4
+let v2 = 5
+let v3 = 6
+let v4 = 7
+let v5 = 8
+let v6 = 9
+let v7 = 10
+let v8 = 11
+let sb = 9
+let sl = 10
+let fp = 11
+let ip = 12
 let sp = 13
+let lr = 14
+let pc = 15
 
 let sign_plus = 1
 let sign_minus = 0
