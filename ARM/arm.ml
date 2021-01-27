@@ -167,8 +167,8 @@ let ldr_str_to_binary is_ldr typ cond rd rn =
 
 let mov_mvn_to_binary is_mov s cond rd rs =
   let opcode = if is_mov
-  then 0b0001_1010_0000_0000_0000_0000_0000_0000
-  else 0b0001_1110_0000_0000_0000_0000_0000_0000 in
+  then 0b0001_1010_0000_0000_0000_0000_0000
+  else 0b0001_1110_0000_0000_0000_0000_0000 in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in
   let v = of_int opcode |>
@@ -178,10 +178,26 @@ let mov_mvn_to_binary is_mov s cond rd rs =
   let addr_mode = addr_mode_1 rs in
   logor v addr_mode
 
+let adc_sbc_to_binary is_adc s cond rd rn op2 =
+  let opcode = if is_adc
+  then 0b0000_1010_0000_0000_0000_0000_0000
+  else 0b0000_1100_0000_0000_0000_0000_0000 in
+  let scode = if s then 1 else 0 in
+  let scode = shift_left (of_int scode) 20 in
+  let v = of_int opcode |>
+    add_condition_code cond |>
+    add_rd_code rd |>
+    add_rn_code rn |>
+    logor scode in
+  let addr_mode = addr_mode_1 op2 in
+  logor v addr_mode
+
 let arm_to_binary arm =
   match arm with
   | LDR {typ;cond;rd;rn} -> ldr_str_to_binary true typ cond rd rn
   | STR {typ;cond;rd;rn} -> ldr_str_to_binary false typ cond rd rn
   | MOV {s;cond;rd;rs}   -> mov_mvn_to_binary true s cond rd rs
   | MVN {s;cond;rd;rs}   -> mov_mvn_to_binary false s cond rd rs
+  | ADC {s;cond;rd;rn;op2} -> adc_sbc_to_binary true s cond rd rn op2
+  | SBC {s;cond;rd;rn;op2} -> adc_sbc_to_binary false s cond rd rn op2
   | _ -> failwith "TODO"
