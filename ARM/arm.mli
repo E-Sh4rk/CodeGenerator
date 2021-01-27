@@ -10,6 +10,7 @@ type ldr_str_type = B | SB | H | SH | W
 type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * int | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
+(* NOTE: pre-indexed and post-indexed load/store are not supported for now *)
 
 type arm =
   | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset }

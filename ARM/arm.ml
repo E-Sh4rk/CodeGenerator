@@ -10,6 +10,7 @@ type ldr_str_type = B | SB | H | SH | W
 type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * int | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
+(* NOTE: pre-indexed and post-indexed load/store are not supported for now *)
 
 type arm =
   | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset }
@@ -178,10 +179,13 @@ let mov_mvn_to_binary is_mov s cond rd rs =
   let addr_mode = addr_mode_1 rs in
   logor v addr_mode
 
-let adc_sbc_to_binary is_adc s cond rd rn op2 =
-  let opcode = if is_adc
-  then 0b0000_1010_0000_0000_0000_0000_0000
-  else 0b0000_1100_0000_0000_0000_0000_0000 in
+let calculation_to_binary typ s cond rd rn op2 =
+  let opcode = match typ with
+  | "adc" -> 0b0000_1010_0000_0000_0000_0000_0000
+  | "sbc" -> 0b0000_1100_0000_0000_0000_0000_0000
+  | "bic" -> 0b0001_1100_0000_0000_0000_0000_0000
+  | _ -> assert false
+  in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in
   let v = of_int opcode |>
@@ -192,12 +196,19 @@ let adc_sbc_to_binary is_adc s cond rd rn op2 =
   let addr_mode = addr_mode_1 op2 in
   logor v addr_mode
 
+let bx_to_binary cond rm =
+  let opcode = 0b0001_0010_0000_0000_0000_0001_0000 in
+  of_int opcode |>
+  add_condition_code cond |>
+  logor (of_int rm)
+
 let arm_to_binary arm =
   match arm with
   | LDR {typ;cond;rd;rn} -> ldr_str_to_binary true typ cond rd rn
   | STR {typ;cond;rd;rn} -> ldr_str_to_binary false typ cond rd rn
   | MOV {s;cond;rd;rs}   -> mov_mvn_to_binary true s cond rd rs
   | MVN {s;cond;rd;rs}   -> mov_mvn_to_binary false s cond rd rs
-  | ADC {s;cond;rd;rn;op2} -> adc_sbc_to_binary true s cond rd rn op2
-  | SBC {s;cond;rd;rn;op2} -> adc_sbc_to_binary false s cond rd rn op2
-  | _ -> failwith "TODO"
+  | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2
+  | SBC {s;cond;rd;rn;op2} -> calculation_to_binary "sbc" s cond rd rn op2
+  | BIC {s;cond;rd;rn;op2} -> calculation_to_binary "bic" s cond rd rn op2
+  | BX {cond;rm} -> bx_to_binary cond rm
