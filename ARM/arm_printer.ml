@@ -66,8 +66,6 @@ let pp_arm fmt arm =
   | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a %a %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
-  | BX {cond;rm} -> Format.fprintf fmt "BX%s %a"
-    (cond_to_str cond) print_register rm
 
 let int32_to_int i =
   match Int32.unsigned_to_int i with

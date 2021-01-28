@@ -22,10 +22,7 @@ type arm =
 
   | ADC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-
   | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-
-  | BX of { cond: conditional ; rm: register }
 
 exception Invalid
 

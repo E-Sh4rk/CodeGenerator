@@ -22,10 +22,7 @@ type arm =
 
   | ADC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-
   | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-
-  | BX of { cond: conditional ; rm: register }
 
 open Int32
 
@@ -230,12 +227,6 @@ let calculation_to_binary typ s cond rd rn op2 =
   addr_mode_1 op2 |>
   List.map (fun addr_mode -> logor v addr_mode)
 
-let bx_to_binary cond rm =
-  let opcode = 0b0001_0010_0000_0000_0000_0001_0000 in
-  [of_int opcode |>
-  add_condition_code cond |>
-  logor (of_int rm)]
-
 let arm_to_binary arm =
   match arm with
   | LDR {typ;cond;rd;rn;addr_typ} -> ldr_str_to_binary true typ cond rd rn addr_typ
@@ -245,7 +236,6 @@ let arm_to_binary arm =
   | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2
   | SBC {s;cond;rd;rn;op2} -> calculation_to_binary "sbc" s cond rd rn op2
   | BIC {s;cond;rd;rn;op2} -> calculation_to_binary "bic" s cond rd rn op2
-  | BX {cond;rm} -> bx_to_binary cond rm
 
 let reverse_endianness v =
   let v1 = shift_left (logand mask8 v) (3*8) in
