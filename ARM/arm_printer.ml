@@ -32,22 +32,27 @@ let print_operand fmt op =
   | Register r -> Format.fprintf fmt "%a" print_register r
   | ScaledRegister _ -> failwith "Not implemented"
 
-let print_register_offset fmt ro =
-  match ro with
-  | OImmediate (r,i) -> Format.fprintf fmt "[%a, #%a]"
+let print_register_offset fmt (ro, addr_typ) =
+  let str = if addr_typ = PreIndexed then "!" else "" in
+  match ro, addr_typ with
+  | OImmediate (r,i), PostIndexed -> Format.fprintf fmt "[%a], #%a"
     print_register r print_relative_int i
-  | ORegister (r,s,ro) -> Format.fprintf fmt "[%a, %s%a]"
+  | ORegister (r,s,ro), PostIndexed -> Format.fprintf fmt "[%a], %s%a"
     print_register r (sign_to_str s) print_register ro
-  | OScaledRegister _ -> failwith "Not implemented"
+  | OImmediate (r,i), _ -> Format.fprintf fmt "[%a, #%a]%s"
+    print_register r print_relative_int i str
+  | ORegister (r,s,ro), _ -> Format.fprintf fmt "[%a, %s%a]%s"
+    print_register r (sign_to_str s) print_register ro str
+  | OScaledRegister _, _ -> failwith "Not implemented"
 
 let pp_arm fmt arm =
   match arm with
-  | LDR {typ;cond;rd;rn} -> Format.fprintf fmt "LDR%s%s %a %a"
+  | LDR {typ;cond;rd;rn;addr_typ} -> Format.fprintf fmt "LDR%s%s %a %a"
     (cond_to_str cond) (ldr_str_type_to_str typ)
-    print_register rd print_register_offset rn
-  | STR {typ;cond;rd;rn} -> Format.fprintf fmt "STR%s%s %a %a"
+    print_register rd print_register_offset (rn, addr_typ)
+  | STR {typ;cond;rd;rn;addr_typ} -> Format.fprintf fmt "STR%s%s %a %a"
     (cond_to_str cond) (ldr_str_type_to_str typ)
-    print_register rd print_register_offset rn
+    print_register rd print_register_offset (rn, addr_typ)
   | MOV {s;cond;rd;rs}   -> Format.fprintf fmt "MOV%s%s %a %a"
     (cond_to_str cond) (s_to_str s) print_register rd print_operand rs
   | MVN {s;cond;rd;rs}   -> Format.fprintf fmt "MVN%s%s %a %a"

@@ -6,6 +6,7 @@ type register = int
 type conditional = EQ | NE | CS | HS | CC | LO | MI | PL 
                  | VS | VC | HI | LS | GE | LT | GT | LE | AL
 type ldr_str_type = B | SB | H | SH | W
+type addressing_type = Offset | PreIndexed | PostIndexed
 
 type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int | Register of register | ScaledRegister of register * scale_type
@@ -13,8 +14,8 @@ type register_offset = OImmediate of register * int | ORegister of register * si
 (* NOTE: pre-indexed and post-indexed load/store are not supported for now *)
 
 type arm =
-  | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset }
-  | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset }
+  | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset ; addr_typ: addressing_type }
+  | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset ; addr_typ: addressing_type }
 
   | MOV of { s:bool ; cond: conditional ; rd: register ; rs: operand }
   | MVN of { s:bool ; cond: conditional ; rd: register ; rs: operand }
@@ -129,7 +130,13 @@ let addr_mode_1 rs =
     logor v i
   )
 
-let addr_mode_2 ro = (* Load and store of word and ubyte *)
+let p_and_w addr_typ =
+  match addr_typ with
+  | Offset -> (1,0)
+  | PreIndexed -> (1,1)
+  | PostIndexed -> (0,0)
+
+let addr_mode_2 ro addr_typ = (* Load and store of word and ubyte *)
   let (sign, reg, v) =
     match ro with
     | OImmediate (_, o) ->
@@ -140,13 +147,14 @@ let addr_mode_2 ro = (* Load and store of word and ubyte *)
       (sign, 1, of_int rm)
     | OScaledRegister _ -> failwith "Not implemented"
   in
+  let (p, w) = p_and_w addr_typ in
   let i = shift_left (of_int reg) 25 in
   let u = shift_left (of_int sign) 23 in
-  let p = shift_left (of_int 1) 24 in
-  let w = shift_left (of_int 0) 21 in
+  let p = shift_left (of_int p) 24 in
+  let w = shift_left (of_int w) 21 in
   logor v u |> logor p |> logor w |> logor i
 
-let addr_mode_3 ro = (* Other load and store *)
+let addr_mode_3 ro addr_typ = (* Other load and store *)
   let (sign, imm, v) =
     match ro with
     | OImmediate (_, o) ->
@@ -160,13 +168,14 @@ let addr_mode_3 ro = (* Other load and store *)
       (sign, 0, of_int rm)
     | OScaledRegister _ -> raise Invalid
   in
+  let (p, w) = p_and_w addr_typ in
   let i = shift_left (of_int imm) 22 in
   let u = shift_left (of_int sign) 23 in
-  let p = shift_left (of_int 1) 24 in
-  let w = shift_left (of_int 0) 21 in
+  let p = shift_left (of_int p) 24 in
+  let w = shift_left (of_int w) 21 in
   logor v u |> logor p |> logor w |> logor i
 
-let ldr_str_to_binary is_ldr typ cond rd rn =
+let ldr_str_to_binary is_ldr typ cond rd rn addr_typ =
   let opcode = match is_ldr, typ with
   | true, B  -> 0b0100_0101_0000_0000_0000_0000_0000
   | true, SB -> 0b0000_0001_0000_0000_0000_1101_0000
@@ -185,8 +194,8 @@ let ldr_str_to_binary is_ldr typ cond rd rn =
     add_rd_code rd in
   let addr_mode =
     match typ with
-    | B | W -> addr_mode_2 rn
-    | H | SH | SB -> addr_mode_3 rn
+    | B | W -> addr_mode_2 rn addr_typ
+    | H | SH | SB -> addr_mode_3 rn addr_typ
   in
   [logor v addr_mode]
 
@@ -229,8 +238,8 @@ let bx_to_binary cond rm =
 
 let arm_to_binary arm =
   match arm with
-  | LDR {typ;cond;rd;rn} -> ldr_str_to_binary true typ cond rd rn
-  | STR {typ;cond;rd;rn} -> ldr_str_to_binary false typ cond rd rn
+  | LDR {typ;cond;rd;rn;addr_typ} -> ldr_str_to_binary true typ cond rd rn addr_typ
+  | STR {typ;cond;rd;rn;addr_typ} -> ldr_str_to_binary false typ cond rd rn addr_typ
   | MOV {s;cond;rd;rs}   -> mov_mvn_to_binary true s cond rd rs
   | MVN {s;cond;rd;rs}   -> mov_mvn_to_binary false s cond rd rs
   | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2
