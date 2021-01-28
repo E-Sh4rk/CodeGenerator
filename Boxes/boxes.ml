@@ -20,7 +20,7 @@ let fit_codes_into_boxes codes =
     let n = List.length codes in
     if pos + n <= name_size
     then codes
-    else if List.nth (name_size-pos) codes = eof
+    else if List.nth codes (name_size-pos) = eof
     then codes
     else
       let nop = nop_sequences.(name_size-pos) in
@@ -47,3 +47,12 @@ let fit_codes_into_boxes codes =
   if List.length res > nb_boxes
   then raise NotEnoughSpace
   else res
+
+let pp_boxes_names fmt lst =
+  let pp_box i codes =
+    let chars = Name.codes_to_chars codes in
+    Format.fprintf fmt "Box %i:" (i+1) ;
+    List.iter (fun str -> Format.fprintf fmt " %s" str) chars ;
+    Format.fprintf fmt "@."
+  in
+  List.iteri pp_box lst
