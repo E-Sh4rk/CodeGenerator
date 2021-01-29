@@ -27,16 +27,18 @@ let print_operand fmt op =
   | Register r -> Format.fprintf fmt "%a" print_register r
   | ScaledRegister _ -> failwith "Not implemented"
 
-(* TODO: Factorize printing of int32 *)
+let print_immediate_offset fmt (s, i) =
+  Format.fprintf fmt "#%s%#lx" (sign_to_str s) i
+
 let print_register_offset fmt (ro, addr_typ) =
   let str = if addr_typ = PreIndexed then "!" else "" in
   match ro, addr_typ with
-  | OImmediate (r,s,i), PostIndexed -> Format.fprintf fmt "[%a], #%s%#lx"
-    print_register r (sign_to_str s) i
+  | OImmediate (r,s,i), PostIndexed -> Format.fprintf fmt "[%a], %a"
+    print_register r print_immediate_offset (s, i)
   | ORegister (r,s,ro), PostIndexed -> Format.fprintf fmt "[%a], %s%a"
     print_register r (sign_to_str s) print_register ro
-  | OImmediate (r,s,i), _ -> Format.fprintf fmt "[%a, #%s%#lx]%s"
-    print_register r (sign_to_str s) i str
+  | OImmediate (r,s,i), _ -> Format.fprintf fmt "[%a, %a]%s"
+    print_register r print_immediate_offset (s, i) str
   | ORegister (r,s,ro), _ -> Format.fprintf fmt "[%a, %s%a]%s"
     print_register r (sign_to_str s) print_register ro str
   | OScaledRegister _, _ -> failwith "Not implemented"
