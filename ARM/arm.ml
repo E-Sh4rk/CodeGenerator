@@ -9,9 +9,8 @@ type ldr_str_type = B | SB | H | SH | W
 type addressing_type = Offset | PreIndexed | PostIndexed
 
 type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
-type operand = Immediate of int | Register of register | ScaledRegister of register * scale_type
-type register_offset = OImmediate of register * int | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
-(* NOTE: pre-indexed and post-indexed load/store are not supported for now *)
+type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
+type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
 type arm =
   | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset ; addr_typ: addressing_type }
@@ -59,9 +58,7 @@ let mask4 = int4 |> of_int
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
 let int12 = 0b111111111111
-(*let mask12 = int12 |> of_int*)
-
-let sign_of i = if i >= 0 then (sign_plus, i) else (sign_minus, -i)
+let mask12 = int12 |> of_int
 
 let condition_code c =
   begin match c with
@@ -85,7 +82,7 @@ let add_rd_code rd v =
 
 let register_of_register_offset ro =
   match ro with
-  | OImmediate (r, _) | ORegister (r, _, _) | OScaledRegister (r, _, _, _) -> r
+  | OImmediate (r, _, _) | ORegister (r, _, _) | OScaledRegister (r, _, _, _) -> r
 
 (*let rotate_right v =
   let lb = logand v mask1 in
@@ -97,8 +94,7 @@ let rotate_left v =
   let v = shift_left v 1 in
   logor v (shift_right_logical hb 31)
 
-let decompose_immediate i =
-  let imm = of_int i in
+let decompose_immediate imm =
   let rec aux n imm =
     if n > int4 then []
     else
@@ -136,10 +132,9 @@ let p_and_w addr_typ =
 let addr_mode_2 ro addr_typ = (* Load and store of word and ubyte *)
   let (sign, reg, v) =
     match ro with
-    | OImmediate (_, o) ->
-      let (sign, o) = sign_of o in
-      if o > int12 then raise Invalid ;
-      (sign, 0, of_int o)
+    | OImmediate (_, sign, v) ->
+      if unsigned_compare v mask12 > 0 then raise Invalid ;
+      (sign, 0, v)
     | ORegister (_, sign, rm) ->
       (sign, 1, of_int rm)
     | OScaledRegister _ -> failwith "Not implemented"
@@ -154,10 +149,8 @@ let addr_mode_2 ro addr_typ = (* Load and store of word and ubyte *)
 let addr_mode_3 ro addr_typ = (* Other load and store *)
   let (sign, imm, v) =
     match ro with
-    | OImmediate (_, o) ->
-      let (sign, o) = sign_of o in
-      if o > int8 then raise Invalid ;
-      let v = of_int o in
+    | OImmediate (_, sign, v) ->
+      if unsigned_compare v mask8 > 0 then raise Invalid ;
       let immedL = logand mask4 v in
       let immedH = logand mask4 (shift_right_logical v 4) in
       (sign, 1, logor immedL (shift_left immedH 8))

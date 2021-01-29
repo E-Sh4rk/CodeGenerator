@@ -1,3 +1,5 @@
+; (ocamllex lexer)
+; (menhir (modules parser))
 (include_subdirs unqualified)
 (executable
  (name ace)

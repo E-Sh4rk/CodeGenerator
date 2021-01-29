@@ -18,29 +18,25 @@ let sign_to_str sign =
 let s_to_str s =
   if s then "S" else ""
 
-let print_relative_int fmt i =
-  if i >= 0
-  then Format.fprintf fmt "%#x" i
-  else Format.fprintf fmt "-%#x" (-i)
-
 let print_register fmt r =
   Format.fprintf fmt "r%i" r
 
 let print_operand fmt op =
   match op with
-  | Immediate i -> Format.fprintf fmt "#%a" print_relative_int i
+  | Immediate i -> Format.fprintf fmt "#%#lx" i
   | Register r -> Format.fprintf fmt "%a" print_register r
   | ScaledRegister _ -> failwith "Not implemented"
 
+(* TODO: Factorize printing of int32 *)
 let print_register_offset fmt (ro, addr_typ) =
   let str = if addr_typ = PreIndexed then "!" else "" in
   match ro, addr_typ with
-  | OImmediate (r,i), PostIndexed -> Format.fprintf fmt "[%a], #%a"
-    print_register r print_relative_int i
+  | OImmediate (r,s,i), PostIndexed -> Format.fprintf fmt "[%a], #%s%#lx"
+    print_register r (sign_to_str s) i
   | ORegister (r,s,ro), PostIndexed -> Format.fprintf fmt "[%a], %s%a"
     print_register r (sign_to_str s) print_register ro
-  | OImmediate (r,i), _ -> Format.fprintf fmt "[%a, #%a]%s"
-    print_register r print_relative_int i str
+  | OImmediate (r,s,i), _ -> Format.fprintf fmt "[%a, #%s%#lx]%s"
+    print_register r (sign_to_str s) i str
   | ORegister (r,s,ro), _ -> Format.fprintf fmt "[%a, %s%a]%s"
     print_register r (sign_to_str s) print_register ro str
   | OScaledRegister _, _ -> failwith "Not implemented"
@@ -67,10 +63,5 @@ let pp_arm fmt arm =
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
 
-let int32_to_int i =
-  match Int32.unsigned_to_int i with
-  | None -> failwith "Only 64bits machines are supported"
-  | Some i -> i
-
 let pp_hex fmt i =
-  Format.fprintf fmt "%08X" (int32_to_int i)
+  Format.fprintf fmt "%08lX" i
