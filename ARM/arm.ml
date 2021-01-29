@@ -13,8 +13,8 @@ type operand = Immediate of int32 | Register of register | ScaledRegister of reg
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
 type arm =
-  | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset ; addr_typ: addressing_type }
-  | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; rn: register_offset ; addr_typ: addressing_type }
+  | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
+  | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
 
   | MOV of { s:bool ; cond: conditional ; rd: register ; rs: operand }
   | MVN of { s:bool ; cond: conditional ; rd: register ; rs: operand }
@@ -165,7 +165,7 @@ let addr_mode_3 ro addr_typ = (* Other load and store *)
   let w = shift_left (of_int w) 21 in
   logor v u |> logor p |> logor w |> logor i
 
-let ldr_str_to_binary is_ldr typ cond rd rn addr_typ =
+let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
   let opcode = match is_ldr, typ with
   | true, B  -> 0b0100_0101_0000_0000_0000_0000_0000
   | true, SB -> 0b0000_0001_0000_0000_0000_1101_0000
@@ -222,8 +222,8 @@ let calculation_to_binary typ s cond rd rn op2 =
 
 let arm_to_binary arm =
   match arm with
-  | LDR {typ;cond;rd;rn;addr_typ} -> ldr_str_to_binary true typ cond rd rn addr_typ
-  | STR {typ;cond;rd;rn;addr_typ} -> ldr_str_to_binary false typ cond rd rn addr_typ
+  | LDR {typ;cond;rd;ro} -> ldr_str_to_binary true typ cond rd ro
+  | STR {typ;cond;rd;ro} -> ldr_str_to_binary false typ cond rd ro
   | MOV {s;cond;rd;rs}   -> mov_mvn_to_binary true s cond rd rs
   | MVN {s;cond;rd;rs}   -> mov_mvn_to_binary false s cond rd rs
   | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2

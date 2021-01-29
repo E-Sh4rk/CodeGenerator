@@ -3,19 +3,19 @@ open Arm
 let program =
   [
     SBC {s=false; cond=AL; rd=11; rn=pc; op2=Immediate(0x2940 |> Int32.of_int)} ;
-    LDR {typ=H; cond=AL; rd=12; rn=OImmediate(11, sign_plus, 21 |> Int32.of_int); addr_typ=Offset} ;
+    LDR {typ=H; cond=AL; rd=12; ro=OImmediate(11, sign_plus, 21 |> Int32.of_int), Offset} ;
     ADC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0x2840 |> Int32.of_int)} ;
     SBC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0xDF |> Int32.of_int)} ;
-    STR {typ=H; cond=AL; rd=12; rn=OImmediate(11, sign_plus, 21 |> Int32.of_int); addr_typ=Offset} ;
+    STR {typ=H; cond=AL; rd=12; ro=OImmediate(11, sign_plus, 21 |> Int32.of_int), Offset} ;
     MOV {s=true; cond=AL; rd=12; rs=Immediate(0xBC00 |> Int32.of_int)} ;
     ADC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0x348 |> Int32.of_int)} ;
-    STR {typ=H; cond=AL; rd=12; rn=OImmediate(11, sign_plus, 37 |> Int32.of_int); addr_typ=Offset} ;
+    STR {typ=H; cond=AL; rd=12; ro=OImmediate(11, sign_plus, 37 |> Int32.of_int), Offset} ;
 
     ADC {s=true; cond=AL; rd=12; rn=pc; op2=Immediate(0x34 |> Int32.of_int)} ;
     MVN {s=false; cond=AL; rd=11; rs=Immediate(0xE1 |> Int32.of_int)} ;
     BIC {s=false; cond=AL; rd=11; rn=11; op2=Immediate(0xED00000 |> Int32.of_int)} ;
     BIC {s=false; cond=AL; rd=11; rn=11; op2=Immediate(0x1000000E |> Int32.of_int)} ;
-    STR {typ=W; cond=AL; rd=11; rn=OImmediate(12, sign_plus, 0 |> Int32.of_int); addr_typ=PreIndexed} ;
+    STR {typ=W; cond=AL; rd=11; ro=OImmediate(12, sign_plus, 0 |> Int32.of_int), PreIndexed} ;
     ADC {s=false; cond=AL; rd=12; rn=lr; op2=Immediate(0xDC0 |> Int32.of_int)} ; 
     ADC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0xD30000 |> Int32.of_int)} ;
     BIC {s=false; cond=AL; rd=12; rn=12; op2=Immediate(0xC00000 |> Int32.of_int)} ;

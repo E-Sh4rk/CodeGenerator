@@ -5,9 +5,9 @@ type offset =
   | ONone
 
 type args =
-  | Registry of string
+  | Register of string
   | Immediate of int32
-  | Offset of string (* registry *) * offset * bool (* pre-indexed *)
+  | Offset of string (* register *) * offset * bool (* pre-indexed *)
 
 type command =
   Lexing.position * string * args list
@@ -15,3 +15,4 @@ type command =
 type ast = command list
 
 val int32_of_str : string -> int32
+val to_arm : ast -> (Arm.arm list) option

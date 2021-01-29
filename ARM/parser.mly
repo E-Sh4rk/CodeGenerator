@@ -26,7 +26,7 @@ command:
   ;
 
 arg:
-  | id = ID { Registry id }
+  | id = ID { Register id }
   | HASH ; i = NUMBER { Immediate i }
   | LEFT_BRACK ; id = ID ; o = offset ; RIGHT_BRACK { Offset (id, o, false) }
   | LEFT_BRACK ; id = ID ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK { Offset (id, o, true) }
