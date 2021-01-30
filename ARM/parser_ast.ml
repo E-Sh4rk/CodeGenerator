@@ -122,9 +122,8 @@ let get_register arg =
 let get_rd args = get_register (List.hd args)
 
 let get_rn args =
-  if List.length args > 2
-  then get_rd (List.tail args)
-  else get_rd args
+  let n = List.length args in
+  get_register (List.nth args (n-2))
 
 let get_operand arg =
   match arg with
@@ -138,7 +137,16 @@ let get_op2 args =
 
 let get_rs = get_op2
 
-let get_ro args = failwith "TODO"
+let get_ro args =
+  let n = List.length args in
+  match List.nth args (n-1) with
+  | Offset (str, offset, addr_typ) -> begin
+    let r = Arm.Register (register_of_str str) in
+    match offset with
+    | OImmediate (sign, i) -> Arm.OImmediate (r, sign, i)
+    | ORegister (sign, str) -> Arm.ORegister (r, sign, register_of_str str)
+    end
+  | _ -> raise StructError
 
 let cmd_to_arm (pos, cmd, args) =
   let cmd = String.uppercase_ascii cmd in

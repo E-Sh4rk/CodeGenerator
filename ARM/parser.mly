@@ -28,15 +28,14 @@ command:
 arg:
   | id = ID { Register id }
   | HASH ; i = NUMBER { Immediate i }
-  | LEFT_BRACK ; id = ID ; o = offset ; RIGHT_BRACK { Offset (id, o, false) }
-  | LEFT_BRACK ; id = ID ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK { Offset (id, o, true) }
+  | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK { Offset (id, o, Arm.Offset) }
+  | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK { Offset (id, o, Arm.PreIndexed) }
+  | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; COMMA ; o = offset { Offset (id, o, Arm.PostIndexed) }
   ;
 
 offset:
-  | (* Empty *) { ONone }
-  | COMMA ; HASH ; i = NUMBER | COMMA ; HASH ; PLUS ; i = NUMBER
-    { OImmediate (Arm.sign_plus, i) }
-  | COMMA ; HASH ; MINUS ; i = NUMBER { OImmediate (Arm.sign_minus, i) }
-  | COMMA ; id = ID | COMMA ; PLUS ; id = ID { ORegister (Arm.sign_plus, id) }
-  | COMMA ; MINUS ; id = ID { ORegister (Arm.sign_minus, id) }
+  | HASH ; i = NUMBER | HASH ; PLUS ; i = NUMBER { OImmediate (Arm.sign_plus, i) }
+  | HASH ; MINUS ; i = NUMBER { OImmediate (Arm.sign_minus, i) }
+  | id = ID | PLUS ; id = ID { ORegister (Arm.sign_plus, id) }
+  | MINUS ; id = ID { ORegister (Arm.sign_minus, id) }
   ;
