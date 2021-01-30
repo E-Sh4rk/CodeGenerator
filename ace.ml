@@ -22,6 +22,8 @@ let treat_command arm =
   Format.printf "%a@." Arm_printer.pp_arm arm ;
   res
   
+let auto_exit_code = false
+
 let () =
   (*Printexc.record_backtrace true ;*)
   let exit_codes = Exit.load_from_dir "Files/ExitCodes" in
@@ -30,8 +32,9 @@ let () =
   | None -> Format.printf "@.No program to convert. Exiting.@."
   | Some program ->
     let res = program |> List.map treat_command in
+    let exit = if auto_exit_code then Some exit_codes else None in
     let boxes_codes = res |>
       List.map Name.codes_for_command |>
-      Boxes.fit_codes_into_boxes ~exit:(Some exit_codes)
+      Boxes.fit_codes_into_boxes ~exit
     in
     Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes
