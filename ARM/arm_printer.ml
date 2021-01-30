@@ -11,6 +11,7 @@ let cond_to_str c =
 let ldr_str_type_to_str t =
   match t with
   | B -> "B" | SB -> "SB" | H -> "H" | SH -> "SH" | W -> ""
+  | T -> "T" | BT -> "BT"
 
 let sign_to_str sign =
   if sign = sign_minus then "-" else ""

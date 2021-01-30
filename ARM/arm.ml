@@ -5,7 +5,7 @@ type register = int
 
 type conditional = EQ | NE | CS | HS | CC | LO | MI | PL 
                  | VS | VC | HI | LS | GE | LT | GT | LE | AL
-type ldr_str_type = B | SB | H | SH | W
+type ldr_str_type = B | SB | H | SH | W | T | BT
 type addressing_type = Offset | PreIndexed | PostIndexed
 
 type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
@@ -166,17 +166,26 @@ let addr_mode_3 ro addr_typ = (* Other load and store *)
   logor v u |> logor p |> logor w |> logor i
 
 let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
+  let check_post_addr () =
+    match addr_typ with
+    | PostIndexed -> ()
+    | _ -> raise Invalid
+  in
   let opcode = match is_ldr, typ with
   | true, B  -> 0b0100_0101_0000_0000_0000_0000_0000
   | true, SB -> 0b0000_0001_0000_0000_0000_1101_0000
   | true, H  -> 0b0000_0001_0000_0000_0000_1011_0000
   | true, SH -> 0b0000_0001_0000_0000_0000_1111_0000
   | true, W  -> 0b0100_0001_0000_0000_0000_0000_0000
+  | true, T  -> check_post_addr () ; 0b0100_0011_0000_0000_0000_0000_0000
+  | true, BT -> check_post_addr () ; 0b0100_0111_0000_0000_0000_0000_0000
   | false, B  -> 0b0100_0100_0000_0000_0000_0000_0000
   | false, SB -> raise Invalid
   | false, H  -> 0b0000_0000_0000_0000_0000_1011_0000
   | false, SH -> raise Invalid
   | false, W  -> 0b0100_0000_0000_0000_0000_0000_0000
+  | false, T  -> check_post_addr () ; 0b0100_0010_0000_0000_0000_0000_0000
+  | false, BT -> check_post_addr () ; 0b0100_0110_0000_0000_0000_0000_0000
   in
   let v = of_int opcode |>
     add_condition_code cond |>
@@ -184,7 +193,7 @@ let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
     add_rd_code rd in
   let addr_mode =
     match typ with
-    | B | W -> addr_mode_2 rn addr_typ
+    | B | W | T | BT -> addr_mode_2 rn addr_typ
     | H | SH | SB -> addr_mode_3 rn addr_typ
   in
   [logor v addr_mode]

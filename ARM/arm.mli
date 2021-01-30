@@ -5,7 +5,7 @@ type register = int
 
 type conditional = EQ | NE | CS | HS | CC | LO | MI | PL 
                  | VS | VC | HI | LS | GE | LT | GT | LE | AL
-type ldr_str_type = B | SB | H | SH | W
+type ldr_str_type = B | SB | H | SH | W | T | BT
 type addressing_type = Offset | PreIndexed | PostIndexed
 
 type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX

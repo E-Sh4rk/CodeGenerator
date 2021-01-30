@@ -47,6 +47,7 @@ let recognize_ldr_str_type str i =
   match str with
   | "SB" -> (Some SB, i+2)
   | "SH" -> (Some SH, i+2)
+  | "BT" -> (Some BT, i+2)
   | _ ->
   begin
     let str = String.sub str 0 (min 1 (n-i)) in
@@ -54,6 +55,7 @@ let recognize_ldr_str_type str i =
     | "B" -> (Some B, i+1)
     | "H" -> (Some H, i+1)
     | "W" -> (Some W, i+1)
+    | "T" -> (Some T, i+1)
     | _ -> (None, i)
   end
 
