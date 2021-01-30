@@ -68,6 +68,6 @@ rule read = parse
   | eof { raise (SyntaxError ("String is not terminated")) }*)
 
 and read_comment = parse
-| _ { read_comment lexbuf }
-| newline { next_line lexbuf; EOL }
-| eof { EOF }
+  | newline { next_line lexbuf; EOL }
+  | eof { EOF }
+  | _ { read_comment lexbuf }
