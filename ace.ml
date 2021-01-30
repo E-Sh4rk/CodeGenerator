@@ -42,6 +42,7 @@ let treat_command arm =
   
 let () =
   (*Printexc.record_backtrace true ;*)
+  let _ = Exit.load_from_dir "Files/ExitCodes" in
   let program = Parse.from_filename "test.txt" in
   match program with
   | None -> Format.printf "@.No program to convert. Exiting.@."

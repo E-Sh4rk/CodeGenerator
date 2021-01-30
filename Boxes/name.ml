@@ -31,3 +31,16 @@ let pp_chars fmt lst =
   lst |> List.iter (fun str ->
     Format.fprintf fmt "%s " str
   )
+
+let is_code_writable hex =
+  try (
+    codes_to_chars hex |> ignore ; true
+  ) with Unwritable -> false
+
+let rec first_writable_code hexs =
+  match hexs with
+  | [] -> raise Unwritable
+  | hex::hexs ->
+    if is_code_writable hex
+    then hex
+    else first_writable_code hexs
