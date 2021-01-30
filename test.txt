@@ -6,12 +6,13 @@ STRH r12, [r11, #0x15]
 MOVS r12, #0xbc00
 ADC r12, r12, #0x348
 STRH r12, [r11, #0x25]
-ADCS r12, r15, #0x34
-MVN r11, #0xe1
-BIC r11, r11, #0xed00000
-BIC r11, r11, #0x1000000e
-STR r11, [r12, #0]!
-ADC r12, r14, #0xdc0
-ADC r12, r12, #0xd30000
-BIC r12, r12, #0xc00000
-ADC r0, r12, #0xd6
+
+ADCS r12, r15, #0x34        ; r12=&Box14Name
+MVN r11, #0xe1              ; r11=ffffff1e
+BIC r11, r11, #0xed00000    ; r11=f12fff1e
+BIC r11, r11, #0x1000000e   ; r11=BX r0
+STR r11, [r12, #0]!         ; store BX r0
+ADC r12, r14, #0xdc0        ; r12=080077A7
+ADC r12, r12, #0xd30000     ; r12=8D377A7
+BIC r12, r12, #0xc00000     ; r12=81377A7
+ADC r0, r12, #0xd6          ; r0=SetCB2WhiteOut

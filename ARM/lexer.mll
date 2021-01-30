@@ -69,5 +69,5 @@ rule read = parse
 
 and read_comment = parse
 | _ { read_comment lexbuf }
-| newline { read lexbuf }
+| newline { next_line lexbuf; EOL }
 | eof { EOF }

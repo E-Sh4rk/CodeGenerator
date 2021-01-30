@@ -9,6 +9,8 @@ let nop_sequences =
     [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
   |]
 
+let nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* andeq r0, r0, r0 *)
+
 let name_size = 8
 let nb_boxes = 14
 let eof = 0xFF
