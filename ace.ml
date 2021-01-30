@@ -46,7 +46,7 @@ let treat_command arm =
   
 let () =
   (*Printexc.record_backtrace true ;*)
-  let _ = Exit.load_from_dir "Files/ExitCodes" in
+  let exit_codes = Exit.load_from_dir "Files/ExitCodes" in
   let program = Parse.from_filename "test.txt" in
   match program with
   | None -> Format.printf "@.No program to convert. Exiting.@."
@@ -54,6 +54,6 @@ let () =
     let res = program |> List.map treat_command in
     let boxes_codes = res |>
       List.map Name.codes_for_command |>
-      Boxes.fit_codes_into_boxes
+      Boxes.fit_codes_into_boxes ~exit:(Some exit_codes)
     in
     Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes
