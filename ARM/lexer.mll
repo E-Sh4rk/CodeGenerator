@@ -36,11 +36,15 @@ let newline = '\r' | '\n' | "\r\n"
 let id = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9']*
 
 rule read = parse
+  | "@@"      { HEADER }
+  | "null"    { NULL }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
   | newline   { next_line lexbuf; EOL }
   | number    { NUMBER (Parser_ast.int32_of_str (Lexing.lexeme lexbuf)) }
   | id        { ID (Lexing.lexeme lexbuf) }
+  | '"'       { read_string (Buffer.create 17) lexbuf }
+  | '='       { EQUAL }
   | '#'       { HASH }
   | '['       { LEFT_BRACK }
   | ']'       { RIGHT_BRACK }
@@ -51,7 +55,7 @@ rule read = parse
   | eof       { EOF }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
-(*and read_string buf = parse
+and read_string buf = parse
   | '"'       { STRING (Buffer.contents buf) }
   | '\\' '/'  { Buffer.add_char buf '/'; read_string buf lexbuf }
   | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
@@ -60,12 +64,13 @@ rule read = parse
   | '\\' 'n'  { Buffer.add_char buf '\n'; read_string buf lexbuf }
   | '\\' 'r'  { Buffer.add_char buf '\r'; read_string buf lexbuf }
   | '\\' 't'  { Buffer.add_char buf '\t'; read_string buf lexbuf }
-  | [^ '"' '\\']+
+  | [^ '"' '\\' '\r' '\n']+
     { Buffer.add_string buf (Lexing.lexeme lexbuf);
       read_string buf lexbuf
     }
+  | newline { raise (SyntaxError ("String cannot be multiline")) }
+  | eof { raise (SyntaxError ("String is not terminated")) }
   | _ { raise (SyntaxError ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
-  | eof { raise (SyntaxError ("String is not terminated")) }*)
 
 and read_comment = parse
   | newline { next_line lexbuf; EOL }

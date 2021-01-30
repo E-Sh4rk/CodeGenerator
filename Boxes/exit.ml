@@ -10,14 +10,14 @@ let load_from_dir dirname =
     let str = Filename.basename x |> Filename.remove_extension in
     let i = int_of_string str in
     let arm =
-      match Parse.from_filename path with
-      | Some arm -> arm
+      match Parse.from_filename ~headers:false path with
+      | Some (_, arm) -> arm
       | None -> failwith "Error while parsing exit codes." in
     let codes = arm |>
       List.map (fun arm ->
         Arm.arm_to_binary arm |>
         List.map Name.codes_for_command |>
-        Name.first_writable_code
+        Name.preferred_code
       )
     in
     (i, codes)

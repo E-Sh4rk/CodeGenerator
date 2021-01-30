@@ -1,5 +1,9 @@
 %{ open Parser_ast %}
 
+%token HEADER
+%token NULL
+%token EQUAL
+%token <string> STRING
 %token <int32> NUMBER
 %token <string> ID
 %token HASH
@@ -13,7 +17,16 @@
 %token EOF
 
 %start <Parser_ast.ast> ast
+%start <Parser_ast.headers> headers
 %%
+
+definition:
+  | id = ID ; EQUAL ; str = STRING { (id, Some str) }
+  | id = ID ; EQUAL ; NULL { (id, None) }
+
+headers:
+  | list (EOL) ; HEADER ; EOL | list (EOL) ; HEADER ; EOF { [] }
+  | list (EOL) ; HEADER ; d = definition ; EOL ; ds = headers { d::ds }
 
 ast:
   | list (EOL) ; EOF { [] }

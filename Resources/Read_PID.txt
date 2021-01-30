@@ -1,3 +1,8 @@
+@@ title = "Read PID"
+@@ author = "Sleipnir17"
+@@ exit = "WhiteOutENG"
+@@
+
 sbc r12, pc, #0x3100   ; E2CFCDC4  %%  R12=PC-3100-1
 adc r12, r12, #0xC1    ; E2ACC0**  %%  R12=R12+(C1 emulator, BF on console)
 ldrh r11, [r12, #0x18] ; E1DCB1B8  %%  Load Pokémon's lowPID

@@ -50,3 +50,7 @@ let rec first_writable_code hexs =
     if is_code_writable hex
     then hex
     else first_writable_code hexs
+
+let preferred_code hexs =
+  try first_writable_code hexs
+  with Unwritable -> List.hd hexs

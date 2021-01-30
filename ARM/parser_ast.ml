@@ -1,5 +1,8 @@
 open Arm
 
+type definition = string * string option
+type headers = definition list
+
 type offset =
   | OImmediate of Arm.sign * int32
   | ORegister of Arm.sign * string
@@ -14,6 +17,8 @@ type command =
   | BIN of Lexing.position * int32
 
 type ast = command list
+
+exception CommandError of Lexing.position
 
 let int32_of_str str = String.lowercase_ascii str |> Int32.of_string
 
@@ -170,8 +175,12 @@ let asm_cmd_to_arm cmd args =
 
 let cmd_to_arm cmd =
   match cmd with
-  | ASM (_, cmd, args) -> asm_cmd_to_arm cmd args
+  | ASM (pos, cmd, args) ->
+    begin try asm_cmd_to_arm cmd args
+    with StructError -> raise (CommandError pos) end
   | BIN (_, i) -> Custom i
 
-let to_arm ast =
-  try Some (List.map cmd_to_arm ast) with StructError -> None
+let to_arm ast = List.map cmd_to_arm ast
+
+let get_header headers name =
+  try List.assoc name headers with Not_found -> None

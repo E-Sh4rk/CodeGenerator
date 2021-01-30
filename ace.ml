@@ -21,18 +21,21 @@ let treat_command arm =
   in
   Format.printf "%a@." Arm_printer.pp_arm arm ;
   res
-  
-let auto_exit_code = false
 
 let () =
-  (*Printexc.record_backtrace true ;*)
-  let exit_codes = Exit.load_from_dir "Files/ExitCodes" in
-  let program = Parse.from_filename "test.txt" in
+  Printexc.record_backtrace true ;
+  let program = Parse.from_filename ~headers:true "test.txt" in
   match program with
   | None -> Format.printf "@.No program to convert. Exiting.@."
-  | Some program ->
+  | Some (headers, program) ->
+    let exit =
+      match Parser_ast.get_header headers "exit" with
+      | None -> None
+      | Some fn -> Some (
+        Filename.concat "Files/ExitCodes" fn |>
+        Exit.load_from_dir)
+    in
     let res = program |> List.map treat_command in
-    let exit = if auto_exit_code then Some exit_codes else None in
     let boxes_codes = res |>
       List.map Name.codes_for_command |>
       Boxes.fit_codes_into_boxes ~exit

@@ -9,3 +9,4 @@ val pp_chars_raw : Format.formatter -> string list -> unit
 
 val is_code_writable : int list -> bool
 val first_writable_code : (int list) list -> int list
+val preferred_code : (int list) list -> int list
