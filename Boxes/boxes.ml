@@ -97,8 +97,7 @@ let fit_codes_into_boxes ?(exit=None) codes =
 let pp_boxes_names fmt lst =
   let pp_box i codes =
     let chars = Name.codes_to_chars codes in
-    Format.fprintf fmt "Box %i:" (i+1) ;
-    List.iter (fun str -> Format.fprintf fmt " %s" str) chars ;
-    Format.fprintf fmt "@."
+    Format.fprintf fmt "Box %2i: %a\t[%a]@." (i+1)
+      Name.pp_chars chars Name.pp_chars_raw chars
   in
   List.iteri pp_box lst

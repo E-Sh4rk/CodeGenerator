@@ -28,8 +28,14 @@ let chars_for_command v =
   codes_for_command v |> codes_to_chars
 
 let pp_chars fmt lst =
+  lst |> List.iteri (fun i str ->
+    Format.fprintf fmt "%s%s" (if i = 0 then "" else " ") str
+  )
+
+let pp_chars_raw fmt lst =
   lst |> List.iter (fun str ->
-    Format.fprintf fmt "%s " str
+    let str = if str = "␣" then " " else str in
+    Format.fprintf fmt "%s" str
   )
 
 let is_code_writable hex =
