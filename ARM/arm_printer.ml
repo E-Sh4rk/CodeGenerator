@@ -1,5 +1,8 @@
 open Arm
 
+let pp_hex fmt i =
+  Format.fprintf fmt "%08lX" i
+
 let cond_to_str c =
   match c with
   | EQ -> "EQ" | NE -> "NE" | CS -> "CS" | HS -> "HS"
@@ -46,6 +49,7 @@ let print_register_offset fmt (ro, addr_typ) =
 
 let pp_arm fmt arm =
   match arm with
+  | Custom i -> pp_hex fmt i
   | LDR {typ;cond;rd;ro} -> Format.fprintf fmt "LDR%s%s %a, %a"
     (cond_to_str cond) (ldr_str_type_to_str typ)
     print_register rd print_register_offset ro
@@ -65,6 +69,3 @@ let pp_arm fmt arm =
   | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a, %a, %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
-
-let pp_hex fmt i =
-  Format.fprintf fmt "%08lX" i

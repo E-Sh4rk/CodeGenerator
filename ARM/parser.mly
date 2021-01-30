@@ -22,7 +22,8 @@ ast:
   ;
 
 command:
-  | id = ID ; args = separated_list(COMMA, arg) { ($startpos, id, args) }
+  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args) }
+  | nb = NUMBER { BIN ($startpos, nb) }
   ;
 
 arg:

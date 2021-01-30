@@ -9,7 +9,8 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
-  Lexing.position * string * args list
+  | ASM of Lexing.position * string * args list
+  | BIN of Lexing.position * int32
 
 type ast = command list
 

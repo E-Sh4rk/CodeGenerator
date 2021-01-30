@@ -13,6 +13,8 @@ type operand = Immediate of int32 | Register of register | ScaledRegister of reg
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
 type arm =
+  | Custom of int32
+
   | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
   | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
 
@@ -231,6 +233,7 @@ let calculation_to_binary typ s cond rd rn op2 =
 
 let arm_to_binary arm =
   match arm with
+  | Custom i -> [i]
   | LDR {typ;cond;rd;ro} -> ldr_str_to_binary true typ cond rd ro
   | STR {typ;cond;rd;ro} -> ldr_str_to_binary false typ cond rd ro
   | MOV {s;cond;rd;rs}   -> mov_mvn_to_binary true s cond rd rs

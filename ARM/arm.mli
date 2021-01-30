@@ -13,6 +13,8 @@ type operand = Immediate of int32 | Register of register | ScaledRegister of reg
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
 type arm =
+  | Custom of int32
+
   | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
   | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
 

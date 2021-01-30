@@ -10,7 +10,8 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
-  Lexing.position * string * args list
+  | ASM of Lexing.position * string * args list
+  | BIN of Lexing.position * int32
 
 type ast = command list
 
@@ -150,7 +151,7 @@ let get_ro args =
     end
   | _ -> raise StructError
 
-let cmd_to_arm (_, cmd, args) =
+let asm_cmd_to_arm cmd args =
   let cmd = String.uppercase_ascii cmd in
   let (cond, typ, s) = recognize_modifiers cmd 3 in
   let cond = match cond with None -> AL | Some c -> c in
@@ -166,6 +167,11 @@ let cmd_to_arm (_, cmd, args) =
   | "BIC" -> BIC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 args }
   | _ -> raise StructError
   with Failure _ | Invalid_argument _ -> raise StructError
+
+let cmd_to_arm cmd =
+  match cmd with
+  | ASM (_, cmd, args) -> asm_cmd_to_arm cmd args
+  | BIN (_, i) -> Custom i
 
 let to_arm ast =
   try Some (List.map cmd_to_arm ast) with StructError -> None

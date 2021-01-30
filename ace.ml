@@ -36,7 +36,11 @@ let rec first_valid hexs =
 
 let treat_command arm =
   let hexs = arm_to_binary arm in
-  let res = first_valid hexs in
+  let res =
+    match first_valid hexs with
+    | None -> List.hd hexs
+    | Some hex -> hex
+  in
   Format.printf "%a@." Arm_printer.pp_arm arm ;
   res
   
@@ -48,13 +52,8 @@ let () =
   | None -> Format.printf "@.No program to convert. Exiting.@."
   | Some program ->
     let res = program |> List.map treat_command in
-    if List.for_all (function None -> false | Some _ -> true) res
-    then (
-      let boxes_codes = res |>
-        List.map (function None -> assert false | Some c -> [c]) |>
-        List.flatten |> List.map Name.codes_for_command |>
-        Boxes.fit_codes_into_boxes
-      in
-      Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes
-    ) else
-      Format.printf "@.Not all commands are writable. Exiting.@."
+    let boxes_codes = res |>
+      List.map Name.codes_for_command |>
+      Boxes.fit_codes_into_boxes
+    in
+    Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes
