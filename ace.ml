@@ -41,7 +41,8 @@ let treat_command arm =
   res
   
 let () =
-  let program = Some program (*Parse.from_filename "test.txt"*) in
+  (*Printexc.record_backtrace true ;*)
+  let program = Parse.from_filename "test.txt" in
   match program with
   | None -> Format.printf "@.No program to convert. Exiting.@."
   | Some program ->

@@ -49,8 +49,7 @@ let recognize_ldr_str_type str i =
   | "SH" -> (Some SH, i+2)
   | _ ->
   begin
-    let n = String.length str in
-    let str = String.sub str i (min 1 (n-i)) in
+    let str = String.sub str 0 (min 1 (n-i)) in
     match str with
     | "B" -> (Some B, i+1)
     | "H" -> (Some H, i+1)
