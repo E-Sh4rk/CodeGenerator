@@ -1,0 +1,17 @@
+SBC r11, r15, #0x2940
+LDRH r12, [r11, #0x15]
+ADC r12, r12, #0x2840
+SBC r12, r12, #0xdf
+STRH r12, [r11, #0x15]
+MOVS r12, #0xbc00
+ADC r12, r12, #0x348
+STRH r12, [r11, #0x25]
+ADCS r12, r15, #0x34
+MVN r11, #0xe1
+BIC r11, r11, #0xed00000
+BIC r11, r11, #0x1000000e
+STR r11, [r12, #0]!
+ADC r12, r14, #0xdc0
+ADC r12, r12, #0xd30000
+BIC r12, r12, #0xc00000
+ADC r0, r12, #0xd6

@@ -3,12 +3,11 @@ open Arm
 type offset =
   | OImmediate of Arm.sign * int32
   | ORegister of Arm.sign * string
-  | ONone
 
 type args =
   | Register of string
   | Immediate of int32
-  | Offset of string (* register *) * offset * bool (* pre-indexed *)
+  | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
   Lexing.position * string * args list
@@ -112,11 +111,11 @@ let register_of_str str =
   | "r5" -> 5   | "r6" -> 6   | "r7" -> 7   | "r8" -> 8   | "r9" -> 9 
   | "r10" -> 10 | "r11" -> 11 | "r12" -> 12 | "r13" -> 13 | "r14" -> 14 
   | "r15" -> 15 | "sb" -> sb  | "sl" -> sl  | "fp" -> fp  | "ip" -> ip
-  | "sp" -> sp  | "lr" -> lr  | "pc" -> pc
+  | "sp" -> sp  | "lr" -> lr  | "pc" -> pc  | _ -> raise StructError
 
 let get_register arg =
   match arg with
-  | Register str -> Arm.Register (register_of_str str)
+  | Register str -> register_of_str str
   | _ -> raise StructError
 
 let get_rd args = get_register (List.hd args)
@@ -141,19 +140,18 @@ let get_ro args =
   let n = List.length args in
   match List.nth args (n-1) with
   | Offset (str, offset, addr_typ) -> begin
-    let r = Arm.Register (register_of_str str) in
-    match offset with
+    let r = register_of_str str in
+    let ro = match offset with
     | OImmediate (sign, i) -> Arm.OImmediate (r, sign, i)
     | ORegister (sign, str) -> Arm.ORegister (r, sign, register_of_str str)
+    in
+    (ro, addr_typ)
     end
   | _ -> raise StructError
 
-let cmd_to_arm (pos, cmd, args) =
+let cmd_to_arm (_, cmd, args) =
   let cmd = String.uppercase_ascii cmd in
-  let n = String.length cmd in
-  if n < 3 then raise StructError ;
-  
-  let (cond, typ, s) = recognize_modifiers str 3 in
+  let (cond, typ, s) = recognize_modifiers cmd 3 in
   let cond = match cond with None -> AL | Some c -> c in
   let typ = match typ with None -> W | Some typ -> typ in
 
@@ -166,7 +164,7 @@ let cmd_to_arm (pos, cmd, args) =
   | "SBC" -> SBC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 args }
   | "BIC" -> BIC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 args }
   | _ -> raise StructError
-  with Failure -> raise StructError
+  with Failure _ | Invalid_argument _ -> raise StructError
 
 let to_arm ast =
   try Some (List.map cmd_to_arm ast) with StructError -> None

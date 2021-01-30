@@ -45,23 +45,23 @@ let print_register_offset fmt (ro, addr_typ) =
 
 let pp_arm fmt arm =
   match arm with
-  | LDR {typ;cond;rd;ro} -> Format.fprintf fmt "LDR%s%s %a %a"
+  | LDR {typ;cond;rd;ro} -> Format.fprintf fmt "LDR%s%s %a, %a"
     (cond_to_str cond) (ldr_str_type_to_str typ)
     print_register rd print_register_offset ro
-  | STR {typ;cond;rd;ro} -> Format.fprintf fmt "STR%s%s %a %a"
+  | STR {typ;cond;rd;ro} -> Format.fprintf fmt "STR%s%s %a, %a"
     (cond_to_str cond) (ldr_str_type_to_str typ)
     print_register rd print_register_offset ro
-  | MOV {s;cond;rd;rs}   -> Format.fprintf fmt "MOV%s%s %a %a"
+  | MOV {s;cond;rd;rs}   -> Format.fprintf fmt "MOV%s%s %a, %a"
     (cond_to_str cond) (s_to_str s) print_register rd print_operand rs
-  | MVN {s;cond;rd;rs}   -> Format.fprintf fmt "MVN%s%s %a %a"
+  | MVN {s;cond;rd;rs}   -> Format.fprintf fmt "MVN%s%s %a, %a"
     (cond_to_str cond) (s_to_str s) print_register rd print_operand rs
-  | ADC {s;cond;rd;rn;op2} -> Format.fprintf fmt "ADC%s%s %a %a %a"
+  | ADC {s;cond;rd;rn;op2} -> Format.fprintf fmt "ADC%s%s %a, %a, %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
-  | SBC {s;cond;rd;rn;op2} -> Format.fprintf fmt "SBC%s%s %a %a %a"
+  | SBC {s;cond;rd;rn;op2} -> Format.fprintf fmt "SBC%s%s %a, %a, %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
-  | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a %a %a"
+  | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a, %a, %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
 
