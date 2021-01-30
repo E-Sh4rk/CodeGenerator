@@ -59,7 +59,7 @@ let charset =
   Unavailable "ʳᵉ" ; Available "0"   ; Available "1" ; Available "2"    ;
   Available "3"    ; Available "4"   ; Available "5" ; Available "6"    ;
   Available "7"    ; Available "8"   ; Available "9" ; Available "!"    ;
-  Available "?"    ; Available "."   ; Available "-" ; Unavailable "・" ;
+  Available "?"    ; Available "."   ; Available "–" ; Unavailable "・" ;
   (* 0xB. *)
   Available "…"    ; Available "“"   ; Available "”" ; Available "‘"     ;
   Available "’"    ; Available "♂"   ; Available "♀" ; Unavailable "Pk$" ;
