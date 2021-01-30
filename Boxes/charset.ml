@@ -61,7 +61,7 @@ let charset =
   Available "7"    ; Available "8"   ; Available "9" ; Available "!"    ;
   Available "?"    ; Available "."   ; Available "-" ; Unavailable "・" ;
   (* 0xB. *)
-  Available "..."  ; Available "“"   ; Available "”" ; Available "‘"     ;
+  Available "…"    ; Available "“"   ; Available "”" ; Available "‘"     ;
   Available "’"    ; Available "♂"   ; Available "♀" ; Unavailable "Pk$" ;
   Available ","    ; Unavailable "×" ; Available "/" ; Available "A"     ;
   Available "B"    ; Available "C"   ; Available "D" ; Available "E"     ;
