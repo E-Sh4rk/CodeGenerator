@@ -6,8 +6,21 @@ let nop_sequences =
     [0x00 ; 0x00 ; 0xFF ; 0xBF](* BFFF0000 *) ;
     [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
   |]
+(*
+TODO: Why not the following instead?
+FF0000B2
+00FF00B2
+0000FFB2
+000000FF
+or
+FF0000BF
+00FF00BF
+0000FFBF
+000000FF
+*)
 
-let nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* andeq r0, r0, r0 *)
+let nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
+let nop_code2 = [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
 
 let name_size = 8
 let nb_boxes = 14
@@ -63,6 +76,11 @@ let add_codes_after res codes =
     res @ (fit_code_at_pos (List.length res) codes)
   ) res codes
 
+let modulo x y =
+  let result = x mod y in
+  if result >= 0 then result
+  else result + y
+
 let fit_codes_into_boxes ?(start=0) ?(exit=None) codes =
   (* Main code *)
   let padding = pad_nb 0 start in
@@ -85,9 +103,22 @@ let fit_codes_into_boxes ?(start=0) ?(exit=None) codes =
     | c::codes when c=eof -> split (current::finished) [] codes
     | c::codes -> split finished (c::current) codes
   in
-  split [] [] res |>
-  List.map List.rev |>
-  List.rev
+  let res =
+    split [] [] res |>
+    List.map List.rev |>
+    List.rev
+  in
+  (* If a box is full of 0... *)
+  res |> List.mapi (fun i lst ->
+    if List.for_all (fun c -> c = 0) lst
+    then
+      let m = List.length nop_code2 in
+      let pos = modulo (m - i*(name_size+1)) m in
+      let prefix = List.init pos (fun _ -> 0) in
+      let suffix = List.init (name_size-pos-m) (fun _ -> 0) in
+      List.concat [prefix ; nop_code2 ; suffix]
+    else lst
+  )
 
 let pp_boxes_names fmt lst =
   let pp_box i codes =
