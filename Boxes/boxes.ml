@@ -13,9 +13,10 @@ let nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* andeq r0, r0, r0 *)
 
 let name_size = 8
 let nb_boxes = 14
-let eof = 0xFF
 
 exception ReturnFalse
+
+let eof = Name.eof
 
 let eof_only_at_pos codes i =
   try begin

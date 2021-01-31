@@ -1,9 +1,13 @@
-@@ title = "Access backyard"
-@@ author = "Sleipnir17"
-@@ exit = "CertificateENG"
+@@ title = "Obtain Fast Clone Species"
+@@ author = "Merrp"
+@@ exit = "WhiteOutBox14ENG"
 @@
 
-sbc r12,pc,#0xAC              ;  E2CFC0**  %%  R12=PC-(AC on emulator, AE on console)
-sbc r12,r12,#0xB400           ;  E2CCCCB4  %%  R12=R12-B400=Old man's position
-movs r11,#0x3                 ;  E3B0B3C0  %%  R11=3=new position
-strh r11, [r12,#0]            ;  E1CCB0B0  %%  Store new position
+SBC r11, r15, #0x2940
+LDRH r12, [r11, #0x15]
+ADC r12, r12, #0x2840
+SBC r12, r12, #0xdf
+STRH r12, [r11, #0x15]
+MOVS r12, #0xbc00
+ADC r12, r12, #0x348
+STRH r12, [r11, #0x25]
