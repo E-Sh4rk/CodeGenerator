@@ -24,6 +24,24 @@ let load_from_dir dirname =
   )
   |> List.sort (fun (i,_) (j,_) -> compare i j)
 
+let load_from_file filename =
+  match Parse.from_filename ~headers:true filename with
+  | Some (h, arm) ->
+    let codes = arm |>
+      List.map (fun arm ->
+        Arm.arm_to_binary arm |>
+        List.map Name.codes_for_command |>
+        Name.preferred_code
+      )
+    in
+    let i =
+      match Parser_ast.get_header h "start" with
+      | HInt i -> Name.int32_to_int i
+      | _ -> failwith "Exit codes must specify the header 'start'."
+    in
+    [(i, codes)]
+  | None -> failwith "Error while parsing exit codes."
+
 exception NoExitCode
 
 let get_preferred t i =

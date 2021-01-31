@@ -1,3 +1,7 @@
+@@ title = "WhiteOutENG"
+@@ start = 64
+@@
+
 mvn r12, #0xE1            ;  E3E0C0E1  %%  R12=notE1=FFFFFF1E
 bic r12,r12, #0xED00000   ;  E3CCC6ED  %%  R12=R12 and notED00000=F12FFF1E
 bic r11,r12, #0x1000000E  ;  E3CCB2E1  %%  R11=R12 and not1000000E=E12FFF10=bx r0 opcpde

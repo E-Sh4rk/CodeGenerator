@@ -1,6 +1,6 @@
 @@ title = "Access backyard"
 @@ author = "Sleipnir17"
-@@ exit = "CertificateENG"
+@@ exit = "ExitCodes/CertificateENG"
 @@
 
 sbc r12,pc,#0xAC              ;  E2CFC0**  %%  R12=PC-(AC on emulator, AE on console)

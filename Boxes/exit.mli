@@ -2,6 +2,7 @@
 type t
 
 val load_from_dir : string -> t
+val load_from_file : string -> t
 
 exception NoExitCode
 

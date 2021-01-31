@@ -1,3 +1,7 @@
+@@ title = "WhiteOutBox14ENG"
+@@ start = 56
+@@
+
 ADCS r12, r15, #0x34        ; r12=&Box14Name
 MVN r11, #0xe1              ; r11=ffffff1e
 BIC r11, r11, #0xed00000    ; r11=f12fff1e

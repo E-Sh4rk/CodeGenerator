@@ -25,7 +25,7 @@ let treat_command arm =
   res
 
 let () =
-  Printexc.record_backtrace true ;
+  (*Printexc.record_backtrace true ;*)
   let program = Parse.from_filename ~headers:true "test.txt" in
   match program with
   | None -> Format.printf "@.No program to convert. Exiting.@."
@@ -40,8 +40,7 @@ let () =
       match Parser_ast.get_header headers "exit" with
       | HNone -> None
       | HString fn -> Some (
-        Filename.concat "Files/ExitCodes" fn |>
-        Exit.load_from_dir)
+        (Filename.concat "Files" fn)^".txt" |> Exit.load_from_file)
       | _ -> failwith "Invalid headers."
     in
     let res = program |> List.map treat_command in
