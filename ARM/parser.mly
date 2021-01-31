@@ -26,10 +26,12 @@ definition:
   | id = ID ; EQUAL ; nb = NUMBER { (id, HInt nb) }
   | id = ID ; EQUAL ; b = BOOL { (id, HBool b) }
   | id = ID ; EQUAL ; NULL { (id, HNone) }
+  ;
 
 headers:
   | list (EOL) ; HEADER ; EOL | list (EOL) ; HEADER ; EOF { [] }
   | list (EOL) ; HEADER ; d = definition ; EOL ; ds = headers { d::ds }
+  ;
 
 ast:
   | list (EOL) ; EOF { [] }
