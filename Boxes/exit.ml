@@ -1,5 +1,5 @@
 
-type t = (int * ((int list) list)) list
+type t = ((int * ((int list) list)) list) * (((int list) list) option)
 
 let load_from_dir dirname =
   Sys.readdir dirname
@@ -23,6 +23,7 @@ let load_from_dir dirname =
     (i, codes)
   )
   |> List.sort (fun (i,_) (j,_) -> compare i j)
+  |> (fun x -> (x, None))
 
 let load_from_file filename =
   match Parse.from_filename ~headers:true filename with
@@ -34,21 +35,27 @@ let load_from_file filename =
         Name.preferred_code
       )
     in
-    let i =
-      match Parser_ast.get_header h "start" with
-      | HInt i -> Name.int32_to_int i
-      | _ -> failwith "Exit codes must specify the header 'start'."
-    in
-    [(i, codes)]
+    begin match Parser_ast.get_header h "start" with
+    | HInt i -> ([(Name.int32_to_int i, codes)], None)
+    | HNone -> ([], Some codes)
+    | _ -> failwith "Exit code has invalid headers."
+    end
   | None -> failwith "Error while parsing exit codes."
 
 exception NoExitCode
 
-let get_preferred t i =
-  let rec aux lst =
-    match lst with
-    | [] -> raise NoExitCode
-    | (j, c)::_ when i <= j -> (j, c)
-    | _::lst -> aux lst
-  in
-  aux t
+let get_preferred (lst, default) i =
+  try (
+    let rec aux lst =
+      match lst with
+      | [] -> raise NoExitCode
+      | (j, c)::_ when i <= j -> (j, c)
+      | _::lst -> aux lst
+    in
+    aux lst
+  ) with NoExitCode -> (
+    match default with
+    | None -> raise NoExitCode
+    | Some c -> (i, c)
+  )
+
