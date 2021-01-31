@@ -1,6 +1,4 @@
 
-exception NotEnoughSpace
-
 let nop_sequences =
   [|
     [0xFF ; 0x00 ; 0xAC ; 0xB2](* B2AC00FF *) ;
@@ -86,14 +84,9 @@ let fit_codes_into_boxes ?(exit=None) codes =
     | c::codes when c=eof -> split (current::finished) [] codes
     | c::codes -> split finished (c::current) codes
   in
-  let res =
-    split [] [] res |>
-    List.map List.rev |>
-    List.rev
-  in
-  if List.length res > nb_boxes
-  then raise NotEnoughSpace
-  else res
+  split [] [] res |>
+  List.map List.rev |>
+  List.rev
 
 let pp_boxes_names fmt lst =
   let pp_box i codes =

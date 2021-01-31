@@ -39,10 +39,18 @@ let () =
     in
     let res = program |> List.map treat_command in
     if List.for_all (fun o -> o <> None) res
-    then
-      let boxes_codes = res |>
-        List.map (function None -> assert false | Some s -> s) |>
-        Boxes.fit_codes_into_boxes ~exit
-      in
-      Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes
-    else Format.printf "@.Codes are unwritable. Exiting.@."
+    then begin
+      try
+        let boxes_codes = res |>
+          List.map (function None -> assert false | Some s -> s) |>
+          Boxes.fit_codes_into_boxes ~exit
+        in
+        Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes ;
+        let size = List.length boxes_codes in
+        if size > Boxes.nb_boxes
+        then
+          Format.printf "Warning: Not enough space... Need %n/%n boxes.@."
+          size Boxes.nb_boxes
+      with Exit.NoExitCode ->
+        Format.printf "Error: No exit code compatible with this code (too long?).@."
+    end else Format.printf "@.Codes are unwritable. Exiting.@."
