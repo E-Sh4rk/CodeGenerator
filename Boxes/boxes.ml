@@ -27,46 +27,47 @@ let eof_only_at_pos codes i =
 let no_eof codes =
   List.for_all (fun c -> c <> eof) codes
 
-let fit_codes_into_boxes ?(exit=None) codes =
-  (* Add fillers *)
-  let rec aux pos codes =
-    let pos = pos mod (name_size+1) in
-    let n = List.length codes in
-    if pos + n <= name_size
-    then begin
-      if no_eof codes then codes
-      else
-        let m = List.length nop_code in
-        nop_code@(aux (pos + m) codes)
-    end else if eof_only_at_pos codes (name_size-pos)
-    then codes
+let pad pos =
+  let pos = pos mod (name_size+1) in
+  let n = List.length nop_code in
+  if pos + n <= name_size
+  then nop_code
+  else nop_sequences.(name_size-pos)
+
+let rec pad_nb pos nb =
+  if nb < 0 then assert false
+  else if nb = 0 then []
+  else
+    let code = pad pos in
+    let m = List.length code in
+    code@(pad_nb (pos + m) (nb - m))
+
+let rec fit_code_at_pos pos codes =
+  let pos = pos mod (name_size+1) in
+  let n = List.length codes in
+  if pos + n <= name_size
+  then begin
+    if no_eof codes then codes
     else
-      let nop = nop_sequences.(name_size-pos) in
-      let m = List.length nop in
-      nop@(aux (pos + m) codes)
-  in
-  let add_codes_after res codes =
-    List.fold_left (fun res codes ->
-      res @ (aux (List.length res) codes)
-    ) res codes
-  in
-  let res = add_codes_after [] codes in
+      let m = List.length nop_code in
+      nop_code@(fit_code_at_pos (pos + m) codes)
+  end else if eof_only_at_pos codes (name_size-pos)
+  then codes
+  else
+    let nop = nop_sequences.(name_size-pos) in
+    let m = List.length nop in
+    nop@(fit_code_at_pos (pos + m) codes)
+
+let add_codes_after res codes =
+  List.fold_left (fun res codes ->
+    res @ (fit_code_at_pos (List.length res) codes)
+  ) res codes
+
+let fit_codes_into_boxes ?(start=0) ?(exit=None) codes =
+  (* Main code *)
+  let padding = pad_nb 0 start in
+  let res = add_codes_after padding codes in
   (* Add exit code *)
-  let pad pos =
-    let pos = pos mod (name_size+1) in
-    let n = List.length nop_code in
-    if pos + n <= name_size
-    then nop_code
-    else nop_sequences.(name_size-pos)
-  in
-  let rec pad_nb pos nb =
-    if nb < 0 then assert false
-    else if nb = 0 then []
-    else
-      let code = pad pos in
-      let m = List.length code in
-      code@(pad_nb (pos + m) (nb - m))
-  in
   let res =
     match exit with
     | None -> res

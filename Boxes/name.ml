@@ -8,7 +8,8 @@ let eof = 0xFF
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
 
-let int32_to_int v = match unsigned_to_int v with None -> assert false | Some i -> i
+let int32_to_int v =
+  match unsigned_to_int v with None -> assert false | Some i -> i
 
 let writable_char_for_code i =
   if is_code_available i then char_at i else raise Unwritable

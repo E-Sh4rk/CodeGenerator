@@ -1,5 +1,6 @@
 
-type definition = string * string option
+type def_val = HNone | HString of string | HInt of int32 | HBool of bool
+type definition = string * def_val
 type headers = definition list
 
 type offset =
@@ -22,4 +23,4 @@ exception CommandError of Lexing.position
 val int32_of_str : string -> int32
 val to_arm : ast -> Arm.arm list
 
-val get_header : headers -> string -> string option
+val get_header : headers -> string -> def_val

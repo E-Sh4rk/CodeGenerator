@@ -5,6 +5,7 @@
 %token EQUAL
 %token <string> STRING
 %token <int32> NUMBER
+%token <bool> BOOL
 %token <string> ID
 %token HASH
 %token LEFT_BRACK
@@ -21,8 +22,10 @@
 %%
 
 definition:
-  | id = ID ; EQUAL ; str = STRING { (id, Some str) }
-  | id = ID ; EQUAL ; NULL { (id, None) }
+  | id = ID ; EQUAL ; str = STRING { (id, HString str) }
+  | id = ID ; EQUAL ; nb = NUMBER { (id, HInt nb) }
+  | id = ID ; EQUAL ; b = BOOL { (id, HBool b) }
+  | id = ID ; EQUAL ; NULL { (id, HNone) }
 
 headers:
   | list (EOL) ; HEADER ; EOL | list (EOL) ; HEADER ; EOF { [] }

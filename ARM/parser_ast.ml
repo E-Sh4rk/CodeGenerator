@@ -1,6 +1,7 @@
 open Arm
 
-type definition = string * string option
+type def_val = HNone | HString of string | HInt of int32 | HBool of bool
+type definition = string * def_val
 type headers = definition list
 
 type offset =
@@ -183,4 +184,4 @@ let cmd_to_arm cmd =
 let to_arm ast = List.map cmd_to_arm ast
 
 let get_header headers name =
-  try List.assoc name headers with Not_found -> None
+  try List.assoc name headers with Not_found -> HNone

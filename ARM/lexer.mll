@@ -38,6 +38,8 @@ let id = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9']*
 rule read = parse
   | "@@"      { HEADER }
   | "null"    { NULL }
+  | "true"    { BOOL true }
+  | "false"   { BOOL false }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
   | newline   { next_line lexbuf; EOL }
