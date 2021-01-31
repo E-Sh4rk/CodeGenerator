@@ -81,8 +81,8 @@ let charset =
   Available "t"    ; Available "u"   ; Available "v" ; Available "w"     ;
   Available "x"    ; Available "y"   ; Available "z" ; Unavailable "▶"  ;
   (* 0xF. *)
-  Unavailable ":"   ; Available "Ä"     ; Available "Ö"     ; Available "Ü"     ;
-  Available "ä"     ; Available "ö"     ; Available "ü"     ; Unused            ;
+  Unavailable ":"   ; Unavailable "Ä"   ; Unavailable "Ö"   ; Unavailable "Ü"   ;
+  Unavailable "ä"   ; Unavailable "ö"   ; Unavailable "ü"   ; Unused            ;
   Unused            ; Unused            ; Unreadable "0xFA" ; Unreadable "0xFB" ;
   Unreadable "0xFC" ; Unreadable "0xFD" ; Unreadable "0xFE" ; Unreadable "0xFF" ;
   |]
