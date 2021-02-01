@@ -43,13 +43,25 @@ let () =
         (Filename.concat "Files" fn)^".txt" |> Exit.load_from_file)
       | _ -> failwith "Invalid headers."
     in
+    let fillers =
+      Array.init 4 (fun n ->
+        let header_name = Format.sprintf "filler%n" (n+1) in
+        match Parser_ast.get_header headers header_name with
+        | HNone -> Boxes.nop_sequences.(n)
+        | HInt i ->
+          let codes = Name.codes_for_command i in
+          if List.nth codes n <> Name.eof then failwith "Invalid filler." ;
+          codes
+        | _ -> failwith "Invalid headers."
+      )
+    in
     let res = program |> List.map treat_command in
     if List.for_all (fun o -> o <> None) res
     then begin
       try
         let boxes_codes = res |>
           List.map (function None -> assert false | Some s -> s) |>
-          Boxes.fit_codes_into_boxes ~start ~exit
+          Boxes.fit_codes_into_boxes ~fillers ~start ~exit
         in
         Format.printf "@.%a@." Boxes.pp_boxes_names boxes_codes ;
         let size = List.length boxes_codes in

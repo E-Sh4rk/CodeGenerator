@@ -28,22 +28,22 @@ let eof_only_at_pos codes i =
 let no_eof codes =
   List.for_all (fun c -> c <> eof) codes
 
-let pad pos =
+let pad fillers pos =
   let pos = pos mod (name_size+1) in
   let n = List.length nop_code in
   if pos + n <= name_size
   then nop_code
-  else nop_sequences.(name_size-pos)
+  else fillers.(name_size-pos)
 
-let rec pad_nb pos nb =
+let rec pad_nb fillers pos nb =
   if nb < 0 then assert false
   else if nb = 0 then []
   else
-    let code = pad pos in
+    let code = pad fillers pos in
     let m = List.length code in
-    code@(pad_nb (pos + m) (nb - m))
+    code@(pad_nb fillers (pos + m) (nb - m))
 
-let rec fit_code_at_pos pos codes =
+let rec fit_code_at_pos fillers pos codes =
   let pos = pos mod (name_size+1) in
   let n = List.length codes in
   if pos + n <= name_size
@@ -51,17 +51,17 @@ let rec fit_code_at_pos pos codes =
     if no_eof codes then codes
     else
       let m = List.length nop_code in
-      nop_code@(fit_code_at_pos (pos + m) codes)
+      nop_code@(fit_code_at_pos fillers (pos + m) codes)
   end else if eof_only_at_pos codes (name_size-pos)
   then codes
   else
-    let nop = nop_sequences.(name_size-pos) in
+    let nop = fillers.(name_size-pos) in
     let m = List.length nop in
-    nop@(fit_code_at_pos (pos + m) codes)
+    nop@(fit_code_at_pos fillers (pos + m) codes)
 
-let add_codes_after res codes =
+let add_codes_after fillers res codes =
   List.fold_left (fun res codes ->
-    res @ (fit_code_at_pos (List.length res) codes)
+    res @ (fit_code_at_pos fillers (List.length res) codes)
   ) res codes
 
 let modulo x y =
@@ -69,10 +69,10 @@ let modulo x y =
   if result >= 0 then result
   else result + y
 
-let fit_codes_into_boxes ?(start=0) ?(exit=None) codes =
+let fit_codes_into_boxes ?(fillers=nop_sequences) ?(start=0) ?(exit=None) codes =
   (* Main code *)
-  let padding = pad_nb 0 start in
-  let res = add_codes_after padding codes in
+  let padding = pad_nb fillers 0 start in
+  let res = add_codes_after fillers padding codes in
   (* Add exit code *)
   let res =
     match exit with
@@ -80,9 +80,9 @@ let fit_codes_into_boxes ?(start=0) ?(exit=None) codes =
     | Some exit ->
       let i = List.length res in
       let (j,ecode) = Exit.get_preferred exit i in
-      let padding = pad_nb i (j-i) in
+      let padding = pad_nb fillers i (j-i) in
       let res = res@padding in
-      add_codes_after res ecode
+      add_codes_after fillers res ecode
   in
   (* Split in boxes *)
   let rec split finished current codes =
