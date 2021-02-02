@@ -1,4 +1,5 @@
 @@ title = "CertificateENG"
+@@ filename = "CertificateENG"
 @@ start = 64
 @@
 
@@ -16,6 +17,7 @@ sbc r0,r12, #0xB0             ;  R0=R12-B0-1=????ENG
 ==========
 
 @@ title = "WhiteOutENG"
+@@ filename = "WhiteOutENG"
 @@ start = 64
 @@
 

@@ -1,6 +1,6 @@
 @@ title = "Read PID"
 @@ author = "Sleipnir17"
-@@ exit = "ExitCodes/WhiteOutENG"
+@@ exit = "WhiteOutENG"
 @@
 
 sbc r12, pc, #0x3100   ; R12=PC-3100-1
