@@ -36,7 +36,7 @@ let pad fillers pos =
   else fillers.(name_size-pos)
 
 let rec pad_nb fillers pos nb =
-  if nb < 0 then assert false
+  if nb < 0 then failwith "Invalid starting position."
   else if nb = 0 then []
   else
     let code = pad fillers pos in

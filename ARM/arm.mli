@@ -25,7 +25,7 @@ type arm =
   | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
 
-exception Invalid
+exception InvalidCommand
 
 val sign_plus : sign
 val sign_minus : sign

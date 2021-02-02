@@ -102,7 +102,19 @@ let is_code_used code =
   | Available _ | Unavailable _ | Unreadable _ -> true
   | Unused -> false
 
+let invalid_str = "❌"
+
 let char_at code =
   match charset.(code) with
   | Available str | Unavailable str | Unreadable str -> str
-  | Unused -> assert false
+  | Unused -> invalid_str
+
+let readable_char_at code =
+  match charset.(code) with
+  | Available str | Unavailable str -> str
+  | Unreadable _ | Unused -> invalid_str
+
+let writable_char_at code =
+  match charset.(code) with
+  | Available str -> str
+  | Unavailable _ | Unreadable _ | Unused -> invalid_str

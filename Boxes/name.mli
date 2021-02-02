@@ -1,6 +1,4 @@
 
-exception Unwritable
-
 val eof : int
 val int32_to_int : int32 -> int
 

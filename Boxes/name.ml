@@ -1,8 +1,6 @@
 open Int32
 open Charset
 
-exception Unwritable
-
 let eof = 0xFF
 
 let int8 = 0b11111111
@@ -10,9 +8,6 @@ let mask8 = int8 |> of_int
 
 let int32_to_int v =
   match unsigned_to_int v with None -> assert false | Some i -> i
-
-let writable_char_for_code i =
-  if is_code_available i then char_at i else raise Unwritable
 
 let codes_for_command v =
   let v1 = logand mask8 v in
@@ -40,7 +35,7 @@ let command_for_codes codes =
   | _ -> assert false
 
 let codes_to_chars c =
-  List.map writable_char_for_code c
+  List.map writable_char_at c
 
 let chars_for_command v =
   codes_for_command v |> codes_to_chars
@@ -56,30 +51,26 @@ let pp_chars_raw fmt lst =
     Format.fprintf fmt "%s" str
   )
 
-let is_code_writable hex =
-  try (
-    codes_to_chars hex |> ignore ; true
-  ) with Unwritable -> false
+let is_code_writable codes =
+  List.for_all is_code_available codes
 
-let rec first_code f hexs =
-  match hexs with
+let rec first_code f codes =
+  match codes with
   | [] -> raise Not_found
-  | hex::hexs ->
-    if f hex then hex
-    else first_code f hexs
+  | code::codes ->
+    if f code then code
+    else first_code f codes
 
-let first_writable_code hexs =
-  first_code is_code_writable hexs
+let first_writable_code codes =
+  first_code is_code_writable codes
 
-let is_code_writable_or_one_eof hex =
-  try (
-    List.filter (fun c -> c <> eof) hex |>
-    codes_to_chars |> ignore ;
-    (List.fold_left (fun nb c -> if c = eof then nb+1 else nb) 0 hex)
-    <= 1
-  ) with Unwritable -> false
+let is_code_writable_or_one_eof code =
+  (List.filter (fun c -> c <> eof) code |> is_code_writable) &&
+  (List.fold_left (fun nb c -> if c = eof then nb+1 else nb) 0 code) <= 1
 
-let preferred_code hexs =
-  try first_writable_code hexs
-  with Not_found ->
-    first_code is_code_writable_or_one_eof hexs
+let preferred_code codes =
+  try first_writable_code codes
+  with Not_found -> begin
+    try first_code is_code_writable_or_one_eof codes
+    with Not_found -> List.hd codes
+  end

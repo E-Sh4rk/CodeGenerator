@@ -27,8 +27,7 @@ type arm =
 
 open Int32
 
-exception Invalid
-
+exception InvalidCommand
 
 let a1 = 0
 let a2 = 1
@@ -105,7 +104,7 @@ let decompose_immediate imm =
       if equal imm8 imm then (n, imm8)::others else others
   in
   let res = aux 0 imm in
-  if res = [] then raise Invalid else res
+  if res = [] then raise InvalidCommand else res
 
 let addr_mode_1 rs =
   let possibilities =
@@ -135,7 +134,7 @@ let addr_mode_2 ro addr_typ = (* Load and store of word and ubyte *)
   let (sign, reg, v) =
     match ro with
     | OImmediate (_, sign, v) ->
-      if unsigned_compare v mask12 > 0 then raise Invalid ;
+      if unsigned_compare v mask12 > 0 then raise InvalidCommand ;
       (sign, 0, v)
     | ORegister (_, sign, rm) ->
       (sign, 1, of_int rm)
@@ -152,13 +151,13 @@ let addr_mode_3 ro addr_typ = (* Other load and store *)
   let (sign, imm, v) =
     match ro with
     | OImmediate (_, sign, v) ->
-      if unsigned_compare v mask8 > 0 then raise Invalid ;
+      if unsigned_compare v mask8 > 0 then raise InvalidCommand ;
       let immedL = logand mask4 v in
       let immedH = logand mask4 (shift_right_logical v 4) in
       (sign, 1, logor immedL (shift_left immedH 8))
     | ORegister (_, sign, rm) ->
       (sign, 0, of_int rm)
-    | OScaledRegister _ -> raise Invalid
+    | OScaledRegister _ -> raise InvalidCommand
   in
   let (p, w) = p_and_w addr_typ in
   let i = shift_left (of_int imm) 22 in
@@ -171,7 +170,7 @@ let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
   let check_post_addr () =
     match addr_typ with
     | PostIndexed -> ()
-    | _ -> raise Invalid
+    | _ -> raise InvalidCommand
   in
   let opcode = match is_ldr, typ with
   | true, B  -> 0b0100_0101_0000_0000_0000_0000_0000
@@ -182,9 +181,9 @@ let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
   | true, T  -> check_post_addr () ; 0b0100_0011_0000_0000_0000_0000_0000
   | true, BT -> check_post_addr () ; 0b0100_0111_0000_0000_0000_0000_0000
   | false, B  -> 0b0100_0100_0000_0000_0000_0000_0000
-  | false, SB -> raise Invalid
+  | false, SB -> raise InvalidCommand
   | false, H  -> 0b0000_0000_0000_0000_0000_1011_0000
-  | false, SH -> raise Invalid
+  | false, SH -> raise InvalidCommand
   | false, W  -> 0b0100_0000_0000_0000_0000_0000_0000
   | false, T  -> check_post_addr () ; 0b0100_0010_0000_0000_0000_0000_0000
   | false, BT -> check_post_addr () ; 0b0100_0110_0000_0000_0000_0000_0000
