@@ -1,6 +1,19 @@
 (include_subdirs unqualified)
+(library
+  (name ace_common)
+  (wrapped false)
+  (libraries num str)
+  (modules ace_common arm_printer arm parser lexer parser_ast
+    boxes charset exit name fs parse)
+; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
+)
 (executable
  (name ace)
- (libraries num str)
- (preprocess (pps ppx_deriving.show ppx_deriving.ord))
+ (libraries num str ace_common)
+ (modules ace)
+)
+(executable
+ (name ace_p)
+ (libraries num str ace_common)
+ (modules ace_p)
 )

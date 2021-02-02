@@ -10,6 +10,9 @@ let next_line lexbuf =
     { pos with pos_bol = lexbuf.lex_curr_pos;
                pos_lnum = pos.pos_lnum + 1
     }
+
+let eof_reached lexbuf =
+  lexbuf.lex_eof_reached <- true
 }
 
 let ddigit = ['0'-'9']
@@ -35,14 +38,17 @@ let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 let id = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9']*
 
+let file_separator = "=====" '='*
+
 rule read = parse
+  | file_separator { EOF }
   | "@@"      { HEADER }
   | "null"    { NULL }
   | "true"    { BOOL true }
   | "false"   { BOOL false }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
-  | newline   { next_line lexbuf; EOL }
+  | newline   { next_line lexbuf ; EOL }
   | number    { NUMBER (Parser_ast.int32_of_str (Lexing.lexeme lexbuf)) }
   | id        { ID (Lexing.lexeme lexbuf) }
   | '"'       { read_string (Buffer.create 17) lexbuf }
@@ -54,7 +60,7 @@ rule read = parse
   | '!'       { EXCLAM_MARK }
   | '+'       { PLUS }
   | '-'       { MINUS }
-  | eof       { EOF }
+  | eof       { eof_reached lexbuf ; EOF }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
 and read_string buf = parse
@@ -75,6 +81,6 @@ and read_string buf = parse
   | _ { raise (SyntaxError ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
 
 and read_comment = parse
-  | newline { next_line lexbuf; EOL }
-  | eof { EOF }
+  | newline { next_line lexbuf ; EOL }
+  | eof { eof_reached lexbuf ; EOF }
   | _ { read_comment lexbuf }
