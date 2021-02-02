@@ -1,0 +1,36 @@
+
+h2 {
+    font-size: large;
+    margin: 5px;
+}
+
+select {
+    margin: 0px 20px;
+}
+
+textarea {
+    font-family: 'Courier New', monospace;
+    margin: 10px 20px;
+    height: 100%;
+    min-height: 300px;
+}
+
+button {
+    margin: 10px 20px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    width:100%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    width: 90%;
+}
