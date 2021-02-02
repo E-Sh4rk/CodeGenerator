@@ -15,5 +15,8 @@ buildp:
 runp:
 	dune exec ./ace_p.exe
 
+js:
+	dune build ace_js.bc.js
+
 clean:
 	dune clean

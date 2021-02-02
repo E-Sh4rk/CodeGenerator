@@ -17,6 +17,7 @@ let rec add_files lexbuf acc =
   )
 
 let parse lexbuf =
+  lexbuf.Lexing.lex_eof_reached <- false ;
   let main_file = Parse.from_lexbuf ~headers:true lexbuf in
   let files = add_files lexbuf StrMap.empty in
   (main_file, files)

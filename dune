@@ -17,3 +17,10 @@
  (libraries num str ace_common)
  (modules ace_p)
 )
+(executable
+  (name ace_js)
+  (libraries num str ace_common)
+  (modules ace_js)
+  (modes js)
+  (preprocess (pps js_of_ocaml-ppx))
+)

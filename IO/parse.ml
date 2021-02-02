@@ -42,4 +42,4 @@ let from_filename ~headers filename =
   close_in channel ; res
 
 let from_str ~headers str =
-  Lexing.from_string str |> (from_lexbuf ~headers)
+  Lexing.from_string str |> from_lexbuf ~headers

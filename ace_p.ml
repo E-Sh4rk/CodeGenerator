@@ -2,7 +2,7 @@ open Ace_common
 
 let () =
   (*Printexc.record_backtrace true ;*)
-  let fs = Fs.from_filename "input_a.txt" in
+  let fs = Fs.from_filename "input_p.txt" in
   let (headers, program) = Fs.main_file fs in
   let exit =
     match Parser_ast.get_header headers "exit" with
