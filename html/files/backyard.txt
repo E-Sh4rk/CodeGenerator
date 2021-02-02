@@ -1,1 +1,9 @@
-backyard
+@@ title = "Access backyard"
+@@ author = "Sleipnir17"
+@@ exit = "ExitCodes/CertificateENG"
+@@
+
+sbc r12,pc,#0xAC              ; R12=PC-(AC on emulator, AE on console)
+sbc r12,r12,#0xB400           ; R12=R12-B400=Old man's position
+movs r11,#0x3                 ; R11=3=new position
+strh r11, [r12,#0]            ; Store new position
