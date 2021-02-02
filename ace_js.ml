@@ -59,7 +59,11 @@ let init _ =
     Option.get
       (Html.getElementById_coerce "compute" Html.CoerceTo.button)
   in
-  compute_button##.onclick := Html.handler compute ;
+  Html.addEventListener compute_button
+    (Html.Event.make "click") (Html.handler compute) (Js.bool false)
+  |> ignore ;
   Js._false
 
-let _ = Html.window##.onload := Html.handler init
+let _ = Html.addEventListener Html.window
+  (Html.Event.make "load") (Html.handler init) (Js.bool false)
+  |> ignore
