@@ -31,7 +31,9 @@ let main fmt (headers, program) exit =
       | _ -> failwith "Invalid headers."
     )
   in
-  let res = program |> List.map (treat_command fmt) in
+  let res = program |> 
+    Optimizer.fix_arm |>
+    List.map (treat_command fmt) in
   try
     let boxes_codes = Boxes.fit_codes_into_boxes ~fillers ~start ~exit res in
     Format.fprintf fmt "@.%a@." Boxes.pp_boxes_names boxes_codes ;

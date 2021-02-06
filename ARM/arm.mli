@@ -52,3 +52,6 @@ val pc : register (* program counter *)
 
 val arm_to_binary : arm -> int32 list
 val reverse_endianness  : int32 -> int32
+
+val rotate_right : int32 -> int32
+val rotate_left : int32 -> int32

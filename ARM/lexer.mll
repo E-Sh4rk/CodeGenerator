@@ -58,6 +58,7 @@ rule read = parse
   | ']'       { RIGHT_BRACK }
   | ','       { COMMA }
   | '!'       { EXCLAM_MARK }
+  | '?'       { INTERROG_MARK }
   | '+'       { PLUS }
   | '-'       { MINUS }
   | eof       { eof_reached lexbuf ; EOF }

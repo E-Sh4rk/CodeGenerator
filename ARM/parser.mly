@@ -12,6 +12,7 @@
 %token RIGHT_BRACK
 %token COMMA
 %token EXCLAM_MARK
+%token INTERROG_MARK
 %token PLUS
 %token MINUS
 %token EOL
@@ -40,7 +41,8 @@ ast:
   ;
 
 command:
-  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args) }
+  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args, false) }
+  | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, true) }
   | nb = NUMBER { BIN ($startpos, nb) }
   ;
 

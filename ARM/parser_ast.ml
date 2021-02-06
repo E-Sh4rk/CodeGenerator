@@ -14,7 +14,7 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
-  | ASM of Lexing.position * string * args list
+  | ASM of Lexing.position * string * args list * bool
   | BIN of Lexing.position * int32
 
 type ast = command list
@@ -176,10 +176,10 @@ let asm_cmd_to_arm cmd args =
 
 let cmd_to_arm cmd =
   match cmd with
-  | ASM (pos, cmd, args) ->
-    begin try asm_cmd_to_arm cmd args
+  | ASM (pos, cmd, args, optimize) ->
+    begin try (asm_cmd_to_arm cmd args, optimize)
     with StructError -> raise (CommandError pos) end
-  | BIN (_, i) -> Custom i
+  | BIN (_, i) -> (Custom i, false)
 
 let to_arm ast = List.map cmd_to_arm ast
 
