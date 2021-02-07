@@ -33,7 +33,10 @@ let constants_set = compute_all_constants ()
 let constants_set_no_carry =
   constants_set |> UInt32Set.filter (fun i -> carry_out i |> not)
 
-let constants = constants_set_no_carry |> UInt32Set.elements
+let constants_nc = constants_set_no_carry |> UInt32Set.elements
+let rev_constants_nc = List.rev constants_nc
+
+let constants = constants_set |> UInt32Set.elements
 let rev_constants = List.rev constants
 
 let constants_and_neg =
@@ -96,8 +99,8 @@ let synthesis ~allow_mvn ~additive ~incr max_card i =
 
   let init_rc =
     if additive
-    then (if allow_mvn then rev_constants_and_neg else rev_constants)
-    else (if allow_mvn then constants_and_neg else constants)
+    then (if allow_mvn then rev_constants_and_neg else rev_constants_nc)
+    else (if allow_mvn then constants_and_neg else constants_nc)
   in
   init 0 init_rc i |>
   (function None -> None | Some lst -> Some (List.rev lst))
