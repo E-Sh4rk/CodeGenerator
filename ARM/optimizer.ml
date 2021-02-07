@@ -33,9 +33,6 @@ let constants_set = compute_all_constants ()
 let constants_set_no_carry =
   constants_set |> UInt32Set.filter (fun i -> carry_out i |> not)
 
-let constants_nc = constants_set_no_carry |> UInt32Set.elements
-let rev_constants_nc = List.rev constants_nc
-
 let constants = constants_set |> UInt32Set.elements
 let rev_constants = List.rev constants
 
@@ -53,7 +50,7 @@ let rec remove_while f lst =
   | i'::lst when f i' -> remove_while f lst
   | lst -> lst
 
-let synthesis ~allow_mvn ~additive ~incr max_card i =
+let synthesis ~mov_mvn ~additive ~incr max_card i =
   let tad0 = tries_at_depth_0 in
   let tred = if max_card > 1 then tad0 / (max_card-1) else tad0 in
 
@@ -99,19 +96,19 @@ let synthesis ~allow_mvn ~additive ~incr max_card i =
 
   let init_rc =
     if additive
-    then (if allow_mvn then rev_constants_and_neg else rev_constants_nc)
-    else (if allow_mvn then constants_and_neg else constants_nc)
+    then (if mov_mvn then rev_constants_and_neg else rev_constants)
+    else (if mov_mvn then constants_and_neg else constants)
   in
   init 0 init_rc i |>
   (function None -> None | Some lst -> Some (List.rev lst))
 
-let synthesis_optimal ~allow_mvn ~inv max_card i =
+let synthesis_optimal ~mov_mvn ~inv max_card i =
   let rec aux card =
     if card > max_card then None
-    else match synthesis ~allow_mvn ~additive:true ~incr:inv card i with
+    else match synthesis ~mov_mvn ~additive:true ~incr:inv card i with
     | Some lst -> Some (lst, true)
     | None ->
-      begin match synthesis ~allow_mvn ~additive:false ~incr:(not inv) card i with
+      begin match synthesis ~mov_mvn ~additive:false ~incr:(not inv) card i with
       | Some lst -> Some (lst, false)
       | None -> aux (card+1)
       end
@@ -125,7 +122,7 @@ let fix_mov_or_mvn is_mov s cond rd rs =
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
     let i = if is_mov then i else neg i in
-    begin match synthesis_optimal ~allow_mvn:true ~inv:false 5 i with
+    begin match synthesis_optimal ~mov_mvn:true ~inv:false 5 i with
     | None -> [cmd]
     | Some (fst::lst, additive) ->
       let nfst = neg fst in
@@ -153,7 +150,7 @@ let fix_adc_or_sbc is_adc s cond rd rn op2 =
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
-    begin match synthesis_optimal ~allow_mvn:false ~inv:(not is_adc) 5 i with
+    begin match synthesis_optimal ~mov_mvn:false ~inv:(not is_adc) 5 i with
     | None -> [cmd]
     | Some (fst::lst, additive) ->
       let fcmd =
