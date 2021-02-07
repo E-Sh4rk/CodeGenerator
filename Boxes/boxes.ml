@@ -87,7 +87,7 @@ let fit_codes_into_boxes ?(fillers=nop_sequences) ?(start=0) ?(exit=None) codes 
   (* Split in boxes *)
   let rec split finished current codes =
     match codes with
-    | [] -> current::finished
+    | [] -> if current <> [] then current::finished else finished
     | c::codes when c=eof -> split (current::finished) [] codes
     | c::codes -> split finished (c::current) codes
   in

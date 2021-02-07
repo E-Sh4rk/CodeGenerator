@@ -125,8 +125,8 @@ let fix_mov_or_mvn is_mov s cond rd rs =
       in
       let fcmd =
         if is_mov
-        then MOV {s;cond;rd;rs=Immediate fst}
-        else MVN {s;cond;rd;rs=Immediate nfst}
+        then MOV {s=true;cond;rd;rs=Immediate fst}
+        else MVN {s=false;cond;rd;rs=Immediate nfst}
       in
       let cmds = lst |> List.map (fun i ->
         if additive
