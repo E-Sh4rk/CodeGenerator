@@ -13,7 +13,7 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
-  | ASM of Lexing.position * string * args list * bool
+  | ASM of Lexing.position * string * args list * Optimizer.optimization_setting
   | BIN of Lexing.position * int32
 
 type ast = command list
@@ -21,6 +21,6 @@ type ast = command list
 exception CommandError of Lexing.position
 
 val int32_of_str : string -> int32
-val to_arm : ast -> (Arm.arm * bool) list
+val to_arm : ast -> (Arm.arm * Optimizer.optimization_setting) list
 
 val get_header : headers -> string -> def_val

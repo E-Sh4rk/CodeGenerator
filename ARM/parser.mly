@@ -41,8 +41,10 @@ ast:
   ;
 
 command:
-  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args, false) }
-  | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, true) }
+  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args, Optimizer.NoOptimization) }
+  | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, Optimizer.VariableLength) }
+  | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK ; i = NUMBER
+  { ASM ($startpos, id, args, Optimizer.FixedLength (Name.int32_to_int i)) }
   | nb = NUMBER { BIN ($startpos, nb) }
   ;
 

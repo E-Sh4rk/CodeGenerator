@@ -1,6 +1,13 @@
 open Int32
 open Arm
 
+exception CannotOptimize
+
+type optimization_setting =
+  | NoOptimization
+  | FixedLength of int
+  | VariableLength
+
 module UInt32 = struct
   type t = int32
   (*let equal = equal*)
@@ -8,6 +15,8 @@ module UInt32 = struct
 end
 
 module UInt32Set = Set.Make(UInt32)
+
+let padding_code = Custom zero
 
 let carry_out i = compare i zero < 0
 
@@ -115,14 +124,14 @@ let synthesis_optimal ~mov_mvn ~inv max_card i =
   in
   aux 1
 
-let fix_mov_or_mvn is_mov s cond rd rs =
+let fix_mov_or_mvn is_mov s cond rd rs max_card =
   let cmd = if is_mov then MOV {s;cond;rd;rs} else MVN {s;cond;rd;rs} in
   match rs with
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
     let i = if is_mov then i else neg i in
-    begin match synthesis_optimal ~mov_mvn:true ~inv:false 5 i with
+    begin match synthesis_optimal ~mov_mvn:true ~inv:false max_card i with
     | None -> [cmd]
     | Some (fst::lst, additive) ->
       let nfst = neg fst in
@@ -144,13 +153,13 @@ let fix_mov_or_mvn is_mov s cond rd rs =
     | _ -> assert false
     end
 
-let fix_adc_or_sbc is_adc s cond rd rn op2 =
+let fix_adc_or_sbc is_adc s cond rd rn op2 max_card =
   let cmd = if is_adc then ADC {s;cond;rd;rn;op2} else SBC {s;cond;rd;rn;op2} in
   match op2 with
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
-    begin match synthesis_optimal ~mov_mvn:false ~inv:(not is_adc) 5 i with
+    begin match synthesis_optimal ~mov_mvn:false ~inv:(not is_adc) max_card i with
     | None -> [cmd]
     | Some (fst::lst, additive) ->
       let fcmd =
@@ -167,22 +176,31 @@ let fix_adc_or_sbc is_adc s cond rd rn op2 =
     | _ -> assert false
     end
 
-let fix_command arm =
-  match arm with
-  | MOV {s;cond;rd;rs} -> fix_mov_or_mvn true s cond rd rs
-  | MVN {s;cond;rd;rs} -> fix_mov_or_mvn false s cond rd rs
-  | ADC {s;cond;rd;rn;op2} -> fix_adc_or_sbc true s cond rd rn op2
-  | SBC {s;cond;rd;rn;op2} -> fix_adc_or_sbc false s cond rd rn op2
-  | _ -> [arm]
+let fix_command (arm, optimize) =
+  let optimize_with_card arm n pad =
+    let res =
+      match arm with
+      | MOV {s;cond;rd;rs} -> fix_mov_or_mvn true s cond rd rs n
+      | MVN {s;cond;rd;rs} -> fix_mov_or_mvn false s cond rd rs n
+      | ADC {s;cond;rd;rn;op2} -> fix_adc_or_sbc true s cond rd rn op2 n
+      | SBC {s;cond;rd;rn;op2} -> fix_adc_or_sbc false s cond rd rn op2 n
+      | _ -> [arm]
+    in
+    if pad
+    then
+      let padding = List.init (n - (List.length res)) (fun _ -> padding_code) in
+      res@padding
+    else res
+  in
+  match optimize with
+  | NoOptimization -> [arm]
+  | VariableLength -> optimize_with_card arm 5 false
+  | FixedLength card -> optimize_with_card arm card true
 
 let fix_arm lst =
-  lst |> List.map (fun (arm, optimize) ->
-    if optimize then fix_command arm else [arm]
-  ) |> List.flatten
-
-exception CannotOptimize
+  lst |> List.map fix_command |> List.flatten
 
 let do_not_fix_arm lst =
   lst |> List.map (fun (arm, optimize) ->
-    if optimize then raise CannotOptimize else arm
+    if optimize <> NoOptimization then raise CannotOptimize else arm
   )
