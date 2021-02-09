@@ -11,5 +11,3 @@ type optimization_setting =
 
 val fix_arm : (Arm.arm * optimization_setting) list -> Arm.arm list
 val do_not_fix_arm : (Arm.arm * optimization_setting) list -> Arm.arm list
-
-(* TODO: ADC (and SBC) must sometimes have the S flag... *)

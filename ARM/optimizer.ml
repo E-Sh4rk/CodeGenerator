@@ -146,7 +146,7 @@ let fix_mov_or_mvn is_mov s cond rd rs max_card =
       in
       let cmds = lst |> List.map (fun i ->
         if additive
-        then ADC {s=false;cond;rd;rn=rd;op2=Immediate i}
+        then ADC {s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
         else SBC {s=false;cond;rd;rn=rd;op2=Immediate i}
       ) in
       fcmd::cmds
@@ -164,12 +164,12 @@ let fix_adc_or_sbc is_adc s cond rd rn op2 max_card =
     | Some (fst::lst, additive) ->
       let fcmd =
         if is_adc
-        then ADC {s=false;cond;rd;rn;op2=Immediate fst}
+        then ADC {s=(rn=15 || rn=0);cond;rd;rn;op2=Immediate fst}
         else SBC {s=false;cond;rd;rn;op2=Immediate fst}
       in
       let cmds = lst |> List.map (fun i ->
         if (additive && is_adc) || (not additive && not is_adc)
-        then ADC {s=false;cond;rd;rn=rd;op2=Immediate i}
+        then ADC {s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
         else SBC {s=false;cond;rd;rn=rd;op2=Immediate i}
       ) in
       fcmd::cmds
