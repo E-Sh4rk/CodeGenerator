@@ -70,11 +70,11 @@ let synthesis ~mov_mvn ~additive ~incr max_card i =
       let depth = List.length acc in
       if depth >= max_card then None
       else
-        let i = if incr then pred i else i in
-        match remove i rc with
+        let ii = if incr then pred i else i in
+        match remove ii rc with
         | [] -> None
         | fst::rc ->
-          let remainder = sub i fst in
+          let remainder = sub ii fst in
           begin match aux 0 (fst::acc) (fst::rc) remainder with
           | None ->
             if try_nb < (tad0-tred*depth)

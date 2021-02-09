@@ -18,5 +18,13 @@ runp:
 js:
 	dune build ace_js.bc.js
 
+alld: buildd rund
+
+buildd:
+	dune build pkmn_data.exe
+
+rund:
+	dune exec ./pkmn_data.exe
+
 clean:
 	dune clean

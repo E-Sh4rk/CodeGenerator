@@ -1,0 +1,12 @@
+@@ title = "Read PID"
+@@ author = "E-Sh4rk"
+@@ exit = "CertificateENG"
+@@
+
+movs r12, #0x20244ec ? ; r12=Pokemon_party
+
+ldrh r11, [r12, #0x64]  ; Load lowPID
+ldrh r10, [r12, #0x66]  ; Load highPID
+
+strh r11, [r12, #0xBE] ; Store lowPID in Attack stat
+strh r10, [r12, #0xC0] ; Store highPID in Defense stat

@@ -1,0 +1,12 @@
+@@ title = "Read TID"
+@@ author = "E-Sh4rk"
+@@ exit = "CertificateENG"
+@@
+
+movs r12, #0x20244ec ? ; r12=Pokemon_party
+
+ldrh r11, [r12, #0x68]  ; Load lowTID (visible)
+ldrh r10, [r12, #0x6A]  ; Load highTID (secret)
+
+strh r11, [r12, #0xBE] ; Store lowTID in Attack stat
+strh r10, [r12, #0xC0] ; Store highTID in Defense stat
