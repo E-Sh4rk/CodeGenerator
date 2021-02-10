@@ -1,0 +1,16 @@
+@@ title = "Write IVs"
+@@ author = "E-Sh4rk"
+@@ exit = "CertificateENG"
+@@
+
+; The Pokemon must be located in Box 10 Slot 19.
+; Use the Alter_checksum code directly after this one
+; (do not load the box 10 otherwise the Pokemon will be turned into a bad egg).
+
+sbc r11, r15, #0x2940   ; r11 = &Box10Slot19 + 7 (on emulator)
+
+movs r12, #0x7a14 ?     ; LowIV
+strh r12, [r11, #0x41]! ; Store lowIV, 0x41 = IVEA offset - 7, use 0x3F on console
+
+movs r12, #0x5181 ?     ; HighIV
+strh r12, [r11, #0x2]   ; Store highIV

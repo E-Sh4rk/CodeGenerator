@@ -13,7 +13,9 @@ let () =
   let tid = Structure.tid_from_vid_sid vid sid in
 
   let pkmn = { Structure.pid=pid ; Structure.otid=tid } in
+  let misc_pos = Structure.substructure_position pkmn 'M' in
   let ivea_offset = Structure.ivea_offset pkmn in
+  Format.printf "Misc substructure position: %d@." (misc_pos+1) ;
   Format.printf "IVEA offset: %#x@." ivea_offset ;
 
   Format.printf "Please enter low-IVEA: @?" ;
