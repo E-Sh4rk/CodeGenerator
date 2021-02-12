@@ -26,5 +26,8 @@ buildd:
 rund:
 	dune exec ./pkmn_data.exe
 
+djs:
+	dune build pkmn_data_js.bc.js
+
 clean:
 	dune clean

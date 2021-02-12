@@ -2,7 +2,7 @@ open Pkmn_data_common
 
 let rec continue_until_end fmt c =
   match c with
-  | NoCont -> Format.fprintf fmt "Program has terminated.@."
+  | NoCont -> Format.fprintf fmt "<Program terminated>@."
   | Cont c ->
     let input = read_line () in
     c fmt input |> continue_until_end fmt

@@ -32,3 +32,10 @@
  (libraries num str ace_common)
  (modules pkmn_data)
 )
+(executable
+  (name pkmn_data_js)
+  (libraries num str ace_common)
+  (modules pkmn_data_js)
+  (modes js)
+  (preprocess (pps js_of_ocaml-ppx))
+)
