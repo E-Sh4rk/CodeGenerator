@@ -19,6 +19,21 @@ button {
     margin: 10px 20px;
 }
 
+#enter {
+    min-width: 75px;
+    padding: 10px 0px;
+    margin: 0px 20px;
+}
+
+#output {
+    min-height: 500px;
+}
+
+input {
+    flex-grow: 1;
+    margin: 0px 20px;
+}
+
 .row {
     display: flex;
     flex-direction: row;

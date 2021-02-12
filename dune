@@ -4,7 +4,8 @@
   (wrapped false)
   (libraries num str)
   (modules ace_common arm_printer arm parser lexer parser_ast
-    boxes charset exit name fs parse optimizer structure constants)
+    boxes charset exit name fs parse optimizer structure constants
+    pkmn_data_common)
 ; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
 )
 

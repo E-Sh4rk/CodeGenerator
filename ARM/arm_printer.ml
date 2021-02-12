@@ -23,7 +23,7 @@ let s_to_str s =
   if s then "S" else ""
 
 let print_register fmt r =
-  Format.fprintf fmt "r%i" r
+  Format.fprintf fmt "r%d" r
 
 let print_operand fmt op =
   match op with
