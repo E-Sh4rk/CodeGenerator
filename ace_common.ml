@@ -47,6 +47,8 @@ let main fmt (headers, program) exit =
     begin
       if List.exists (fun c -> Name.is_code_writable c |> not) boxes_codes
       then Format.fprintf fmt "Warning: Contains unwritable characters...@."
-    end
+    end ;
+    Format.fprintf fmt "Raw data (in hexadecimal):@." ;
+    boxes_codes |> List.iter (Format.fprintf fmt "%a" Boxes.pp_box_raw)
   with Exit.NoExitCode ->
     Format.fprintf fmt "Error: The exit code overlaps this code (too long?).@."

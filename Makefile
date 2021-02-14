@@ -7,7 +7,15 @@ build:
 run:
 	dune exec ./ace.exe
 
-allp: buildp runp
+save: builds runs
+
+builds:
+	dune build save_edit.exe
+
+runs:
+	dune exec ./save_edit.exe
+
+portable: buildp runp
 
 buildp:
 	dune build ace_p.exe
@@ -18,7 +26,7 @@ runp:
 js:
 	dune build ace_js.bc.js
 
-alld: buildd rund
+data: buildd rund
 
 buildd:
 	dune build pkmn_data.exe

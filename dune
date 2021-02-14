@@ -5,7 +5,7 @@
   (libraries num str)
   (modules ace_common arm_printer arm parser lexer parser_ast
     boxes charset exit name fs parse optimizer structure constants
-    pkmn_data_common)
+    pkmn_data_common save)
 ; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
 )
 
@@ -25,6 +25,12 @@
   (modules ace_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
+)
+
+(executable
+ (name save_edit)
+ (libraries num str ace_common)
+ (modules save_edit)
 )
 
 (executable

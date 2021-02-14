@@ -115,3 +115,6 @@ let pp_boxes_names fmt lst =
       Name.pp_chars chars Name.pp_chars_raw chars
   in
   List.iteri pp_box lst
+
+let pp_box_raw fmt lst =
+  lst@[eof] |> List.iter (Format.fprintf fmt "%02X @?")
