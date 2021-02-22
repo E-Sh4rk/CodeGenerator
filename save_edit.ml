@@ -5,9 +5,9 @@ let () =
   Format.printf "Your choice: @?" ;
   let filename = List.nth filenames (read_int ()) in
   let inc = open_in_gen [Open_rdonly;Open_binary] 0 filename in
-  let current = Save.read_box_names inc in
+  let (addr, section) = Save.read_section inc Save.box_names_section_id in
+  let current = Save.extract_box_names_from_section section in
   let len = Bytes.length current in
-  let (addr, section) = Save.read_box_names_section inc in
   close_in inc ;
   Format.printf "Current data (in hexadecimal):@." ;
   current |> Bytes.iter (fun c -> Format.printf "%02X " (Char.code c)) ;
