@@ -1,5 +1,5 @@
-@@ title = "CertificateENG"
-@@ filename = "CertificateENG"
+@@ title = "CertificateFR"
+@@ filename = "CertificateFR"
 @@ start = 64
 @@
 
@@ -8,8 +8,7 @@ bic r12,r12, #0xED00000       ;  R12=R12 and notED00000=F12FFF1E
 bic r11,r12, #0x1000000E      ;  R11=R12 and not1000000E=E12FFF10=bx r0 opcpde
 adcs r12,pc, #0x30            ;  R12=PC+30
 str r11, [r12, #0]!           ;  Store bx r0 opcode in [r12]
-sbc r12,lr, #0x2C40           ;  R12=LR-2C40-1
+adc r12,lr, #0xE30            ;  R12=LR+E30
 adc r12,r12, #0xD30000        ;  R12=R12+D30000
 bic r12,r12, #0xC00000        ;  R12=R12 and notC00000
-adc r12,r12, #0x3FC0          ;  R12=R12+3FC0
-sbc r0,r12, #0xB0             ;  R0=R12-B0-1=????ENG
+adc r0,r12, #0xE2             ;  R0=R12+E2=????FRA

@@ -1,0 +1,16 @@
+@@ title = "Seedot to 0x40E9"
+@@ author = "Merrp"
+@@ exit = "ExitCodes/CertificateENG"
+@@ start = 0
+@@
+
+; Box 10 Slot 19
+
+sbc r11,pc,#0x2940   @ r11=&checksum-21
+ldrh r12,[r11,#21]   @ r12=checksum ; 19 on console
+adc r12,#0xc0
+sbc r12,#0xc100      @ r12=checksum + 0x3FBF
+strh r12,[r11,#21]   @ store checksum ; 19 on console
+movs r12,#0xD700      
+adc r12,#0x2B        @ r12=0x40E9 xor PID xor TID
+strh r12,[r11,#37]   @ store species ; 35 on console

@@ -3,9 +3,7 @@ type t = ((int * ((int list) list)) list) * (((int list) list) option)
 
 let load_from_dir dirname =
   try (
-    Sys.readdir dirname
-    |> Array.to_list
-    |> List.filter (fun x -> Filename.extension x = ".txt")
+    IO_utils.enumerate_files dirname ".txt"
     |> List.map (fun x ->
       let path = Filename.concat dirname x in
       let str = Filename.basename x |> Filename.remove_extension in

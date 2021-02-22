@@ -1,0 +1,35 @@
+PID
+15008
+8283
+
+TID
+48971
+20005
+
+IVEA
+50436
+17081
+
+===================
+
+EMU 0x611:  CPSR = 31 SPSR = 0
+EMU 0x40E9:  CPSR = 31 SPSR = 0
+CONSOLE 0x611: CPSR = 31 SPSR = 31
+CONSOLE 0x40E9: CPSR = 31 SPSR = 31
+
+
+@@ title = "Title"
+@@ author = "Author"
+@@ exit = "CertificateENG"
+@@ start = 0
+@@
+
+0xE10FB000        ; mrs r11, cpsr
+
+movs r12, #0x20244ec ? ; r12=Pokemon_party
+
+strh r11, [r12, #0xBE] ; Store lowCPSR in Attack stat
+
+0xE1A0B82B       ; mov r11, r11, LSR #16
+
+strh r11, [r12, #0xC0] ; Store highCPSR in Defense stat

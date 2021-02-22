@@ -1,7 +1,10 @@
 
 let () =
-  let inc =
-    open_in_gen [Open_rdonly;Open_binary] 0 "Pokemon - Emerald Version (U).sav" in
+  let filenames = IO_utils.enumerate_files (Sys.getcwd ()) ".sav" in
+  filenames |> List.iteri (fun i str -> Format.printf "%i. %s@." i str) ;
+  Format.printf "Your choice: @?" ;
+  let filename = List.nth filenames (read_int ()) in
+  let inc = open_in_gen [Open_rdonly;Open_binary] 0 filename in
   let current = Save.read_box_names inc in
   let len = Bytes.length current in
   let (addr, section) = Save.read_box_names_section inc in
@@ -22,8 +25,7 @@ let () =
     with End_of_file -> ()
   in
   aux 0 ;
-  let oc =
-    open_out_gen [Open_wronly;Open_binary] 0 "Pokemon - Emerald Version (U).sav" in
+  let oc = open_out_gen [Open_wronly;Open_binary] 0 filename in
   Save.update_box_names section current ;
   Save.write_section oc addr section ;
   close_out oc ;
