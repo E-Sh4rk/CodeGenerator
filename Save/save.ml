@@ -92,6 +92,8 @@ let extract_team_from_section buf =
   extract_pkmns [] (nb-1)
 
 let update_team buf pkmns =
+  let len = List.length pkmns |> Int32.of_int in
+  Bytes.set_int32_le buf team_size_offset len ;
   let update_pkmn i pkmn =
     let addr = team_data_offset + pkmn_data_size*i in
     Bytes.blit pkmn 0 buf addr pkmn_data_size
