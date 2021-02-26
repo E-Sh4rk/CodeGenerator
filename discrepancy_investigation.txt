@@ -1,16 +1,4 @@
-PID
-15008
-8283
-
-TID
-48971
-20005
-
-IVEA
-50436
-17081
-
-===================
+=================== CPSR / SPSR ===================
 
 EMU 0x611:  CPSR = 31 SPSR = 0
 EMU 0x40E9:  CPSR = 31 SPSR = 0
@@ -18,8 +6,6 @@ CONSOLE 0x611: CPSR = 31 SPSR = 31
 CONSOLE 0x40E9: CPSR = 31 SPSR = 31
 
 
-@@ title = "Title"
-@@ author = "Author"
 @@ exit = "CertificateENG"
 @@ start = 0
 @@
@@ -33,3 +19,47 @@ strh r11, [r12, #0xBE] ; Store lowCPSR in Attack stat
 0xE1A0B82B       ; mov r11, r11, LSR #16
 
 strh r11, [r12, #0xC0] ; Store highCPSR in Defense stat
+
+=================== DISCREPANCIES ===================
+
+@@ exit = "CertificateENG"
+@@ start = 0
+@@
+
+sbc r11, r15, #0x0
+adcs r10, r15, #0x0
+
+movs r12, #0x20244ec ? ; r12=Pokemon_party
+
+strh r11, [r12, #0xBE] ; Store lowPID in Attack stat
+strh r10, [r12, #0xC0] ; Store highPID in Defense stat
+
+--------------------------------------------------
+
+ACE entry point: 0x02070000
+
+Instructions in box1:
+- PC-relative ADC, SBC (not pre/post indexed): Discrepency with 0x611, but not with 0x40E9
+
+Instruction later (where?):
+- There does not seem to be discrepancy even with 0x611
+
+Where?
+
+-------------------------------------------------
+[PADDING]
+
+movs r11, #0x20244ec ? ; r12=Pokemon_party
+
+adcs r12,pc, #0x30
+strh r12, [r11, #0xBE] ; Store lowPID in Attack stat
+
+sbc r12,lr, #0x2C40           ;  R12=LR-2C40-1
+adc r12,r12, #0xD30000        ;  R12=R12+D30000
+bic r12,r12, #0xC00000        ;  R12=R12 and notC00000
+adc r12,r12, #0x3FC0          ;  R12=R12+3FC0
+sbc r0,r12, #0xB0             ;  R0=R12-B0-1=????ENG
+0xE12FFF10                    ;  BX r0
+--------------------------------------------------
+
+P=2: Discrepancy with 0x611 but not 0x40E9
