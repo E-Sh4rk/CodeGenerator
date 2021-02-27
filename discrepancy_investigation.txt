@@ -20,6 +20,16 @@ strh r11, [r12, #0xBE] ; Store lowCPSR in Attack stat
 
 strh r11, [r12, #0xC0] ; Store highCPSR in Defense stat
 
+=====================================================
+
+# THUMB->ARM nickname bootstrap
+box_12_04: @ (x♂zN”6FFxC)
+PUSH r2-r3,r5-r7,lr B5EC @ preserve necessary registers
+LDMIA r0!,r1-r3,r5-r7 C8EE @ do not touch r4! 
+ADD r7,pc,nn A7B2 @ (B2 is +9 pokemon ahead) 
+STMIA r0!,r6,r7 C0C0 @ store new jump address 
+POP r2-r3,r5-r7,pc BDEC @ restore registers and jump out
+
 =================== DISCREPANCIES ===================
 
 @@ exit = "CertificateENG"
@@ -38,13 +48,10 @@ strh r10, [r12, #0xC0] ; Store highPID in Defense stat
 
 ACE entry point: 0x02070000
 
-Instructions in box1:
-- PC-relative ADC, SBC (not pre/post indexed): Discrepency with 0x611, but not with 0x40E9
+- PC-relative ADC, SBC: Discrepancy with 0x611, but not with 0x40E9
+- Seems not to depend on position (box 1 - 14)
 
-Instruction later (where?):
-- There does not seem to be discrepancy even with 0x611
-
-Where?
+===== DEPENDS ON POSITION ? (SEEMS NOT) =====
 
 -------------------------------------------------
 [PADDING]
@@ -62,4 +69,8 @@ sbc r0,r12, #0xB0             ;  R0=R12-B0-1=????ENG
 0xE12FFF10                    ;  BX r0
 --------------------------------------------------
 
-P=2: Discrepancy with 0x611 but not 0x40E9
+P=32: Discrepancy with 0x611
+P=40: Discrepancy with 0x611
+P=48: Discrepancy with 0x611
+P=56: Discrepancy with 0x611
+P=72: Discrepancy with 0x611
