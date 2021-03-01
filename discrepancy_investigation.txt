@@ -47,6 +47,7 @@ strh r10, [r12, #0xC0] ; Store highPID in Defense stat
 --------------------------------------------------
 
 ACE entry point: 0x02070000
+Box names: around 2031B70
 
 - PC-relative ADC, SBC: Discrepancy with 0x611, but not with 0x40E9
 - Seems not to depend on position (box 1 - 14)
