@@ -46,7 +46,7 @@ let constants = constants_set |> UInt32Set.elements
 let rev_constants = List.rev constants
 
 let constants_and_neg =
-  let nset = UInt32Set.map neg constants_set in
+  let nset = UInt32Set.map lognot constants_set in
   UInt32Set.union constants_set_no_carry nset |> UInt32Set.elements
 
 let rev_constants_and_neg = List.rev constants_and_neg
@@ -130,11 +130,11 @@ let fix_mov_or_mvn is_mov s cond rd rs max_card =
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
-    let i = if is_mov then i else neg i in
+    let i = if is_mov then i else lognot i in
     begin match synthesis_optimal ~mov_mvn:true ~inv:false max_card i with
     | None -> [cmd]
     | Some (fst::lst, additive) ->
-      let nfst = neg fst in
+      let nfst = lognot fst in
       let is_mov =
         (is_mov && UInt32Set.mem fst constants_set_no_carry)
         || (UInt32Set.mem nfst constants_set |> not)
