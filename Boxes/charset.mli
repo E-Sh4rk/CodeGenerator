@@ -6,3 +6,6 @@ val is_code_used : int -> bool
 val char_at : int -> string
 val readable_char_at : int -> string
 val writable_char_at : int -> string
+
+val all_writable_chars : string list
+val encode_writable_char : string -> int (* Can raise Not_found *)

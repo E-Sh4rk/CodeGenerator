@@ -118,3 +118,23 @@ let writable_char_at code =
   match charset.(code) with
   | Available str -> str
   | Unavailable _ | Unreadable _ | Unused -> invalid_str
+
+let all_writable_chars =
+  let rec aux acc i =
+    if i < 0 then acc
+    else
+      match charset.(i) with
+      | Available str -> aux (str::acc) (i-1)
+      | Unavailable _ | Unreadable _ | Unused -> aux acc (i-1)
+  in
+  aux [] 0xFF
+
+let encode_writable_char str =
+  let rec aux i =
+    if i < 0 then raise Not_found
+    else
+      match charset.(i) with
+      | Available str' when String.equal str str' -> i
+      | Available _ | Unavailable _ | Unreadable _ | Unused -> aux (i-1)
+  in
+  aux 0xFF

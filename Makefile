@@ -37,5 +37,16 @@ rund:
 djs:
 	dune build pkmn_data_js.bc.js
 
+encoder: builde rune
+
+builde:
+	dune build encoder.exe
+
+rune:
+	dune exec ./encoder.exe
+
+ejs:
+	dune build encoder_js.bc.js
+
 clean:
 	dune clean
