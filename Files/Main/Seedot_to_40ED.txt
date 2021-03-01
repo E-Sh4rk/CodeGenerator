@@ -1,6 +1,6 @@
 @@ title = "Seedot to 0x40ED"
 @@ author = "E-Sh4rk"
-@@ exit = "ExitCodes/CertificateFR"
+@@ exit = "ExitCodes/CertificateFRA"
 @@ start = 0
 @@
 
