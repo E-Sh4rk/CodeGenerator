@@ -1,0 +1,14 @@
+@@ title = "Change trainer name"
+@@ author = "E-Sh4rk"
+@@ exit = "ExitCodes/CertificateENG"
+@@
+
+; Code for changing characters 1-4 of the trainer name
+
+; Player name is D0F8 bytes before first box name
+sbc r11,pc,#0xD0F7     ?  ; Change to 0xD0FB for changing the characters 5-8, 0xD0F7 for 9-12
+
+movs r12, #0x00FFE9E3  ?  ; Change to the characters wanted (encoded in little-endian)
+
+str r12, [r11, #0]!
+
