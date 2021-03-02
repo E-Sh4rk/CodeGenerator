@@ -45,11 +45,11 @@ let constants_set_no_carry =
 let constants = constants_set |> UInt32Set.elements
 let rev_constants = List.rev constants
 
-let constants_and_neg =
+let constants_mov_mvn =
   let nset = UInt32Set.map lognot constants_set in
   UInt32Set.union constants_set_no_carry nset |> UInt32Set.elements
 
-let rev_constants_and_neg = List.rev constants_and_neg
+let rev_constants_mov_mvn = List.rev constants_mov_mvn
 
 let tries_at_depth_0 = 200
 
@@ -59,7 +59,7 @@ let rec remove_while f lst =
   | i'::lst when f i' -> remove_while f lst
   | lst -> lst
 
-let synthesis ~mov_mvn ~additive ~incr max_card i =
+let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = tries_at_depth_0 in
   let tred = if max_card > 1 then tad0 / (max_card-1) else tad0 in
 
@@ -84,6 +84,7 @@ let synthesis ~mov_mvn ~additive ~incr max_card i =
           end
   in
 
+  let filtered_rev_constants = List.filter is_valid rev_constants in
   let remove_init =
     if additive then remove
     else (fun i -> remove_while (fun j -> unsigned_compare i j > 0))
@@ -94,7 +95,7 @@ let synthesis ~mov_mvn ~additive ~incr max_card i =
     | [] -> None
     | fst::rc ->
       let remainder = op_init i fst in
-      begin match aux 0 [fst] rev_constants remainder with
+      begin match aux 0 [fst] filtered_rev_constants remainder with
       | None ->
         if try_nb < tad0
         then init (try_nb+1) rc i
@@ -105,24 +106,33 @@ let synthesis ~mov_mvn ~additive ~incr max_card i =
 
   let init_rc =
     if additive
-    then (if mov_mvn then rev_constants_and_neg else rev_constants)
-    else (if mov_mvn then constants_and_neg else constants)
+    then (if mov_mvn then rev_constants_mov_mvn else rev_constants)
+    else (if mov_mvn then constants_mov_mvn else constants)
   in
+  let init_rc = List.filter is_valid_fst init_rc in
   init 0 init_rc i |>
   (function None -> None | Some lst -> Some (List.rev lst))
 
-let synthesis_optimal ~mov_mvn ~inv max_card i =
+let synthesis_optimal ~mov_mvn ~inv max_card i is_valid_fst is_valid =
   let rec aux card =
     if card > max_card then None
-    else match synthesis ~mov_mvn ~additive:true ~incr:inv card i with
+    else match synthesis ~mov_mvn ~additive:true ~incr:inv
+                  card i is_valid_fst (is_valid true) with
     | Some lst -> Some (lst, true)
     | None ->
-      begin match synthesis ~mov_mvn ~additive:false ~incr:(not inv) card i with
+      begin match synthesis ~mov_mvn ~additive:false ~incr:(not inv)
+                      card i is_valid_fst (is_valid false) with
       | Some lst -> Some (lst, false)
       | None -> aux (card+1)
       end
   in
   aux 1
+
+let is_command_valid arm =
+  try (
+    arm_to_binary arm |>
+    List.exists (fun i -> Name.codes_for_command i |> Name.is_code_writable)
+  ) with InvalidCommand -> false
 
 let fix_mov_or_mvn is_mov s cond rd rs max_card =
   let cmd = if is_mov then MOV {s;cond;rd;rs} else MVN {s;cond;rd;rs} in
@@ -130,26 +140,28 @@ let fix_mov_or_mvn is_mov s cond rd rs max_card =
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
-    let i = if is_mov then i else lognot i in
-    begin match synthesis_optimal ~mov_mvn:true ~inv:false max_card i with
-    | None -> [cmd]
-    | Some (fst::lst, additive) ->
+    let mk_cmd_first fst =
       let nfst = lognot fst in
       let is_mov =
         (is_mov && UInt32Set.mem fst constants_set_no_carry)
         || (UInt32Set.mem nfst constants_set |> not)
       in
-      let fcmd =
-        if is_mov
-        then MOV {s=true;cond;rd;rs=Immediate fst}
-        else MVN {s=false;cond;rd;rs=Immediate nfst}
-      in
-      let cmds = lst |> List.map (fun i ->
-        if additive
-        then ADC {s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
-        else SBC {s=false;cond;rd;rn=rd;op2=Immediate i}
-      ) in
-      fcmd::cmds
+      if is_mov
+      then MOV {s=true;cond;rd;rs=Immediate fst}
+      else MVN {s=false;cond;rd;rs=Immediate nfst}
+    in
+    let mk_cmd additive i =
+      if additive
+      then ADC {s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
+      else SBC {s=false;cond;rd;rn=rd;op2=Immediate i}
+    in
+    let i = if is_mov then i else lognot i in
+    begin match synthesis_optimal ~mov_mvn:true ~inv:false max_card i
+                  (fun i -> mk_cmd_first i |> is_command_valid)
+                  (fun add i -> mk_cmd add i |> is_command_valid) with
+    | None -> [cmd]
+    | Some (fst::lst, additive) ->
+      (mk_cmd_first fst)::(List.map (mk_cmd additive) lst)
     | _ -> assert false
     end
 
@@ -159,20 +171,22 @@ let fix_adc_or_sbc is_adc s cond rd rn op2 max_card =
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
-    begin match synthesis_optimal ~mov_mvn:false ~inv:(not is_adc) max_card i with
+    let mk_cmd_first fst =
+      if is_adc
+      then ADC {s=(rn=15 || rn=0);cond;rd;rn;op2=Immediate fst}
+      else SBC {s=false;cond;rd;rn;op2=Immediate fst}
+    in
+    let mk_cmd additive i =
+      if (additive && is_adc) || (not additive && not is_adc)
+      then ADC {s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
+      else SBC {s=false;cond;rd;rn=rd;op2=Immediate i}
+    in
+    begin match synthesis_optimal ~mov_mvn:false ~inv:(not is_adc) max_card i
+                  (fun i -> mk_cmd_first i |> is_command_valid)
+                  (fun add i -> mk_cmd add i |> is_command_valid) with
     | None -> [cmd]
     | Some (fst::lst, additive) ->
-      let fcmd =
-        if is_adc
-        then ADC {s=(rn=15 || rn=0);cond;rd;rn;op2=Immediate fst}
-        else SBC {s=false;cond;rd;rn;op2=Immediate fst}
-      in
-      let cmds = lst |> List.map (fun i ->
-        if (additive && is_adc) || (not additive && not is_adc)
-        then ADC {s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
-        else SBC {s=false;cond;rd;rn=rd;op2=Immediate i}
-      ) in
-      fcmd::cmds
+      (mk_cmd_first fst)::(List.map (mk_cmd additive) lst)
     | _ -> assert false
     end
 
