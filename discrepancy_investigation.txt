@@ -75,3 +75,23 @@ P=40: Discrepancy with 0x611
 P=48: Discrepancy with 0x611
 P=56: Discrepancy with 0x611
 P=72: Discrepancy with 0x611
+
+
+===================== Alignment checking ======================
+
+
+@@ title = "Discrepancy"
+@@ author = "E-Sh4rk"
+@@ exit = "CertificateENG"
+@@
+
+adcs r12,pc, #0x30
+
+movs r11, #0x20244ec ? ; r12=Pokemon_party
+strh r12, [r11, #0xBE] ; Store lowPID in Attack stat
+
+
+========================== Realignment Pkmn ================================
+
+
+ldrh r12, [r15], #0x62    [”Lkl      ]
