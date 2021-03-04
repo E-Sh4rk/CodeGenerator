@@ -10,6 +10,11 @@
 )
 
 (executable
+ (name test)
+ (libraries num str ace_common)
+ (modules test)
+)
+(executable
  (name ace)
  (libraries num str ace_common)
  (modules ace)

@@ -51,13 +51,15 @@ let constants_mov_mvn =
 
 let rev_constants_mov_mvn = List.rev constants_mov_mvn
 
-let tries_at_depth_0 = 200
+let tries_at_depth_0 = 500
 
 let rec remove_while f lst =
   match lst with
   | [] -> []
   | i'::lst when f i' -> remove_while f lst
   | lst -> lst
+
+(*let int64_of_uint32 x = Int64.of_string (Int32.to_string x)*)
 
 let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = tries_at_depth_0 in
@@ -70,9 +72,13 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
       let depth = List.length acc in
       if depth >= max_card then None
       else
+        let rem_depth = max_card - depth |> of_int in
         let ii = if incr then pred i else i in
         match remove ii rc with
         | [] -> None
+        | fst::_ when unsigned_compare (* Optimisation *)
+                        (unsigned_div i rem_depth)
+                        (if incr then succ fst else fst) > 0 -> None
         | fst::rc ->
           let remainder = sub ii fst in
           begin match aux 0 (fst::acc) (fst::rc) remainder with
@@ -116,17 +122,22 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
 let synthesis_optimal ~mov_mvn ~inv max_card i is_valid_fst is_valid =
   let rec aux card =
     if card > max_card then None
-    else match synthesis ~mov_mvn ~additive:true ~incr:inv
+    else
+      match synthesis ~mov_mvn ~additive:true ~incr:inv
                   card i is_valid_fst (is_valid true) with
-    | Some lst -> Some (lst, true)
-    | None ->
-      begin match synthesis ~mov_mvn ~additive:false ~incr:(not inv)
-                      card i is_valid_fst (is_valid false) with
-      | Some lst -> Some (lst, false)
-      | None -> aux (card+1)
-      end
+      | Some lst -> Some (lst, true)
+      | None ->
+        begin match synthesis ~mov_mvn ~additive:false ~incr:(not inv)
+                        card i is_valid_fst (is_valid false) with
+        | Some lst -> Some (lst, false)
+        | None -> aux (card+1)
+        end
   in
   aux 1
+
+let synthesis_test max_card i =
+  synthesis_optimal ~mov_mvn:true ~inv:false
+    max_card i (fun _ -> true) (fun _ _ -> true)
 
 let is_command_valid arm =
   try (

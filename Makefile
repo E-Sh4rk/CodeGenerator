@@ -7,6 +7,14 @@ build:
 run:
 	dune exec ./ace.exe
 
+test: buildt runt
+
+buildt:
+	dune build test.exe
+
+runt:
+	dune exec ./test.exe
+
 save: builds runs
 
 builds:

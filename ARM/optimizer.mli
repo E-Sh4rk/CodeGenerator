@@ -9,5 +9,7 @@ type optimization_setting =
   | FixedLength of int
   | VariableLength
 
+val synthesis_test : int -> int32 -> (int32 list * bool) option
+
 val fix_arm : (Arm.arm * optimization_setting) list -> Arm.arm list
 val do_not_fix_arm : (Arm.arm * optimization_setting) list -> Arm.arm list
