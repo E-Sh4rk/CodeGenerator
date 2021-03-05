@@ -34,7 +34,7 @@ let load_from_parsed_file (h, arm) =
         Name.preferred_code
       )
     in
-    match Parser_ast.get_header h "start" with
+    match Preprocess.get_param h "start" with
     | HInt i -> ([(Name.int32_to_int i, codes)], None)
     | HNone -> ([], Some codes)
     | _ -> failwith "Exit code has invalid headers."

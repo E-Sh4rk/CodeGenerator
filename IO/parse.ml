@@ -4,7 +4,7 @@ open Lexing
 exception InvalidContent of string
 
 type parsed_content =
-  Parser_ast.headers * (Arm.arm * Optimizer.optimization_setting) list
+  Preprocess.headers * (Arm.arm * Optimizer.optimization_setting) list
 
 let print_position fmt pos =
   Format.fprintf fmt "%s:%d:%d" pos.pos_fname

@@ -8,7 +8,7 @@ let rec add_files lexbuf acc =
   else (
     let (headers, arm) = Parse.from_lexbuf ~headers:true lexbuf in
     let fn =
-      match Parser_ast.get_header headers "filename" with
+      match Preprocess.get_param headers "filename" with
       | HNone -> failwith "Please specify the 'filename' header everywhere."
       | HString fn -> fn
       | _ -> failwith "Invalid headers."

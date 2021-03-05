@@ -5,7 +5,7 @@ let () =
   let fs = Fs.from_filename "input_p.txt" in
   let (headers, program) = Fs.main_file fs in
   let exit =
-    match Parser_ast.get_header headers "exit" with
+    match Preprocess.get_param headers "exit" with
     | HNone -> None
     | HString fn ->
       Some (Fs.get_file fn fs |> Exit.load_from_parsed_file)

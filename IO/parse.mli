@@ -2,7 +2,7 @@
 exception InvalidContent of string
 
 type parsed_content =
-  Parser_ast.headers * (Arm.arm * Optimizer.optimization_setting) list
+  Preprocess.headers * (Arm.arm * Optimizer.optimization_setting) list
 
 val from_lexbuf : headers:bool -> Lexing.lexbuf -> parsed_content
 val from_str : headers:bool -> string -> parsed_content

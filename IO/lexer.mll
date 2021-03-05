@@ -46,6 +46,9 @@ rule read = parse
   | "null"    { NULL }
   | "true"    { BOOL true }
   | "false"   { BOOL false }
+  | "<<"      { LSHIFT }
+  | ">>"      { RSHIFT }
+  | ":="      { DEFINE }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
   | newline   { next_line lexbuf ; EOL }
@@ -56,11 +59,22 @@ rule read = parse
   | '#'       { HASH }
   | '['       { LEFT_BRACK }
   | ']'       { RIGHT_BRACK }
+  | '{'       { LEFT_BRACE }
+  | '}'       { RIGHT_BRACE }
   | ','       { COMMA }
   | '!'       { EXCLAM_MARK }
   | '?'       { INTERROG_MARK }
+  | '('       { LPAREN }
+  | ')'       { RPAREN }
   | '+'       { PLUS }
   | '-'       { MINUS }
+  | '*'       { TIMES }
+  | '/'       { DIV }
+  | '%'       { MOD }
+  | '&'       { AND }
+  | '|'       { OR }
+  | '^'       { XOR }
+  | '~'       { NOT }
   | eof       { eof_reached lexbuf ; EOF }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 

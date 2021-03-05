@@ -1,8 +1,10 @@
 %{ open Parser_ast %}
+%{ open Preprocess %}
 
 %token HEADER
 %token NULL
 %token EQUAL
+%token DEFINE
 %token <string> STRING
 %token <int32> NUMBER
 %token <bool> BOOL
@@ -10,23 +12,64 @@
 %token HASH
 %token LEFT_BRACK
 %token RIGHT_BRACK
+%token LEFT_BRACE
+%token RIGHT_BRACE
+%token LPAREN
+%token RPAREN
+%token LSHIFT
+%token RSHIFT
 %token COMMA
 %token EXCLAM_MARK
 %token INTERROG_MARK
+%token TIMES
+%token DIV
+%token MOD
 %token PLUS
 %token MINUS
+%token AND
+%token OR
+%token XOR
+%token NOT
 %token EOL
 %token EOF
 
+%left OR
+%left XOR
+%left AND
+%left LSHIFT RSHIFT
+%left PLUS MINUS
+%left TIMES DIV MOD
+%nonassoc NOT
+%nonassoc UPLUS UMINUS
+
 %start <Parser_ast.ast> ast
-%start <Parser_ast.headers> headers
+%start <Preprocess.headers> headers
 %%
 
+meta_expr:
+  | i = NUMBER { MConst i }
+  | v = ID { MVar v }
+  | LPAREN e = meta_expr RPAREN { e }
+  | e1 = meta_expr PLUS e2 = meta_expr { MBinary (OAdd, e1, e2) }
+  | e1 = meta_expr MINUS e2 = meta_expr { MBinary (OSub, e1, e2) }
+  | e1 = meta_expr TIMES e2 = meta_expr { MBinary (OMul, e1, e2) }
+  | e1 = meta_expr DIV e2 = meta_expr { MBinary (ODiv, e1, e2) }
+  | e1 = meta_expr MOD e2 = meta_expr { MBinary (OMod, e1, e2) }
+  | e1 = meta_expr AND e2 = meta_expr { MBinary (OAnd, e1, e2) }
+  | e1 = meta_expr XOR e2 = meta_expr { MBinary (OXor, e1, e2) }
+  | e1 = meta_expr OR e2 = meta_expr { MBinary (OOr, e1, e2) }
+  | e1 = meta_expr LSHIFT e2 = meta_expr { MBinary (OLShift, e1, e2) }
+  | e1 = meta_expr RSHIFT e2 = meta_expr { MBinary (ORShift, e1, e2) }
+  | PLUS e = meta_expr %prec UPLUS { MUnary (OId, e) }
+  | MINUS e = meta_expr %prec UMINUS { MUnary (ONeg, e) }
+  | NOT e = meta_expr { MUnary (ONot, e) }
+
 definition:
-  | id = ID ; EQUAL ; str = STRING { (id, HString str) }
-  | id = ID ; EQUAL ; nb = NUMBER { (id, HInt nb) }
-  | id = ID ; EQUAL ; b = BOOL { (id, HBool b) }
-  | id = ID ; EQUAL ; NULL { (id, HNone) }
+  | id = ID ; EQUAL ; str = STRING { Param (id, HString str) }
+  | id = ID ; EQUAL ; nb = NUMBER { Param (id, HInt nb) }
+  | id = ID ; EQUAL ; b = BOOL { Param (id, HBool b) }
+  | id = ID ; EQUAL ; NULL { Param (id, HNone) }
+  | id = ID ; DEFINE ; e = meta_expr { VarDef (id, e) }
   ;
 
 headers:

@@ -14,7 +14,7 @@ let treat_command fmt arm =
 
 let main fmt (headers, program) exit =
   let onlyraw =
-    match Parser_ast.get_header headers "onlyraw" with
+    match Preprocess.get_param headers "onlyraw" with
     | HNone -> false
     | HBool b -> b
     | _ -> failwith "Invalid headers."
@@ -22,7 +22,7 @@ let main fmt (headers, program) exit =
   if onlyraw && exit <> None
   then failwith "Only-raw mode does not support exit codes." ;
   let start =
-    match Parser_ast.get_header headers "start" with
+    match Preprocess.get_param headers "start" with
     | HNone -> 0
     | HInt i -> Name.int32_to_int i
     | _ -> failwith "Invalid headers."
@@ -30,7 +30,7 @@ let main fmt (headers, program) exit =
   let fillers =
     Array.init 4 (fun n ->
       let header_name = Format.sprintf "filler%n" (n+1) in
-      match Parser_ast.get_header headers header_name with
+      match Preprocess.get_param headers header_name with
       | HNone -> Boxes.nop_sequences.(n)
       | HInt i ->
         let codes = Name.codes_for_command i in

@@ -1,9 +1,5 @@
 open Arm
 
-type def_val = HNone | HString of string | HInt of int32 | HBool of bool
-type definition = string * def_val
-type headers = definition list
-
 type offset =
   | OImmediate of Arm.sign * int32
   | ORegister of Arm.sign * string
@@ -182,6 +178,3 @@ let cmd_to_arm cmd =
   | BIN (_, i) -> (Custom i, Optimizer.NoOptimization)
 
 let to_arm ast = List.map cmd_to_arm ast
-
-let get_header headers name =
-  try List.assoc name headers with Not_found -> HNone
