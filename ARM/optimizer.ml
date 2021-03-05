@@ -51,7 +51,7 @@ let constants_mov_mvn =
 
 let rev_constants_mov_mvn = List.rev constants_mov_mvn
 
-let tries_at_depth_0 = 500
+let tries_at_depth_0 = [| 0x10000 ; 0x10000 ; 0x10000 ; 0x200 ; 0x40 ; 0x8 ; 0x1 |]
 
 let rec remove_while f lst =
   match lst with
@@ -63,7 +63,8 @@ let rec remove_while f lst =
 
 let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = tries_at_depth_0 in
-  let tred = if max_card > 1 then tad0 / (max_card-1) else tad0 in
+  let tad0_len = Array.length tad0 in
+  let tad0 = if tad0_len < max_card then tad0.(tad0_len-1) else tad0.(max_card-1) in
 
   let remove = (fun i -> remove_while (fun j -> unsigned_compare i j < 0)) in
   let rec aux try_nb acc rc i =
@@ -82,10 +83,7 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
         | fst::rc ->
           let remainder = sub ii fst in
           begin match aux 0 (fst::acc) (fst::rc) remainder with
-          | None ->
-            if try_nb < (tad0-tred*depth)
-            then aux (try_nb+1) acc rc i
-            else None
+          | None -> aux (try_nb+1) acc rc i
           | Some res -> Some res
           end
   in
@@ -97,15 +95,13 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   in
   let op_init = if additive then sub else (fun x y -> sub y x) in
   let rec init try_nb rc i =
-    match remove_init i rc with
+    if try_nb >= tad0 then None
+    else match remove_init i rc with
     | [] -> None
     | fst::rc ->
       let remainder = op_init i fst in
       begin match aux 0 [fst] filtered_rev_constants remainder with
-      | None ->
-        if try_nb < tad0
-        then init (try_nb+1) rc i
-        else None
+      | None -> init (try_nb+1) rc i
       | Some res -> Some res
       end
   in
@@ -121,6 +117,7 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
 
 let synthesis_optimal ~mov_mvn ~inv max_card i is_valid_fst is_valid =
   let rec aux card =
+    (*Format.printf "Trying with card=%i@." card ;*)
     if card > max_card then None
     else
       match synthesis ~mov_mvn ~additive:true ~incr:inv
