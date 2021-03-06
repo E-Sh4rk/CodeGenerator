@@ -12,7 +12,7 @@ let treat_command fmt arm =
     Arm_printer.pp_arm arm ;
   code
 
-let main fmt (headers, program) exit =
+let main fmt (headers, parsed) exit =
   let onlyraw =
     match Preprocess.get_param headers "onlyraw" with
     | HNone -> false
@@ -39,8 +39,8 @@ let main fmt (headers, program) exit =
       | _ -> failwith "Invalid headers."
     )
   in
-  let res = program |> 
-    Optimizer.fix_arm |>
+  let res = (headers, parsed) |> 
+    Parse.parsed_content_to_arm ~optimize:true |>
     List.map (treat_command fmt) in
   if onlyraw
   then begin

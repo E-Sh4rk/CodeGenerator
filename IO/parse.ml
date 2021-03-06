@@ -4,7 +4,7 @@ open Lexing
 exception InvalidContent of string
 
 type parsed_content =
-  Preprocess.headers * (Arm.arm * Optimizer.optimization_setting) list
+  Preprocess.headers * Parser_ast.ast
 
 let print_position fmt pos =
   Format.fprintf fmt "%s:%d:%d" pos.pos_fname
@@ -23,19 +23,13 @@ let parse_with_error f lexbuf =
       (Format.asprintf "%a: parser error\n" print_lexbuf_pos lexbuf))
 
 let from_lexbuf ~headers lexbuf =
-  let (headers, env) =
+  let headers =
     if headers
-    then
-      let h = parse_with_error (Parser.headers Lexer.read) lexbuf in
-      (h, Preprocess.env_from_headers h)
-    else ([], Preprocess.empty_env)
+    then parse_with_error (Parser.headers Lexer.read) lexbuf
+    else []
   in
   let ast = parse_with_error (Parser.ast Lexer.read) lexbuf in
-  try (headers, Parser_ast.to_arm env ast)
-  with Parser_ast.CommandError pos ->
-    raise (InvalidContent
-      (Format.asprintf "%a: command error\n" print_position pos)
-    )
+  (headers, ast)
 
 let from_filename ~headers filename =
   let channel = open_in filename in
@@ -46,3 +40,13 @@ let from_filename ~headers filename =
 
 let from_str ~headers str =
   Lexing.from_string str |> from_lexbuf ~headers
+
+let parsed_content_to_arm ~optimize (headers, lst) =
+  try
+    let env = Preprocess.env_from_headers headers in
+    Parser_ast.to_arm env lst |>
+    if optimize then Optimizer.fix_arm else Optimizer.do_not_fix_arm
+  with Parser_ast.CommandError pos ->
+    raise (InvalidContent
+      (Format.asprintf "%a: command error\n" print_position pos)
+    )

@@ -8,8 +8,8 @@ let load_from_dir dirname =
       let path = Filename.concat dirname x in
       let str = Filename.basename x |> Filename.remove_extension in
       let i = int_of_string str in
-      let arm = Parse.from_filename ~headers:false path |> snd
-        |> Optimizer.do_not_fix_arm in
+      let arm = Parse.from_filename ~headers:false path |>
+        Parse.parsed_content_to_arm ~optimize:false in
       let codes = arm |>
         List.map (fun arm ->
           Arm.arm_to_binary arm |>
@@ -26,21 +26,17 @@ let load_from_dir dirname =
     failwith "Exit codes cannot be tweaked (please remove interrogation marks)."
 
 let load_from_parsed_file (h, arm) =
-  try (
-    let codes = arm |> Optimizer.do_not_fix_arm |>
-      List.map (fun arm ->
-        Arm.arm_to_binary arm |>
-        List.map Name.codes_for_command |>
-        Name.preferred_code
-      )
-    in
-    match Preprocess.get_param h "start" with
-    | HInt i -> ([(Name.int32_to_int i, codes)], None)
-    | HNone -> ([], Some codes)
-    | _ -> failwith "Exit code has invalid headers."
-  )
-  with Optimizer.CannotOptimize ->
-    failwith "Exit codes cannot be tweaked (please remove interrogation marks)."
+  let codes = (h, arm) |> Parse.parsed_content_to_arm ~optimize:true |>
+    List.map (fun arm ->
+      Arm.arm_to_binary arm |>
+      List.map Name.codes_for_command |>
+      Name.preferred_code
+    )
+  in
+  match Preprocess.get_param h "start" with
+  | HInt i -> ([(Name.int32_to_int i, codes)], None)
+  | HNone -> ([], Some codes)
+  | _ -> failwith "Exit code has invalid headers."
 
 let load_from_file filename =
   Parse.from_filename ~headers:true filename |>
