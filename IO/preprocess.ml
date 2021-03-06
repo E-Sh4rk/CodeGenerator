@@ -63,6 +63,8 @@ let eval_meta_expr env e =
   in
   aux e
 
+let empty_env = StrMap.empty
+
 let env_from_headers headers =
   let treat_def acc def =
     match def with

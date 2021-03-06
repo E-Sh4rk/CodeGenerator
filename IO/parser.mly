@@ -88,20 +88,25 @@ command:
   | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, Optimizer.VariableLength) }
   | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK ; i = NUMBER
   { ASM ($startpos, id, args, Optimizer.FixedLength (Name.int32_to_int i)) }
-  | nb = NUMBER { BIN ($startpos, nb) }
+  | nb = number { BIN ($startpos, nb) }
   ;
 
 arg:
   | id = ID { Register id }
-  | HASH ; i = NUMBER { Immediate i }
+  | HASH ; i = number { Immediate i }
   | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK { Offset (id, o, Arm.Offset) }
   | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK { Offset (id, o, Arm.PreIndexed) }
   | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; COMMA ; o = offset { Offset (id, o, Arm.PostIndexed) }
   ;
 
 offset:
-  | HASH ; i = NUMBER | HASH ; PLUS ; i = NUMBER { OImmediate (Arm.sign_plus, i) }
-  | HASH ; MINUS ; i = NUMBER { OImmediate (Arm.sign_minus, i) }
+  | HASH ; i = number | HASH ; PLUS ; i = number { OImmediate (Arm.sign_plus, i) }
+  | HASH ; MINUS ; i = number { OImmediate (Arm.sign_minus, i) }
   | id = ID | PLUS ; id = ID { ORegister (Arm.sign_plus, id) }
   | MINUS ; id = ID { ORegister (Arm.sign_minus, id) }
+  ;
+
+number:
+  | i = NUMBER { ConstInt32 i }
+  | LEFT_BRACE ; e=meta_expr ; RIGHT_BRACE { MetaExpr e }
   ;

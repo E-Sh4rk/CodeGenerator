@@ -1,17 +1,19 @@
 open Arm
 
+type unprocessed_int32 = ConstInt32 of int32 | MetaExpr of Preprocess.meta_expr
+
 type offset =
-  | OImmediate of Arm.sign * int32
+  | OImmediate of Arm.sign * unprocessed_int32
   | ORegister of Arm.sign * string
 
 type args =
   | Register of string
-  | Immediate of int32
+  | Immediate of unprocessed_int32
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
   | ASM of Lexing.position * string * args list * Optimizer.optimization_setting
-  | BIN of Lexing.position * int32
+  | BIN of Lexing.position * unprocessed_int32
 
 type ast = command list
 
@@ -20,6 +22,11 @@ exception CommandError of Lexing.position
 let int32_of_str str = String.lowercase_ascii str |> Int32.of_string
 
 exception StructError
+
+let preprocess env ui =
+  match ui with
+  | ConstInt32 i -> i
+  | MetaExpr e -> Preprocess.eval_meta_expr env e
 
 let recognize_condition str i =
   let n = String.length str in
@@ -128,53 +135,53 @@ let get_rn args =
   let n = List.length args in
   get_register (List.nth args (n-2))
 
-let get_operand arg =
+let get_operand env arg =
   match arg with
-  | Immediate i -> Arm.Immediate i
+  | Immediate i -> Arm.Immediate (preprocess env i)
   | Register str -> Arm.Register (register_of_str str)
   | _ -> raise StructError
 
-let get_op2 args =
+let get_op2 env args =
   let n = List.length args in
-  get_operand (List.nth args (n-1))
+  get_operand env (List.nth args (n-1))
 
 let get_rs = get_op2
 
-let get_ro args =
+let get_ro env args =
   let n = List.length args in
   match List.nth args (n-1) with
   | Offset (str, offset, addr_typ) -> begin
     let r = register_of_str str in
     let ro = match offset with
-    | OImmediate (sign, i) -> Arm.OImmediate (r, sign, i)
+    | OImmediate (sign, i) -> Arm.OImmediate (r, sign, preprocess env i)
     | ORegister (sign, str) -> Arm.ORegister (r, sign, register_of_str str)
     in
     (ro, addr_typ)
     end
   | _ -> raise StructError
 
-let asm_cmd_to_arm cmd args =
+let asm_cmd_to_arm env cmd args =
   let cmd = String.uppercase_ascii cmd in
   let (cond, typ, s) = recognize_modifiers cmd 3 in
   let cond = match cond with None -> AL | Some c -> c in
   let typ = match typ with None -> W | Some typ -> typ in
 
   try match String.sub cmd 0 3 with
-  | "LDR" -> LDR { typ ; cond ; rd=get_rd args ; ro=get_ro args }
-  | "STR" -> STR { typ ; cond ; rd=get_rd args ; ro=get_ro args }
-  | "MOV" -> MOV { s ; cond ; rd=get_rd args ; rs=get_rs args }
-  | "MVN" -> MVN { s ; cond ; rd=get_rd args ; rs=get_rs args }
-  | "ADC" -> ADC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 args }
-  | "SBC" -> SBC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 args }
-  | "BIC" -> BIC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 args }
+  | "LDR" -> LDR { typ ; cond ; rd=get_rd args ; ro=get_ro env args }
+  | "STR" -> STR { typ ; cond ; rd=get_rd args ; ro=get_ro env args }
+  | "MOV" -> MOV { s ; cond ; rd=get_rd args ; rs=get_rs env args }
+  | "MVN" -> MVN { s ; cond ; rd=get_rd args ; rs=get_rs env args }
+  | "ADC" -> ADC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "SBC" -> SBC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "BIC" -> BIC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | _ -> raise StructError
   with Failure _ | Invalid_argument _ -> raise StructError
 
-let cmd_to_arm cmd =
+let cmd_to_arm env cmd =
   match cmd with
   | ASM (pos, cmd, args, optimize) ->
-    begin try (asm_cmd_to_arm cmd args, optimize)
+    begin try (asm_cmd_to_arm env cmd args, optimize)
     with StructError -> raise (CommandError pos) end
-  | BIN (_, i) -> (Custom i, Optimizer.NoOptimization)
+  | BIN (_, i) -> (Custom (preprocess env i), Optimizer.NoOptimization)
 
-let to_arm ast = List.map cmd_to_arm ast
+let to_arm env ast = List.map (cmd_to_arm env) ast

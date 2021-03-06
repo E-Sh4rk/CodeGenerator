@@ -20,4 +20,5 @@ val get_param : headers -> string -> def_val
 
 val eval_meta_expr : env -> meta_expr -> int32
 
+val empty_env : env
 val env_from_headers : headers -> env

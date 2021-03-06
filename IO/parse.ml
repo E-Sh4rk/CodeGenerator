@@ -23,13 +23,15 @@ let parse_with_error f lexbuf =
       (Format.asprintf "%a: parser error\n" print_lexbuf_pos lexbuf))
 
 let from_lexbuf ~headers lexbuf =
-  let headers =
+  let (headers, env) =
     if headers
-    then parse_with_error (Parser.headers Lexer.read) lexbuf
-    else []
+    then
+      let h = parse_with_error (Parser.headers Lexer.read) lexbuf in
+      (h, Preprocess.env_from_headers h)
+    else ([], Preprocess.empty_env)
   in
   let ast = parse_with_error (Parser.ast Lexer.read) lexbuf in
-  try (headers, Parser_ast.to_arm ast)
+  try (headers, Parser_ast.to_arm env ast)
   with Parser_ast.CommandError pos ->
     raise (InvalidContent
       (Format.asprintf "%a: command error\n" print_position pos)
