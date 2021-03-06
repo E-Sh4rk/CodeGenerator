@@ -48,7 +48,6 @@ rule read = parse
   | "false"   { BOOL false }
   | "<<"      { LSHIFT }
   | ">>"      { RSHIFT }
-  | ":="      { DEFINE }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
   | newline   { next_line lexbuf ; EOL }

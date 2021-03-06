@@ -4,7 +4,6 @@
 %token HEADER
 %token NULL
 %token EQUAL
-%token DEFINE
 %token <string> STRING
 %token <int32> NUMBER
 %token <bool> BOOL
@@ -65,16 +64,16 @@ meta_expr:
   | NOT e = meta_expr { MUnary (ONot, e) }
 
 definition:
-  | id = ID ; EQUAL ; str = STRING { Param (id, HString str) }
-  | id = ID ; EQUAL ; nb = NUMBER { Param (id, HInt nb) }
-  | id = ID ; EQUAL ; b = BOOL { Param (id, HBool b) }
-  | id = ID ; EQUAL ; NULL { Param (id, HNone) }
-  | id = ID ; DEFINE ; e = meta_expr { VarDef (id, e) }
+  | HEADER ; id = ID ; EQUAL ; str = STRING { Param (id, HString str) }
+  | HEADER ; id = ID ; EQUAL ; nb = NUMBER { Param (id, HInt nb) }
+  | HEADER ; id = ID ; EQUAL ; b = BOOL { Param (id, HBool b) }
+  | HEADER ; id = ID ; EQUAL ; NULL { Param (id, HNone) }
+  | id = ID ; EQUAL ; e = meta_expr { VarDef (id, e) }
   ;
 
 headers:
   | list (EOL) ; HEADER ; EOL | list (EOL) ; HEADER ; EOF { [] }
-  | list (EOL) ; HEADER ; d = definition ; EOL ; ds = headers { d::ds }
+  | list (EOL) ; d = definition ; EOL ; ds = headers { d::ds }
   ;
 
 ast:
