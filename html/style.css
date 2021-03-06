@@ -6,6 +6,7 @@ h2 {
 
 select {
     margin: 0px 20px;
+    flex-grow: 1;
 }
 
 textarea {
@@ -48,4 +49,9 @@ input {
     justify-content: center;
     align-items: stretch;
     width: 90%;
+}
+
+.left {
+    max-width:100px;
+    margin-right:0px;
 }
