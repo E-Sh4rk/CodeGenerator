@@ -1,4 +1,4 @@
-@@ title = "WhiteOutENG"
+@@ title = "WhiteOutSPA"
 @@ start = 64
 @@
 
@@ -7,7 +7,7 @@ bic r12,r12, #0xED00000   ;  R12=R12 and notED00000=F12FFF1E
 bic r11,r12, #0x1000000E  ;  R11=R12 and not1000000E=E12FFF10=bx r0 opcpde
 adcs r12,pc, #0x30        ;  R12=PC+30
 str r11, [r12, #0]!       ;  Store bx r0 opcode in [r12]
-adc r12,lr, #0xDC0        ;  R12=LR+DC0
+adc r12,lr, #0xB80        ;  R12=LR+B80
 adc r12,r12, #0xD30000    ;  R12=R12+D30000
 bic r12,r12, #0xC00000    ;  R12=R12 and notC00000
-adc r0,r12, #0xD6         ;  R0=R12+D6=SetCB2WhiteOutENG
+sbc r0,r12, #0xD5         ;  R0=R12-D5-1=SetCB2WhiteOutSPA
