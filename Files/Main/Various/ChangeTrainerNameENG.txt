@@ -1,4 +1,4 @@
-@@ title = "Change trainer name"
+@@ title = "Change trainer name (ENG)"
 @@ author = "E-Sh4rk"
 @@ exit = "ExitCodes/CertificateENG"
 @@
