@@ -32,6 +32,9 @@
 %token EOL
 %token EOF
 
+%nonassoc ARG
+%nonassoc COMMA
+
 %left OR
 %left XOR
 %left AND
@@ -94,7 +97,11 @@ arg:
   | id = ID { Register id }
   | HASH ; i = number | i = number { Immediate i }
   | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK { Offset (id, o, Arm.Offset) }
+  | LEFT_BRACK ; id = ID ; RIGHT_BRACK %prec ARG
+  { Offset (id, OImmediate (Arm.sign_plus, ConstInt32 Int32.zero), Arm.Offset) }
   | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK { Offset (id, o, Arm.PreIndexed) }
+  | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; EXCLAM_MARK
+  { Offset (id, OImmediate (Arm.sign_plus, ConstInt32 Int32.zero), Arm.PreIndexed) }
   | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; COMMA ; o = offset { Offset (id, o, Arm.PostIndexed) }
   ;
 
