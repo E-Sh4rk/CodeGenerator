@@ -7,6 +7,7 @@ val team_items_section_id : int
 val extract_box_names_from_section : Bytes.t -> Bytes.t
 val update_box_names : Bytes.t -> Bytes.t -> unit
 
+val empty_pkmn : unit -> Bytes.t
 val extract_team_from_section : Bytes.t -> Bytes.t list
 val update_team : Bytes.t -> Bytes.t list -> unit
 

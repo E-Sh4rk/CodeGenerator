@@ -33,26 +33,58 @@ let main_team filename =
   close_in inc ;
   let team = Save.extract_team_from_section section in
   Format.printf "Which pokemon do you want to modify? (1-%i)@." (List.length team) ;
+  Format.printf "(write 0 to create a new one at the end)@." ;
   let i = (read_int ()) - 1 in
-  let current = List.nth team i in
 
-  let data = Structure.extract_data current in
-  let offset =
-    Structure.pkmn_from_bytes current |>
-    Structure.species_offset_relative_to_data in
-  let species = Bytes.get_uint16_le data offset in
-  Format.printf "Current species (in hexadecimal): %04X@." species ;
-  Format.printf "Please enter new species (in hexadecimal):@." ;
-  let line = read_line () in
-  let species = Scanf.sscanf line " %X" (fun i -> i) in
-  Bytes.set_uint16_le data offset species ;
-  Structure.update_with_data current data ;
+  if i < 0
+  then begin
+    if List.length team >= 6
+    then Format.printf "Full team, please remove a pokemon before.@."
+    else (
+      let current = Save.empty_pkmn () in
+      let data = Structure.extract_data current in
+      let offset =
+        Structure.pkmn_from_bytes current |>
+        Structure.species_offset_relative_to_data in
+      Format.printf "Please enter new species (in hexadecimal):@." ;
+      let line = read_line () in
+      let species = Scanf.sscanf line " %X" (fun i -> i) in
+      Bytes.set_uint16_le data offset species ;
+      Structure.update_with_data current data ;
+      let team = team@[current] in
+      let oc = open_out_gen [Open_wronly;Open_binary] 0 filename in
+      Save.update_team section team ;
+      Save.write_section oc addr section ;
+      close_out oc ;
+      Format.printf "Save has been successfully modified.@."
+    )
+  end else begin
+    let current = List.nth team i in
 
-  let oc = open_out_gen [Open_wronly;Open_binary] 0 filename in
-  Save.update_team section team ;
-  Save.write_section oc addr section ;
-  close_out oc ;
-  Format.printf "Save has been successfully modified.@."
+    let data = Structure.extract_data current in
+    let offset =
+      Structure.pkmn_from_bytes current |>
+      Structure.species_offset_relative_to_data in
+    let species = Bytes.get_uint16_le data offset in
+    Format.printf "Current species (in hexadecimal): %04X@." species ;
+    Format.printf "Please enter new species (in hexadecimal, blank to remove):@." ;
+    let line = read_line () in
+    let team =
+      if String.equal (String.trim line) ""
+      then
+        List.filteri (fun j _ -> j <> i) team
+      else
+        let species = Scanf.sscanf line " %X" (fun i -> i) in
+        Bytes.set_uint16_le data offset species ;
+        Structure.update_with_data current data ;
+        team
+    in
+    let oc = open_out_gen [Open_wronly;Open_binary] 0 filename in
+    Save.update_team section team ;
+    Save.write_section oc addr section ;
+    close_out oc ;
+    Format.printf "Save has been successfully modified.@."
+  end
 
 let () =
   let filenames = IO_utils.enumerate_files (Sys.getcwd ()) ".sav" in

@@ -79,6 +79,9 @@ let update_box_names buf box_names =
 
 (* ----- TEAM ----- *)
 
+let empty_pkmn () =
+  Bytes.create pkmn_data_size
+
 let extract_team_from_section buf =
   let nb = Bytes.get_int32_le buf team_size_offset |> Name.int32_to_int in
   let rec extract_pkmns acc i =
