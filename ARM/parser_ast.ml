@@ -19,11 +19,18 @@ type ast = command list
 
 exception CommandError of Lexing.position
 
-let int32_of_str str =
+let uint32_of_str str =
   let str = String.lowercase_ascii str in
+  (* Issue with js_of_ocaml... *)
+  (*
   if Str.string_match (Str.regexp "[0-9]+$") str 0
   then Int32.of_string ("0u"^str)
   else Int32.of_string str
+  *)
+  let i64 = Int64.of_string str in
+  if Int64.logand 0xFFFFFFFF00000000L i64 |> Int64.equal Int64.zero
+  then Int64.to_int32 i64
+  else raise (Failure "Not a valid int32.")
 
 exception StructError
 

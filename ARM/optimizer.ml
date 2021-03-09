@@ -59,7 +59,8 @@ let rec remove_while f lst =
   | i'::lst when f i' -> remove_while f lst
   | lst -> lst
 
-(*let int64_of_uint32 x = Int64.of_string (Int32.to_string x)*)
+let int64_of_uint32 x =
+  Int64.of_int32 x |> Int64.logand 0xFFFFFFFFL
 
 let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = tries_at_depth_0 in
@@ -73,13 +74,14 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
       let depth = List.length acc in
       if depth >= max_card then None
       else
-        let rem_depth = max_card - depth |> of_int in
+        let rem_depth = max_card - depth |> Int64.of_int in
+        let i64 = int64_of_uint32 i in
         let ii = if incr then pred i else i in
         match remove ii rc with
         | [] -> None
-        | fst::_ when unsigned_compare (* Optimisation *)
-                        (unsigned_div i rem_depth)
-                        (if incr then succ fst else fst) > 0 -> None
+        | fst::_ when Int64.unsigned_compare (* Optimisation *)
+                        (Int64.mul ((if incr then succ fst else fst)
+                        |> int64_of_uint32) rem_depth) i64 < 0 -> None
         | fst::rc ->
           let remainder = sub ii fst in
           begin match aux 0 (fst::acc) (fst::rc) remainder with

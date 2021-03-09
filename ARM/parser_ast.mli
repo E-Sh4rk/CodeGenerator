@@ -18,5 +18,5 @@ type ast = command list
 
 exception CommandError of Lexing.position
 
-val int32_of_str : string -> int32
+val uint32_of_str : string -> int32
 val to_arm : Preprocess.env -> ast -> (Arm.arm * Optimizer.optimization_setting) list
