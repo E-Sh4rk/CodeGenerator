@@ -15,7 +15,7 @@ type headers = definition list
 
 module StrMap = Map.Make(String)
 type env = int32 StrMap.t
-exception VarNotFound
+exception VarNotFound of string
 
 let get_param headers name =
   let rec aux lst =
@@ -53,7 +53,7 @@ let eval_meta_expr env e =
     | MVar str ->
       if StrMap.mem str env
       then StrMap.find str env
-      else raise VarNotFound
+      else raise (VarNotFound str)
     | MUnary (op, e) ->
       let i = aux e in
       eval_unary op i

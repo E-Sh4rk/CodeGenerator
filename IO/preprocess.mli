@@ -14,7 +14,7 @@ type definition = Param of string * def_val | VarDef of string * meta_expr
 type headers = definition list
 
 type env
-exception VarNotFound
+exception VarNotFound of string
 
 val get_param : headers -> string -> def_val
 

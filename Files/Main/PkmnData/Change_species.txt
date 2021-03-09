@@ -1,0 +1,25 @@
+@@ title = "Change species"
+@@ exit = "CertificateENG"
+
+pid = 0
+otid = 0
+cur_species = 0
+new_species = 0x40ED
+growth_substructure_position = 0  ; 0, 1, 2 or 3
+
+key = pid ^ otid
+encoded_species = new_species ^ key
+offset = 32 + 12*growth_substructure_position
+
+@@
+
+; The Pokemon must be located in Box 10 Slot 19.
+; Use the Alter_checksum code directly after this one
+; (without looking at the box 10, or the Pokemon will be turned into a bad egg).
+; The value for checksum_diff is: new_species - cur_species (can be negative).
+
+sbc r11, r15, #0x2940   ; r11 = &Box10Slot19 + 7 (on emulator)
+
+movs r12, {encoded_species} ?
+movs r0, {offset-7} ? ; Use -9 instead of -7 on console
+strh r12, [r11, r0]!
