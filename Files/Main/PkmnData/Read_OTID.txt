@@ -3,7 +3,7 @@
 @@
 
 ; Store the Original Trainer ID of the second pokemon in the team in its attack and defense stats
-; PID=attack + defense*(2^16)
+; OTID=attack + defense*(2^16)
 
 ; movs r12, #0x20244ec ? ; r12=Pokemon_party
 MOVS r12, #0xee0000

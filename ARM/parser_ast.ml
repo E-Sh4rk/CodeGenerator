@@ -19,7 +19,11 @@ type ast = command list
 
 exception CommandError of Lexing.position
 
-let int32_of_str str = String.lowercase_ascii str |> Int32.of_string
+let int32_of_str str =
+  let str = String.lowercase_ascii str in
+  if Str.string_match (Str.regexp "[0-9]+$") str 0
+  then Int32.of_string ("0u"^str)
+  else Int32.of_string str
 
 exception StructError
 

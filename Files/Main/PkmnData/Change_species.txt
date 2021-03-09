@@ -8,7 +8,7 @@ new_species = 0x40ED
 growth_substructure_position = 0  ; 0, 1, 2 or 3
 
 key = pid ^ otid
-encoded_species = new_species ^ key
+encoded_species = (new_species ^ key) & 0xFFFF
 offset = 32 + 12*growth_substructure_position
 
 @@
