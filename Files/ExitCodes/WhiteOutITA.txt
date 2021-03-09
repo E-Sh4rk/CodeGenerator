@@ -1,4 +1,4 @@
-@@ title = "WhiteOutITA"
+@@ filename = "WhiteOutITA"
 @@ start = 64
 @@
 

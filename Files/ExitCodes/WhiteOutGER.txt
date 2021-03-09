@@ -1,4 +1,4 @@
-@@ title = "WhiteOutGER"
+@@ filename = "WhiteOutGER"
 @@ start = 64
 @@
 

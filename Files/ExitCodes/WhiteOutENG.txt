@@ -1,4 +1,4 @@
-@@ title = "WhiteOutENG"
+@@ filename = "WhiteOutENG"
 @@ start = 64
 @@
 

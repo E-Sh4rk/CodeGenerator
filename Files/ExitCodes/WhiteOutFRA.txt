@@ -1,4 +1,4 @@
-@@ title = "WhiteOutFRA"
+@@ filename = "WhiteOutFRA"
 @@ start = 64
 @@
 

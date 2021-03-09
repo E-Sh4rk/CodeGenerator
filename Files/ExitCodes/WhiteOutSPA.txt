@@ -1,4 +1,4 @@
-@@ title = "WhiteOutSPA"
+@@ filename = "WhiteOutSPA"
 @@ start = 64
 @@
 
