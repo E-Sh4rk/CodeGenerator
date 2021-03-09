@@ -5,7 +5,7 @@ h2 {
 }
 
 select {
-    margin: 0px 20px;
+    margin: 10px 20px 0px 20px;
     flex-grow: 1;
 }
 
@@ -13,7 +13,7 @@ textarea {
     font-family: 'Courier New', monospace;
     margin: 10px 20px;
     height: 100%;
-    min-height: 300px;
+    min-height: 500px;
 }
 
 button {
@@ -27,7 +27,7 @@ button {
 }
 
 #output {
-    min-height: 500px;
+    min-height: 600px;
 }
 
 input {
@@ -55,3 +55,22 @@ input {
     max-width:100px;
     margin-right:0px;
 }
+
+/* ===== TABS ===== */
+
+  .tablinks {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+  }
+  
+  .tablinks-active {
+    cursor: default;
+    color: black;
+    text-decoration: none;
+  }
+
+  .tabcontent {
+    display: none;
+  }
+

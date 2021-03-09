@@ -9,8 +9,10 @@
   </head>
   <body>
     <div class="row">
-      <div class="column">
-        <h2>Main code</h2>
+      <div id="mainTab" class="column tabcontent-active">
+        <h2><a class="tablinks-active">Main code</a> /
+            <a class="tablinks" onclick="openTab(event,'secondaryTab');">Exit codes</a></h2>
+        
         <div class="row">
           <select id="lang" class="left">
             <option value="eng">English</option>
@@ -23,14 +25,20 @@
             <option value='' selected>----------</option>
           </select>
         </div>
-        <textarea id="main"></textarea>
+        <textarea id="main" spellcheck="false"></textarea>
         <button id="compute" type="button">Compute</button>
-        <h2>Exit codes</h2>
-        <textarea id="secondary"></textarea>
       </div>
+
+      <div id="secondaryTab" class="column tabcontent">
+        <h2><a class="tablinks" onclick="openTab(event,'mainTab');">Main code</a> /
+            <a class="tablinks-active">Exit codes</a></h2>
+
+        <textarea id="secondary" spellcheck="false"></textarea>
+      </div>
+      
       <div class="column">
         <h2>Result</h2>
-        <textarea id="output" readonly></textarea>
+        <textarea id="output" spellcheck="false" readonly></textarea>
       </div>
     </div>
   </body>

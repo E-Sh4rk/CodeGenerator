@@ -91,3 +91,12 @@ window.addEventListener ("load", () => {
         fileToField(empty_path, code, () => {loadExamples(null);});
     });
 });
+
+/* ===== TABS ===== */
+
+function openTab(_, id) {
+    let active = document.getElementsByClassName("tabcontent-active")[0];
+    active.className = active.className.replace("tabcontent-active", "tabcontent");
+    let target = document.getElementById(id);
+    target.className = target.className.replace("tabcontent", "tabcontent-active");
+}
