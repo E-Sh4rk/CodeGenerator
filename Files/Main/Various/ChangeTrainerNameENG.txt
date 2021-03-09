@@ -1,14 +1,17 @@
 @@ title = "Change trainer name (ENG)"
 @@ author = "E-Sh4rk"
-@@ exit = "ExitCodes/CertificateENG"
+@@ exit = "CertificateENG"
+
+letter1 = 0
+letter2 = 0
+letter3 = 0
+letter4 = 0
+start   = 0 ; 0 for characters 1-4, 1 for characters 5-8, 2 for characters 9-10
+
+le_encoding = letter1 | (letter2 << 8) | (letter3 << 16) | (letter4 << 24)
+offset = 0xD0F8 + 8 - start*4
 @@
 
-; Code for changing characters 1-4 of the trainer name
-
-; Player name is D0F8 bytes before first box name
-sbc r11,pc,#0xD0FF     ?  ; Change to 0xD0FB for changing the characters 5-8, 0xD0F7 for 9-12
-
-movs r12, #0x000000FF  ?  ; Change to the characters wanted (encoded in little-endian)
-
+sbc r11,pc, {offset-1}   ?
+movs r12, {le_encoding}  ?
 str r12, [r11, #0]!
-

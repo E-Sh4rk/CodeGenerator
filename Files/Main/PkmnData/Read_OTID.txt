@@ -1,4 +1,4 @@
-@@ title = "Read OTID"
+@@ title = "Read OTID (ENG)"
 @@ exit = "CertificateENG"
 @@
 

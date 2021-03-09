@@ -1,10 +1,11 @@
 @@ title = "Change species"
+@@ author = "E-Sh4rk"
 @@ exit = "CertificateENG"
 
 pid = 0
 otid = 0
 cur_species = 0
-new_species = 0x40ED
+new_species = 0
 growth_substructure_position = 0  ; 0, 1, 2 or 3
 
 key = pid ^ otid
@@ -18,8 +19,8 @@ offset = 32 + 12*growth_substructure_position
 ; (without looking at the box 10, or the Pokemon will be turned into a bad egg).
 ; The value for checksum_diff is: new_species - cur_species (can be negative).
 
-sbc r11, r15, #0x2940   ; r11 = &Box10Slot19 + 7 (on emulator)
+sbc r11, r15, #0x2940          ; r11 = &Box10Slot19 + 7 (on emulator)
 
 movs r12, {encoded_species} ?
-movs r0, {offset-7} ? ; Use -9 instead of -7 on console
+movs r0, {offset-7} ?          ; Replace -7 by -9 on console
 strh r12, [r11, r0]!
