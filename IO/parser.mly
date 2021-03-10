@@ -32,6 +32,8 @@
 %token NOT
 %token EQ
 %token NEQ
+%token BOR
+%token BAND
 %token EOL
 %token EOF
 
@@ -39,6 +41,8 @@
 %nonassoc COMMA
 
 %right INTERROG_MARK COLON
+%left BOR
+%left BAND
 %left OR
 %left XOR
 %left AND
@@ -46,7 +50,7 @@
 %left LSHIFT RSHIFT
 %left PLUS MINUS
 %left TIMES DIV MOD
-%nonassoc NOT UPLUS UMINUS
+%nonassoc EXCLAM_MARK NOT UPLUS UMINUS
 
 %start <Parser_ast.ast> ast
 %start <Preprocess.headers> headers
@@ -64,6 +68,8 @@ meta_expr:
   | e1 = meta_expr AND e2 = meta_expr { MBinary (OAnd, e1, e2) }
   | e1 = meta_expr XOR e2 = meta_expr { MBinary (OXor, e1, e2) }
   | e1 = meta_expr OR e2 = meta_expr { MBinary (OOr, e1, e2) }
+  | e1 = meta_expr BOR e2 = meta_expr { MBinary (OBOr, e1, e2) }
+  | e1 = meta_expr BAND e2 = meta_expr { MBinary (OBAnd, e1, e2) }
   | e1 = meta_expr EQ e2 = meta_expr { MBinary (OEq, e1, e2) }
   | e1 = meta_expr NEQ e2 = meta_expr { MBinary (ONeq, e1, e2) }
   | e1 = meta_expr LSHIFT e2 = meta_expr { MBinary (OLShift, e1, e2) }
@@ -71,6 +77,7 @@ meta_expr:
   | PLUS e = meta_expr %prec UPLUS { MUnary (OId, e) }
   | MINUS e = meta_expr %prec UMINUS { MUnary (ONeg, e) }
   | NOT e = meta_expr { MUnary (ONot, e) }
+  | EXCLAM_MARK e = meta_expr { MUnary (OBNot, e) }
   | e0 = meta_expr INTERROG_MARK e1 = meta_expr COLON e2 = meta_expr
   { MCond (e0, e1, e2) }
 

@@ -50,6 +50,8 @@ rule read = parse
   | ">>"      { RSHIFT }
   | "=="      { EQ }
   | "!="      { NEQ }
+  | "||"      { BOR }
+  | "&&"      { BAND }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
   | '\\' newline { next_line lexbuf ; read lexbuf }

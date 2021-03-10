@@ -1,8 +1,8 @@
 
-type unop = OId | ONeg | ONot
+type unop = OId | ONeg | ONot | OBNot
 type binop = OAdd | OSub | OMul | ODiv | OMod
            | OAnd | OXor | OOr | OLShift | ORShift
-           | OEq | ONeq
+           | OEq | ONeq | OBOr | OBAnd
 
 type meta_expr =
   | MConst of int32

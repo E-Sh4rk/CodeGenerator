@@ -1,8 +1,8 @@
 
-type unop = OId | ONeg | ONot
+type unop = OId | ONeg | ONot | OBNot
 type binop = OAdd | OSub | OMul | ODiv | OMod
            | OAnd | OXor | OOr | OLShift | ORShift
-           | OEq | ONeq
+           | OEq | ONeq | OBOr | OBAnd
 
 type meta_expr =
   | MConst of int32
@@ -34,6 +34,7 @@ let eval_unary op i =
   | OId -> i
   | ONeg -> Int32.neg i
   | ONot -> Int32.lognot i
+  | OBNot -> if Int32.equal i Int32.zero then Int32.one else Int32.zero
 
 let eval_binary op i1 i2 =
   match op with
@@ -47,8 +48,14 @@ let eval_binary op i1 i2 =
   | OOr -> Int32.logor i1 i2
   | OLShift -> Int32.shift_left i1 (Name.int32_to_int i2)
   | ORShift -> Int32.shift_right_logical i1 (Name.int32_to_int i2)
-  | OEq -> if Int32.equal i1 i2 then Int32.lognot Int32.zero else Int32.zero
-  | ONeq -> if Int32.equal i1 i2 then Int32.zero else Int32.lognot Int32.zero
+  | OEq -> if Int32.equal i1 i2 then Int32.one else Int32.zero
+  | ONeq -> if Int32.equal i1 i2 then Int32.zero else Int32.one
+  | OBOr ->
+    if Int32.equal i1 Int32.zero && Int32.equal i2 Int32.zero
+    then Int32.zero else Int32.one
+  | OBAnd ->
+    if Int32.equal i1 Int32.zero || Int32.equal i2 Int32.zero
+    then Int32.zero else Int32.one
 
 let eval_meta_expr env e =
   let rec aux e =
