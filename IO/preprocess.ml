@@ -2,12 +2,14 @@
 type unop = OId | ONeg | ONot
 type binop = OAdd | OSub | OMul | ODiv | OMod
            | OAnd | OXor | OOr | OLShift | ORShift
+           | OEq | ONeq
 
 type meta_expr =
   | MConst of int32
   | MBinary of binop * meta_expr * meta_expr
   | MUnary of unop * meta_expr
   | MVar of string
+  | MCond of meta_expr * meta_expr * meta_expr
 
 type def_val = HNone | HString of string | HInt of int32 | HBool of bool
 type definition = Param of string * def_val | VarDef of string * meta_expr
@@ -45,6 +47,8 @@ let eval_binary op i1 i2 =
   | OOr -> Int32.logor i1 i2
   | OLShift -> Int32.shift_left i1 (Name.int32_to_int i2)
   | ORShift -> Int32.shift_right_logical i1 (Name.int32_to_int i2)
+  | OEq -> if Int32.equal i1 i2 then Int32.one else Int32.zero
+  | ONeq -> if Int32.equal i1 i2 then Int32.zero else Int32.one
 
 let eval_meta_expr env e =
   let rec aux e =
@@ -60,6 +64,9 @@ let eval_meta_expr env e =
     | MBinary (op, e1, e2) ->
       let i1 = aux e1 and i2 = aux e2 in
       eval_binary op i1 i2
+    | MCond (e0, e1, e2) ->
+      let i0 = aux e0 in
+      if Int32.equal i0 Int32.zero then aux e2 else aux e1
   in
   aux e
 

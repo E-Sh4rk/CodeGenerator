@@ -48,8 +48,11 @@ rule read = parse
   | "false"   { BOOL false }
   | "<<"      { LSHIFT }
   | ">>"      { RSHIFT }
+  | "=="      { EQ }
+  | "!="      { NEQ }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
+  | '\\' newline { next_line lexbuf ; read lexbuf }
   | newline   { next_line lexbuf ; EOL }
   | number    { NUMBER (Parser_ast.uint32_of_str (Lexing.lexeme lexbuf)) }
   | id        { ID (Lexing.lexeme lexbuf) }
@@ -63,6 +66,7 @@ rule read = parse
   | ','       { COMMA }
   | '!'       { EXCLAM_MARK }
   | '?'       { INTERROG_MARK }
+  | ':'       { COLON }
   | '('       { LPAREN }
   | ')'       { RPAREN }
   | '+'       { PLUS }

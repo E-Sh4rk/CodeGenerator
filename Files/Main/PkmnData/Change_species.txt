@@ -6,8 +6,15 @@ pid = 0
 otid = 0
 cur_species = 0
 new_species = 0
-growth_substructure_position = 0  ; 0, 1, 2 or 3
 
+pmod = pid % 24
+growth_substructure_position = \
+    pmod == 0  | pmod == 1  | pmod == 2  | pmod == 3  | \
+    pmod == 4  | pmod == 5 ? 0 : \
+    pmod == 6  | pmod == 7  | pmod == 12 | pmod == 13 | \
+    pmod == 18 | pmod == 19 ? 1 : \
+    pmod == 8  | pmod == 10 | pmod == 14 | pmod == 16 | \
+    pmod == 20 | pmod == 22 ? 2 : 3
 key = pid ^ otid
 encoded_species = (new_species ^ key) & 0xFFFF
 offset = 32 + 12*growth_substructure_position
