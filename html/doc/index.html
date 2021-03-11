@@ -98,9 +98,10 @@
 
       <p>Due to the ARM restrictions and the charset restrictions, not all immediate values can be used in commands such as MOV or ADC.
       In order to help you to write codes and to allow automation, you can ask the code generator to automatically tweak an ADC, SBC, MOV or MVN command
-      (not available for BIC, STR and LDR commands) into multiple commands that are writable (when it is possible). It can take up to 5 commands instead of 1. In order to use this feature,
+      (not available for BIC, STR and LDR commands) into multiple commands that are writable (when it is possible). It will search a solution in up to 5 commands. In order to use this feature,
       just add a <code>?</code> (interrogation mark) at the end of the command that should be tweaked. You can also specify a number just after
-      (for instance <code>?4</code>) if you want to force the result to use a fixed number of commands.</p>
+      (for instance <code>?4</code>) if you want to force the result to use a fixed number of commands. Note that using the register <code>r12</code> usually gives best results
+      (it makes more constants to be writable).</p>
 
       <h2>Exit codes</h2>
 

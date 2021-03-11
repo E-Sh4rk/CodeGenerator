@@ -68,26 +68,29 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = if tad0_len < max_card then tad0.(tad0_len-1) else tad0.(max_card-1) in
 
   let remove = (fun i -> remove_while (fun j -> unsigned_compare i j < 0)) in
-  let rec aux try_nb acc rc i =
-    if equal i zero then Some acc
-    else
-      let depth = List.length acc in
-      if depth >= max_card then None
+  let rec next acc rc i =
+    let rec aux try_nb rc =
+      if equal i zero then Some acc
       else
-        let rem_depth = max_card - depth |> Int64.of_int in
-        let i64 = int64_of_uint32 i in
-        let ii = if incr then pred i else i in
-        match remove ii rc with
-        | [] -> None
-        | fst::_ when Int64.unsigned_compare (* Optimisation *)
-                        (Int64.mul ((if incr then succ fst else fst)
-                        |> int64_of_uint32) rem_depth) i64 < 0 -> None
-        | fst::rc ->
-          let remainder = sub ii fst in
-          begin match aux 0 (fst::acc) (fst::rc) remainder with
-          | None -> aux (try_nb+1) acc rc i
-          | Some res -> Some res
-          end
+        let depth = List.length acc in
+        if depth >= max_card then None
+        else
+          let rem_depth = max_card - depth |> Int64.of_int in
+          let i64 = int64_of_uint32 i in
+          let ii = if incr then pred i else i in
+          match remove ii rc with
+          | [] -> None
+          | fst::_ when Int64.unsigned_compare (* Optimisation *)
+                          (Int64.mul ((if incr then succ fst else fst)
+                          |> int64_of_uint32) rem_depth) i64 < 0 -> None
+          | fst::rc ->
+            let remainder = sub ii fst in
+            begin match next (fst::acc) (fst::rc) remainder with
+            | None -> aux (try_nb+1) rc
+            | Some res -> Some res
+            end
+    in
+    aux 0 rc
   in
 
   let filtered_rev_constants = List.filter is_valid rev_constants in
@@ -96,14 +99,14 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
     else (fun i -> remove_while (fun j -> unsigned_compare i j > 0))
   in
   let op_init = if additive then sub else (fun x y -> sub y x) in
-  let rec init try_nb rc i =
+  let rec init try_nb rc =
     if try_nb >= tad0 then None
     else match remove_init i rc with
     | [] -> None
     | fst::rc ->
       let remainder = op_init i fst in
-      begin match aux 0 [fst] filtered_rev_constants remainder with
-      | None -> init (try_nb+1) rc i
+      begin match next [fst] filtered_rev_constants remainder with
+      | None -> init (try_nb+1) rc
       | Some res -> Some res
       end
   in
@@ -114,7 +117,7 @@ let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
     else (if mov_mvn then constants_mov_mvn else constants)
   in
   let init_rc = List.filter is_valid_fst init_rc in
-  init 0 init_rc i |>
+  init 0 init_rc |>
   (function None -> None | Some lst -> Some (List.rev lst))
 
 let synthesis_optimal ~mov_mvn ~inv max_card i is_valid_fst is_valid =
