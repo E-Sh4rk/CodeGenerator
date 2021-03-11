@@ -10,7 +10,7 @@ select {
 }
 
 textarea {
-    font-family: 'Courier New', monospace;
+    font-family: 'Consolas', 'Courier New', 'monospace';
     margin: 10px 20px;
     height: 100%;
     min-height: 500px;
