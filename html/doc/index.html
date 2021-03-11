@@ -65,9 +65,9 @@
 
       <p><code>meta_expr</code> must be an expression that evaluates to an int32:</p>
       <ul>
-        <li>It can be an integer (in decimal by default, use the prefix <code>0x</code>/<code>0b</code>/<code>0o</code> for hexadecimal/binary/octal)</li>
-        <li>It can be a constant defined earlier</li>
-        <li>It can use the following operators (same semantics as in C for unsigned integers): <code>+ - * / % ~ & ^ | &lt;&lt; &gt;&gt; == != && || !</code></li>
+        <li>It can be a constant int32 (in decimal by default, use the prefix <code>0x</code>/<code>0b</code>/<code>0o</code> for hexadecimal/binary/octal)</li>
+        <li>It can be a constant name previously defined</li>
+        <li>It can use the following operators (same semantics as in C for unsigned int32): <code>+ - * / % ~ & ^ | &lt;&lt; &gt;&gt; == != && || !</code></li>
         <li>It can be a C-like conditional expression: <code>meta_expr ? meta_expr : meta_expr</code> (the <i>else</i> branch is taken iff the tested expression
             evaluates to zero)</li>
       </ul>
@@ -101,7 +101,7 @@
       (not available for BIC, STR and LDR commands) into multiple commands that are writable (when it is possible). It will search a solution in up to 5 commands. In order to use this feature,
       just add a <code>?</code> (interrogation mark) at the end of the command that should be tweaked. You can also specify a number just after
       (for instance <code>?4</code>) if you want to force the result to use a fixed number of commands. Note that using the register <code>r12</code> usually gives best results
-      (it makes more constants to be writable).</p>
+      (it makes more constants to be writable). Also note that the ARM tweaker assumes that the carry flag in CPSR is unset.</p>
 
       <h2>Exit codes</h2>
 
