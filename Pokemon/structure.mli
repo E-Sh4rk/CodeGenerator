@@ -3,7 +3,6 @@ type pokemon = { pid:int32 ; otid:int32 }
 
 val int32_from_low_high : int32 -> int32 -> int32
 val int32_to_low_high : int32 -> int32 * int32
-val tid_from_vid_sid : int32 -> int32 -> int32
 
 val pkmn_from_bytes : Bytes.t -> pokemon
 

@@ -1,5 +1,5 @@
 
-val nop_sequences : (int list) array
+val default_fillers : (int list) array
 
 val fit_codes_into_boxes :
   ?fillers:((int list) array) ->

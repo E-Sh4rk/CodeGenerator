@@ -1,5 +1,5 @@
 
-let nop_sequences =
+let default_fillers =
   [|
     [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
     [0x00 ; 0xFF ; 0x00 ; 0x00](* 0000FF00 *) ;
@@ -69,7 +69,7 @@ let modulo x y =
   if result >= 0 then result
   else result + y
 
-let fit_codes_into_boxes ?(fillers=nop_sequences) ?(start=0) ?(exit=None) codes =
+let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
   (* Main code *)
   let padding = pad_nb fillers 0 start in
   let res = add_codes_after fillers padding codes in

@@ -3,10 +3,10 @@ open Arm
 
 exception CannotOptimize
 
-type optimization_setting =
-  | NoOptimization
-  | FixedLength of int
-  | VariableLength
+type tweaking_settings =
+  | NoTweaking
+  | TweakFixedLength of int
+  | TweakMinLength
 
 module UInt32 = struct
   type t = int32
@@ -27,7 +27,7 @@ let compute_all_constants _ =
   in
   let immed8 = all_immed8 (of_int 255) [] zero in
   let immed8 = immed8 |> List.filter (fun i ->
-    Name.is_code_writable [Name.int32_to_int i]
+    Name.is_code_writable [Utils.uint32_to_int i]
   ) in
   let rec all_rotations initial acc i =
     let i = Arm.rotate_right i |> Arm.rotate_right in
@@ -147,7 +147,7 @@ let is_command_valid arm =
     List.exists (fun i -> Name.codes_for_command i |> Name.is_code_writable)
   ) with InvalidCommand -> false
 
-let fix_mov_or_mvn is_mov s cond rd rs max_card =
+let tweak_mov_or_mvn is_mov s cond rd rs max_card =
   let cmd = if is_mov then MOV {s;cond;rd;rs} else MVN {s;cond;rd;rs} in
   match rs with
   | Register _ -> [cmd]
@@ -178,7 +178,7 @@ let fix_mov_or_mvn is_mov s cond rd rs max_card =
     | _ -> assert false
     end
 
-let fix_adc_or_sbc is_adc s cond rd rn op2 max_card =
+let tweak_adc_or_sbc is_adc s cond rd rn op2 max_card =
   let cmd = if is_adc then ADC {s;cond;rd;rn;op2} else SBC {s;cond;rd;rn;op2} in
   match op2 with
   | Register _ -> [cmd]
@@ -203,14 +203,14 @@ let fix_adc_or_sbc is_adc s cond rd rn op2 max_card =
     | _ -> assert false
     end
 
-let fix_command (arm, optimize) =
+let tweak_command (arm, optimize) =
   let optimize_with_card arm n pad =
     let res =
       match arm with
-      | MOV {s;cond;rd;rs} -> fix_mov_or_mvn true s cond rd rs n
-      | MVN {s;cond;rd;rs} -> fix_mov_or_mvn false s cond rd rs n
-      | ADC {s;cond;rd;rn;op2} -> fix_adc_or_sbc true s cond rd rn op2 n
-      | SBC {s;cond;rd;rn;op2} -> fix_adc_or_sbc false s cond rd rn op2 n
+      | MOV {s;cond;rd;rs} -> tweak_mov_or_mvn true s cond rd rs n
+      | MVN {s;cond;rd;rs} -> tweak_mov_or_mvn false s cond rd rs n
+      | ADC {s;cond;rd;rn;op2} -> tweak_adc_or_sbc true s cond rd rn op2 n
+      | SBC {s;cond;rd;rn;op2} -> tweak_adc_or_sbc false s cond rd rn op2 n
       | _ -> [arm]
     in
     if pad
@@ -220,14 +220,14 @@ let fix_command (arm, optimize) =
     else res
   in
   match optimize with
-  | NoOptimization -> [arm]
-  | VariableLength -> optimize_with_card arm 5 false
-  | FixedLength card -> optimize_with_card arm card true
+  | NoTweaking -> [arm]
+  | TweakMinLength -> optimize_with_card arm 5 false
+  | TweakFixedLength card -> optimize_with_card arm card true
 
-let fix_arm lst =
-  lst |> List.map fix_command |> List.flatten
+let tweak_arm lst =
+  lst |> List.map tweak_command |> List.flatten
 
-let do_not_fix_arm lst =
+let do_not_tweak_arm lst =
   lst |> List.map (fun (arm, optimize) ->
-    if optimize <> NoOptimization then raise CannotOptimize else arm
+    if optimize <> NoTweaking then raise CannotOptimize else arm
   )

@@ -3,7 +3,7 @@ type t = ((int * ((int list) list)) list) * (((int list) list) option)
 
 let load_from_dir dirname =
   try (
-    IO_utils.enumerate_files dirname ".txt"
+    Utils.enumerate_files dirname ".txt"
     |> List.map (fun x ->
       let path = Filename.concat dirname x in
       let str = Filename.basename x |> Filename.remove_extension in
@@ -34,7 +34,7 @@ let load_from_parsed_file (h, arm) =
     )
   in
   match Preprocess.get_param h "start" with
-  | HInt i -> ([(Name.int32_to_int i, codes)], None)
+  | HInt i -> ([(Utils.uint32_to_int i, codes)], None)
   | HNone -> ([], Some codes)
   | _ -> failwith "Exit code has invalid headers."
 

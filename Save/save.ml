@@ -64,7 +64,7 @@ let compute_checksum buf start len =
   let high = Int32.shift_right_logical sum 16 in
   let low = Int32.logand sum mask16 in
   let res = Int32.add high low in
-  Int32.logand res mask16 |> Name.int32_to_int
+  Int32.logand res mask16 |> Utils.uint32_to_int
 
 (* ----- BOX NAMES ----- *)
 
@@ -83,7 +83,7 @@ let empty_pkmn () =
   Bytes.create pkmn_data_size
 
 let extract_team_from_section buf =
-  let nb = Bytes.get_int32_le buf team_size_offset |> Name.int32_to_int in
+  let nb = Bytes.get_int32_le buf team_size_offset |> Utils.uint32_to_int in
   let rec extract_pkmns acc i =
     if i < 0 then acc
     else (

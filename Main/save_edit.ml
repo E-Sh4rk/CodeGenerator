@@ -87,7 +87,7 @@ let main_team filename =
   end
 
 let () =
-  let filenames = IO_utils.enumerate_files (Sys.getcwd ()) ".sav" in
+  let filenames = Utils.enumerate_files (Sys.getcwd ()) ".sav" in
   filenames |> List.iteri (fun i str -> Format.printf "%i. %s@." i str) ;
   Format.printf "Your choice: @?" ;
   let filename = List.nth filenames (read_int ()) in

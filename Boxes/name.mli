@@ -1,6 +1,5 @@
 
 val eof : int
-val int32_to_int : int32 -> int
 
 val codes_for_command : int32 -> int list (* Bytes are reversed *)
 val command_for_codes : int list -> int32 (* Bytes are reversed *)

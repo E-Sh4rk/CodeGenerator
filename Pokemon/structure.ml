@@ -11,8 +11,6 @@ let int32_to_low_high i =
   let h = shift_right_logical i 16 in
   (l, h)
 
-let tid_from_vid_sid = int32_from_low_high
-
 let data_offset = 32
 let substructure_size = 12
 let data_size = substructure_size * 4
@@ -35,7 +33,7 @@ let pkmn_from_bytes buf =
   { pid ; otid }
 
 let substructure_position { pid ; _ } ss =
-  let i = unsigned_rem pid (of_int 24) |> Name.int32_to_int in
+  let i = unsigned_rem pid (of_int 24) |> Utils.uint32_to_int in
   let order = substructures_order.(i) in
   let rec aux i =
     if order.[i] = ss then i else aux (i+1)
@@ -90,7 +88,7 @@ let compute_checksum buf start len =
   in
   let sum = aux Int32.zero start in
   let low = Int32.logand sum mask16 in
-  low |> Name.int32_to_int
+  low |> Utils.uint32_to_int
 
 let update_with_data buf data =
   let pkmn = pkmn_from_bytes buf in

@@ -24,14 +24,14 @@ let main fmt (headers, parsed) exit =
   let start =
     match Preprocess.get_param headers "start" with
     | HNone -> 0
-    | HInt i -> Name.int32_to_int i
+    | HInt i -> Utils.uint32_to_int i
     | _ -> failwith "Invalid headers."
   in
   let fillers =
     Array.init 4 (fun n ->
       let header_name = Format.sprintf "filler%n" (n+1) in
       match Preprocess.get_param headers header_name with
-      | HNone -> Boxes.nop_sequences.(n)
+      | HNone -> Boxes.default_fillers.(n)
       | HInt i ->
         let codes = Name.codes_for_command i in
         if List.nth codes n <> Name.eof then failwith "Invalid filler." ;

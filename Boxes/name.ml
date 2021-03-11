@@ -1,13 +1,11 @@
 open Int32
 open Charset
+open Utils
 
 let eof = 0xFF
 
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
-
-let int32_to_int v =
-  match unsigned_to_int v with None -> assert false | Some i -> i
 
 let codes_for_command v =
   let v1 = logand mask8 v in
@@ -17,7 +15,7 @@ let codes_for_command v =
   let v3 = logand mask8 v in
   let v = shift_right_logical v 8 in
   let v4 = logand mask8 v in
-  [ int32_to_int v1 ; int32_to_int v2 ; int32_to_int v3 ; int32_to_int v4 ]
+  [ uint32_to_int v1 ; uint32_to_int v2 ; uint32_to_int v3 ; uint32_to_int v4 ]
 
 let command_for_codes codes =
   match codes with

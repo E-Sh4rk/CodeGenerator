@@ -101,10 +101,10 @@ ast:
   ;
 
 command:
-  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args, Optimizer.NoOptimization) }
-  | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, Optimizer.VariableLength) }
+  | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args, Optimizer.NoTweaking) }
+  | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, Optimizer.TweakMinLength) }
   | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK ; i = NUMBER
-  { ASM ($startpos, id, args, Optimizer.FixedLength (Name.int32_to_int i)) }
+  { ASM ($startpos, id, args, Optimizer.TweakFixedLength (Utils.uint32_to_int i)) }
   | nb = number { BIN ($startpos, nb) }
   ;
 

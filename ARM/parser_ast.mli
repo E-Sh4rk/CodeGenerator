@@ -11,12 +11,11 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
-  | ASM of Lexing.position * string * args list * Optimizer.optimization_setting
+  | ASM of Lexing.position * string * args list * Optimizer.tweaking_settings
   | BIN of Lexing.position * unprocessed_int32
 
 type ast = command list
 
 exception CommandError of Lexing.position
 
-val uint32_of_str : string -> int32
-val to_arm : Preprocess.env -> ast -> (Arm.arm * Optimizer.optimization_setting) list
+val to_arm : Preprocess.env -> ast -> (Arm.arm * Optimizer.tweaking_settings) list

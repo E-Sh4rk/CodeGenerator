@@ -12,25 +12,12 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
-  | ASM of Lexing.position * string * args list * Optimizer.optimization_setting
+  | ASM of Lexing.position * string * args list * Optimizer.tweaking_settings
   | BIN of Lexing.position * unprocessed_int32
 
 type ast = command list
 
 exception CommandError of Lexing.position
-
-let uint32_of_str str =
-  let str = String.lowercase_ascii str in
-  (* Issue with js_of_ocaml... *)
-  (*
-  if Str.string_match (Str.regexp "[0-9]+$") str 0
-  then Int32.of_string ("0u"^str)
-  else Int32.of_string str
-  *)
-  let i64 = Int64.of_string str in
-  if Int64.logand 0xFFFFFFFF00000000L i64 |> Int64.equal Int64.zero
-  then Int64.to_int32 i64
-  else raise (Failure "Not a valid int32.")
 
 exception StructError
 
@@ -193,6 +180,6 @@ let cmd_to_arm env cmd =
   | ASM (pos, cmd, args, optimize) ->
     begin try (asm_cmd_to_arm env cmd args, optimize)
     with StructError -> raise (CommandError pos) end
-  | BIN (_, i) -> (Custom (preprocess env i), Optimizer.NoOptimization)
+  | BIN (_, i) -> (Custom (preprocess env i), Optimizer.NoTweaking)
 
 let to_arm env ast = List.map (cmd_to_arm env) ast

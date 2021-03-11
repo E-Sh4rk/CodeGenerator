@@ -26,7 +26,7 @@ and main_3 pid fmt str =
 
 and main_4 pid vid fmt str =
   let sid = Scanf.sscanf str " %li" (fun i -> i) in
-  let tid = Structure.tid_from_vid_sid vid sid in
+  let tid = Structure.int32_from_low_high vid sid in
 
   let pkmn = { Structure.pid=pid ; Structure.otid=tid } in
   let misc_pos = Structure.substructure_position pkmn 'M' in

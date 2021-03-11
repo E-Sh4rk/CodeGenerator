@@ -45,7 +45,7 @@ let parsed_content_to_arm ~optimize (headers, lst) =
   try
     let env = Preprocess.env_from_headers headers in
     Parser_ast.to_arm env lst |>
-    if optimize then Optimizer.fix_arm else Optimizer.do_not_fix_arm
+    if optimize then Optimizer.tweak_arm else Optimizer.do_not_tweak_arm
   with Parser_ast.CommandError pos ->
     raise (InvalidContent
       (Format.asprintf "%a: command error\n" print_position pos)

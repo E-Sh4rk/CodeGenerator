@@ -56,7 +56,7 @@ rule read = parse
   | white     { read lexbuf }
   | '\\' newline { next_line lexbuf ; read lexbuf }
   | newline   { next_line lexbuf ; EOL }
-  | number    { NUMBER (Parser_ast.uint32_of_str (Lexing.lexeme lexbuf)) }
+  | number    { NUMBER (Utils.uint32_of_str (Lexing.lexeme lexbuf)) }
   | id        { ID (Lexing.lexeme lexbuf) }
   | '"'       { read_string (Buffer.create 17) lexbuf }
   | '='       { EQUAL }

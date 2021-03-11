@@ -46,8 +46,8 @@ let eval_binary op i1 i2 =
   | OAnd -> Int32.logand i1 i2
   | OXor -> Int32.logxor i1 i2
   | OOr -> Int32.logor i1 i2
-  | OLShift -> Int32.shift_left i1 (Name.int32_to_int i2)
-  | ORShift -> Int32.shift_right_logical i1 (Name.int32_to_int i2)
+  | OLShift -> Int32.shift_left i1 (Utils.uint32_to_int i2)
+  | ORShift -> Int32.shift_right_logical i1 (Utils.uint32_to_int i2)
   | OEq -> if Int32.equal i1 i2 then Int32.one else Int32.zero
   | ONeq -> if Int32.equal i1 i2 then Int32.zero else Int32.one
   | OBOr ->
