@@ -41,9 +41,9 @@ let from_filename ~headers filename =
 let from_str ~headers str =
   Lexing.from_string str |> from_lexbuf ~headers
 
-let parsed_content_to_arm ~optimize (headers, lst) =
+let parsed_content_to_arm fmt ~optimize (headers, lst) =
   try
-    let env = Preprocess.env_from_headers headers in
+    let env = Preprocess.env_from_headers fmt headers in
     Parser_ast.to_arm env lst |>
     if optimize then Optimizer.tweak_arm else Optimizer.do_not_tweak_arm
   with Parser_ast.CommandError pos ->

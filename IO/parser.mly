@@ -86,7 +86,8 @@ definition:
   | HEADER ; id = ID ; EQUAL ; nb = NUMBER { Param (id, HInt nb) }
   | HEADER ; id = ID ; EQUAL ; b = BOOL { Param (id, HBool b) }
   | HEADER ; id = ID ; EQUAL ; NULL { Param (id, HNone) }
-  | id = ID ; EQUAL ; e = meta_expr { VarDef (id, e) }
+  | id = ID ; EQUAL ; e = meta_expr { VarDef (id, false, e) }
+  | id = ID ; INTERROG_MARK ; EQUAL ; e = meta_expr { VarDef (id, true, e) }
   ;
 
 headers:

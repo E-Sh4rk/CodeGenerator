@@ -9,7 +9,7 @@ let load_from_dir dirname =
       let str = Filename.basename x |> Filename.remove_extension in
       let i = int_of_string str in
       let arm = Parse.from_filename ~headers:false path |>
-        Parse.parsed_content_to_arm ~optimize:false in
+        Parse.parsed_content_to_arm Utils.dummy_fmt ~optimize:false in
       let codes = arm |>
         List.map (fun arm ->
           Arm.arm_to_binary arm |>
@@ -26,7 +26,8 @@ let load_from_dir dirname =
     failwith "Exit codes cannot be tweaked (please remove interrogation marks)."
 
 let load_from_parsed_file (h, arm) =
-  let codes = (h, arm) |> Parse.parsed_content_to_arm ~optimize:true |>
+  let codes = (h, arm) |>
+    Parse.parsed_content_to_arm Utils.dummy_fmt ~optimize:true |>
     List.map (fun arm ->
       Arm.arm_to_binary arm |>
       List.map Name.codes_for_command |>

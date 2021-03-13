@@ -12,7 +12,7 @@ type meta_expr =
   | MCond of meta_expr * meta_expr * meta_expr
 
 type def_val = HNone | HString of string | HInt of int32 | HBool of bool
-type definition = Param of string * def_val | VarDef of string * meta_expr
+type definition = Param of string * def_val | VarDef of string * bool * meta_expr
 type headers = definition list
 
 module StrMap = Map.Make(String)
@@ -79,12 +79,15 @@ let eval_meta_expr env e =
 
 let empty_env = StrMap.empty
 
-let env_from_headers headers =
-  let treat_def acc def =
+let env_from_headers fmt headers =
+  let treat_def (printed, acc) def =
     match def with
-    | Param _ -> acc
-    | VarDef (str, expr) ->
+    | Param _ -> (printed, acc)
+    | VarDef (str, print, expr) ->
       let i = eval_meta_expr acc expr in
-      StrMap.add str i acc
+      if print then Format.fprintf fmt "%s = %li (%#lx)@." str i i ;
+      (printed || print, StrMap.add str i acc)
   in
-  List.fold_left treat_def StrMap.empty headers
+  let (printed, res) =
+    List.fold_left treat_def (false, StrMap.empty) headers in
+  if printed then Format.fprintf fmt "@." ; res

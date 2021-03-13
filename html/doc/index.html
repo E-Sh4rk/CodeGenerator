@@ -72,7 +72,8 @@
             evaluates to zero)</li>
       </ul>
 
-      <p>Please note that if you want to write a definition on several lines, you must end the intermediate lines with a <code>\</code>.</p>
+      <p>Please note that if you want to write a definition on several lines, you must end the intermediate lines with a <code>\</code>.
+	  You can also ask the generator to print the computed value of a constant by adding an interrogation mark after its name: <code>constant_name ? = meta_expr</code></p>
 
       <p>Constants (and more generally meta-expressions) can be used in the ARM section. Instead of writing a hard-coded number,
       you can insert a meta-expression that will be evaluated before assembling the code (just like a preprocessor expression).

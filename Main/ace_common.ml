@@ -40,7 +40,7 @@ let main fmt (headers, parsed) exit =
     )
   in
   let res = (headers, parsed) |> 
-    Parse.parsed_content_to_arm ~optimize:true |>
+    Parse.parsed_content_to_arm fmt ~optimize:true |>
     List.map (treat_command fmt) in
   if onlyraw
   then begin
