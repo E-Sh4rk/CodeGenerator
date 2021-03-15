@@ -85,14 +85,20 @@ let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) code
       add_codes_after fillers res ecode
   in
   (* Split in boxes *)
-  let rec split finished current codes =
+  let rec split finished current codes i =
     match codes with
     | [] -> if current <> [] then current::finished else finished
-    | c::codes when c=eof -> split (current::finished) [] codes
-    | c::codes -> split finished (c::current) codes
+    | c::codes when i = name_size ->
+      assert (c = eof) ;
+      split (current::finished) [] codes 0
+    | c::codes when c = eof ->
+      split finished current codes (i+1)
+    | c::codes ->
+      assert (List.length current = i) ;
+      split finished (c::current) codes (i+1)
   in
   let res =
-    split [] [] res |>
+    split [] [] res 0 |>
     List.map List.rev |>
     List.rev
   in
@@ -101,10 +107,13 @@ let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) code
     if List.for_all (fun c -> c = 0) lst
     then
       let m = List.length nop_code2 in
-      let pos = modulo (m - i*(name_size+1)) m in
+      let pos = modulo (-i*(name_size+1)) m in
       let prefix = List.init pos (fun _ -> 0) in
-      let suffix = List.init (name_size-pos-m) (fun _ -> 0) in
-      List.concat [prefix ; nop_code2 ; suffix]
+      let suffix_len = (List.length lst)-pos-m in
+      if suffix_len < 0 then lst
+      else
+        let suffix = List.init suffix_len (fun _ -> 0) in
+        List.concat [prefix ; nop_code2 ; suffix]
     else lst
   )
 
@@ -117,4 +126,6 @@ let pp_boxes_names fmt lst =
   List.iteri pp_box lst
 
 let pp_box_raw fmt lst =
-  lst@[eof] |> List.iter (Format.fprintf fmt "%02X @?")
+  let pad =
+    List.init (name_size+1-(List.length lst)) (fun _ -> eof) in
+  lst@pad |> List.iter (Format.fprintf fmt "%02X @?")
