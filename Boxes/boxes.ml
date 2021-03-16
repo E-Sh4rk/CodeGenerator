@@ -1,4 +1,6 @@
 
+exception BoxFittingError of string
+
 let default_fillers =
   [|
     [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
@@ -62,7 +64,8 @@ let rec fit_code_at_pos fillers pos codes =
       let i = last_eof_index codes in
       (pos+i = name_size) ||
       (i = n-1 && pos+i+1 = name_size)
-    else false
+    else raise (BoxFittingError
+    "Some codes cannot be positionned due to non-consecutive 0xFF bytes.")
   in
   if is_ok_here then codes
   else begin
@@ -104,12 +107,16 @@ let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) code
     match codes with
     | [] -> if current <> [] then current::finished else finished
     | c::codes when i = name_size ->
-      assert (c = eof) ;
+      if c <> eof
+      then raise (BoxFittingError
+      "Result is inconsistent. Please check the fillers.") ;
       split (current::finished) [] codes 0
     | c::codes when c = eof ->
       split finished current codes (i+1)
     | c::codes ->
-      assert (List.length current = i) ;
+      if List.length current <> i
+      then raise (BoxFittingError
+      "Result is inconsistent. Please check the fillers.") ;
       split finished (c::current) codes (i+1)
   in
   let res =
@@ -117,17 +124,17 @@ let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) code
     List.map List.rev |>
     List.rev
   in
-  (* If a box is full of 0... *)
+  (* If a box is full of spaces... *)
   res |> List.mapi (fun i lst ->
-    if List.for_all (fun c -> c = 0) lst
+    if Name.is_full_of_spaces lst
     then
       let m = List.length nop_code2 in
       let pos = modulo (-i*(name_size+1)) m in
-      let prefix = List.init pos (fun _ -> 0) in
+      let prefix = List.init pos (fun _ -> Name.space) in
       let suffix_len = (List.length lst)-pos-m in
       if suffix_len < 0 then lst
       else
-        let suffix = List.init suffix_len (fun _ -> 0) in
+        let suffix = List.init suffix_len (fun _ -> Name.space) in
         List.concat [prefix ; nop_code2 ; suffix]
     else lst
   )

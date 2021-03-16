@@ -1,4 +1,6 @@
 
+exception BoxFittingError of string
+
 val default_fillers : (int list) array
 
 val fit_codes_into_boxes :

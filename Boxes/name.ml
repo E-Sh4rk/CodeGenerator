@@ -3,6 +3,7 @@ open Charset
 open Utils
 
 let eof = 0xFF
+let space = 0x00
 
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
@@ -72,3 +73,6 @@ let preferred_code codes =
     try first_code is_code_writable_or_one_eof codes
     with Not_found -> List.hd codes
   end
+
+let is_full_of_spaces codes =
+  List.for_all (fun c -> c = space) codes

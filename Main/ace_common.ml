@@ -63,6 +63,8 @@ let main fmt (headers, parsed) exit =
       begin
         if List.exists (fun c -> Name.is_code_writable c |> not) boxes_codes
         then Format.fprintf fmt "Warning: Contains unwritable characters...@."
+        else if List.exists Name.is_full_of_spaces boxes_codes
+        then Format.fprintf fmt "Warning: A box name cannot be written (only contains spaces)...@."
       end ;
       Format.fprintf fmt "Raw data (in hexadecimal):@." ;
       boxes_codes |> List.iter (Format.fprintf fmt "%a" Boxes.pp_box_raw) ;
