@@ -4,9 +4,9 @@ open Js_of_ocaml
 module Html = Dom_html
 
 let treat_input str =
-  try (
-    let buffer = Buffer.create 1000 in
-    let fmt = Format.formatter_of_buffer buffer in
+  let buffer = Buffer.create 1000 in
+  let fmt = Format.formatter_of_buffer buffer in
+  begin try (
     let fs = Fs.from_str str in
     let (headers, program) = Fs.main_file fs in
     let exit =
@@ -17,9 +17,10 @@ let treat_input str =
       | _ -> failwith "Invalid headers."
     in
     main fmt (headers, program) exit ;
-    Format.pp_print_flush fmt () ;
-    Buffer.contents buffer
-  ) with e -> Printexc.to_string e
+
+  ) with e -> Buffer.add_string buffer (Printexc.to_string e) end ;
+  Format.pp_print_flush fmt () ;
+  Buffer.contents buffer
 
 let is_blank_str s =  
   let rec empty i =
