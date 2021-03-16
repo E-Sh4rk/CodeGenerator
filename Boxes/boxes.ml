@@ -38,6 +38,14 @@ let last_eof_index codes =
   in
   n - 1 - (aux 0 codes)
 
+let first_non_eof_index codes =
+  let rec aux acc codes =
+    match codes with
+    | c::codes when c = eof -> aux (acc+1) codes
+    | _ -> acc
+  in
+  aux 0 codes
+
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
   let n = List.length nop_code in
@@ -53,7 +61,7 @@ let rec pad_nb fillers pos nb =
     let m = List.length code in
     code@(pad_nb fillers (pos + m) (nb - m))
 
-let rec fit_code_at_pos fillers pos codes =
+let rec fit_code_at_pos ?(next=[]) fillers pos codes =
   let pos = pos mod (name_size+1) in
   let n = List.length codes in
   let is_ok_here =
@@ -62,8 +70,10 @@ let rec fit_code_at_pos fillers pos codes =
     else if only_consecutive_eof codes
     then
       let i = last_eof_index codes in
+      let j = first_non_eof_index next in
       (pos+i = name_size) ||
-      (i = n-1 && pos+i+1 = name_size)
+      (i = n-1 && pos+i+1 = name_size) || (* Followed by filler code *)
+      (i = n-1 && pos+i+j = name_size) (* Followed by next code *)
     else raise (BoxFittingError
     "Some codes cannot be positionned due to non-consecutive 0xFF bytes.")
   in
@@ -74,13 +84,19 @@ let rec fit_code_at_pos fillers pos codes =
       else fillers.(name_size-pos)
     in
     let m = List.length nop_code in
-    nop_code@(fit_code_at_pos fillers (pos + m) codes)
+    nop_code@(fit_code_at_pos ~next fillers (pos + m) codes)
   end
 
 let add_codes_after fillers res codes =
-  List.fold_left (fun res codes ->
-    res @ (fit_code_at_pos fillers (List.length res) codes)
-  ) res codes
+  let rec aux acc codes =
+  match codes with
+  | [] -> acc
+  | [codes] -> acc@(fit_code_at_pos fillers (List.length acc) codes)
+  | c1::c2::codes ->
+    let nc = fit_code_at_pos ~next:c2 fillers (List.length acc) c1 in
+    aux (acc@nc) (c2::codes)
+  in
+  aux res codes
 
 let modulo x y =
   let result = x mod y in
