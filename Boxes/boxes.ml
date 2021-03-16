@@ -13,20 +13,28 @@ let nop_code2 = [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
 let name_size = 8
 let nb_boxes = 14
 
-exception ReturnFalse
-
 let eof = Name.eof
-
-let eof_only_at_pos codes i =
-  try begin
-    List.iteri (fun j code ->
-      if j=i && code <> eof then raise ReturnFalse
-      else if j<>i && code = eof then raise ReturnFalse
-    ) codes ; true
-  end with ReturnFalse -> false
 
 let no_eof codes =
   List.for_all (fun c -> c <> eof) codes
+
+let rec only_consecutive_eof codes =
+  match codes with
+  | [] -> true
+  | c::codes when c <> eof -> only_consecutive_eof codes
+  | _::c'::codes when c' = eof -> only_consecutive_eof (c'::codes)
+  | _::codes -> no_eof codes
+
+let last_eof_index codes =
+  let n = List.length codes in
+  let codes = List.rev codes in
+  let rec aux acc codes =
+    match codes with
+    | [] -> assert false
+    | c::_ when c = eof -> acc
+    | _::codes -> aux (acc+1) codes
+  in
+  n - 1 - (aux 0 codes)
 
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
@@ -46,18 +54,25 @@ let rec pad_nb fillers pos nb =
 let rec fit_code_at_pos fillers pos codes =
   let pos = pos mod (name_size+1) in
   let n = List.length codes in
-  if pos + n <= name_size
-  then begin
-    if no_eof codes then codes
-    else
-      let m = List.length nop_code in
-      nop_code@(fit_code_at_pos fillers (pos + m) codes)
-  end else if eof_only_at_pos codes (name_size-pos)
-  then codes
-  else
-    let nop = fillers.(name_size-pos) in
-    let m = List.length nop in
-    nop@(fit_code_at_pos fillers (pos + m) codes)
+  let is_ok_here =
+    if no_eof codes
+    then pos + n <= name_size
+    else if only_consecutive_eof codes
+    then
+      let i = last_eof_index codes in
+      (pos+i = name_size) ||
+      (i = n-1 && pos+i+1 = name_size)
+    else false
+  in
+  if is_ok_here then codes
+  else begin
+    let nop_code =
+      if pos + n <= name_size then nop_code
+      else fillers.(name_size-pos)
+    in
+    let m = List.length nop_code in
+    nop_code@(fit_code_at_pos fillers (pos + m) codes)
+  end
 
 let add_codes_after fillers res codes =
   List.fold_left (fun res codes ->
