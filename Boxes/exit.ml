@@ -40,8 +40,8 @@ let load_from_parsed_file fmt env (h, arm) =
   | _ -> failwith "Exit code has invalid headers."
 
 let load_from_file fmt env filename =
-  Parse.from_filename ~headers:true filename |>
-  load_from_parsed_file fmt env
+  let (headers,ast) = Parse.from_filename ~headers:true filename in
+  (headers, load_from_parsed_file fmt env (headers, ast))
 
 exception NoExitCode
 

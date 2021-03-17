@@ -43,7 +43,7 @@
         <tr><td><code>title</code></td><td>String</td><td>Optional</td><td>Actually does nothing.</td></tr>
         <tr><td><code>author</code></td><td>String</td><td>Optional</td><td>Actually does nothing.</td></tr>
         <tr><td><code>start</code></td><td>Integer</td><td>Optional</td><td>The offset at which the code must start. The offset is counted in bytes, from the start address of the box names.
-        It should be a multiple of 4. If not specified (or if <code>null</code> is specified), then the code will start immediately.</td>
+        It should be a multiple of 4. If not specified (or if <code>null</code> is specified), then the code will start immediately.</td></tr>
         <tr><td><code>exit</code></td><td>String</td><td>Optional</td><td>Specify the name of the exit code to include at the end of the code.
         If not specified (or if <code>null</code> is specified), no exit code will be inserted.</td></tr>
         <tr><td><code>filler1</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
@@ -54,8 +54,10 @@
         Should be of the form <code>0x..FF....</code>. Default: <code>0x00FF0000</code>.</td></tr>
         <tr><td><code>filler4</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
         Should be of the form <code>0xFF......</code>. Default: <code>0xFF000000</code>.</td></tr>
+        <tr><td><code>fill</code></td><td>Boolean</td><td>Optional</td><td>When set to true, the remaining space of the last box will be filled with spaces.
+        If specified in both the main code headers and the exit code headers, the value must be the same. Default: true.</td></tr>
         <tr><td><code>onlyraw</code></td><td>Boolean</td><td>Optional</td><td>For dev only. When set to <code>true</code>, the generator will not try to fit the commands
-        in the boxes. Only the raw binary result will be generated. Cannot be used in conjunction with an exit code.</tr>
+        in the boxes. Only the raw binary result will be generated. Cannot be used in conjunction with an exit code.</td></tr>
     </table>
 
       <h3>Constants and meta-expressions</h3>
@@ -115,7 +117,8 @@
       <code>==========</code></p>
 
       <p>Each exit code contains a header section followed by some ARM code, just like the <q>Main code</q> textarea.
-      The parameters available for exit codes are defined below. The definition and use of constants is possible.
+      The parameters available for exit codes are defined below. The definition and use of constants is possible
+      (the constants defined in the main code can also be accessed in the exit code).
       Calls to the ARM tweaker are also possible in an exit code, but this practice is discouraged.</p>
 
       <h3>Headers</h3>
@@ -127,6 +130,8 @@
           <tr><td><code>start</code></td><td>Integer</td><td>Optional</td><td>The offset at which the exit code must start. The offset is counted in bytes, from the start address of the box names.
           It should be a multiple of 4. If not specified (or if <code>null</code> is specified), then the exit code will be inserted just after the main commands,
           as soon as possible.</td></tr>
+          <tr><td><code>fill</code></td><td>Boolean</td><td>Optional</td><td>When set to true, the remaining space of the last box will be filled with spaces.
+          If specified in both the main code headers and the exit code headers, the value must be the same. Default: true.</td></tr>
       </table>
 
   </body>

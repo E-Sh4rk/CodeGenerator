@@ -12,7 +12,7 @@ let treat_command fmt arm =
     Arm_printer.pp_arm arm ;
   code
 
-let main fmt env (headers, parsed) exit =
+let main fmt env (headers,headers2) parsed exit =
   let onlyraw =
     match Preprocess.get_param headers "onlyraw" with
     | HNone -> false
@@ -39,6 +39,16 @@ let main fmt env (headers, parsed) exit =
       | _ -> failwith "Invalid headers."
     )
   in
+  let fill_last =
+    match Preprocess.get_param headers "fill",
+          Preprocess.get_param headers2 "fill" with
+    | HNone, HNone -> true
+    | HNone, HBool b | HBool b, HNone -> b
+    | HBool b1, HBool b2 when b1=b2 -> b1
+    | HBool _, HBool _ ->
+      failwith "The 'fill' header has a different value in the main code and in the exit code."
+    | _ -> failwith "Invalid headers."
+  in
   let res =
     Parse.parsed_ast_to_arm ~optimize:true env parsed |>
     List.map (treat_command fmt) in
@@ -51,7 +61,8 @@ let main fmt env (headers, parsed) exit =
     Format.fprintf fmt "@."
   end else
     try
-      let boxes_codes = Boxes.fit_codes_into_boxes ~fillers ~start ~exit res in
+      let boxes_codes =
+        Boxes.fit_codes_into_boxes ~fill_last ~fillers ~start ~exit res in
       Format.fprintf fmt "@.%a@." Boxes.pp_boxes_names boxes_codes ;
       let size = List.length boxes_codes in
       begin
