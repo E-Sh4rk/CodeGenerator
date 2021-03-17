@@ -61,7 +61,7 @@ let rec pad_nb fillers pos nb =
     let m = List.length code in
     code@(pad_nb fillers (pos + m) (nb - m))
 
-let rec fit_code_at_pos ?(next=[]) fillers pos codes =
+let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
   let pos = pos mod (name_size+1) in
   let n = List.length codes in
   let is_ok_here =
@@ -70,10 +70,11 @@ let rec fit_code_at_pos ?(next=[]) fillers pos codes =
     else if only_consecutive_eof codes
     then
       let i = last_eof_index codes in
-      let j = first_non_eof_index next in
+      let j = match next with Some next -> first_non_eof_index next | None -> 0 in
       (pos+i = name_size) ||
       (i = n-1 && pos+i+1 = name_size) || (* Followed by filler code *)
-      (i = n-1 && pos+i+j = name_size) (* Followed by next code *)
+      (i = n-1 && pos+i+j = name_size) || (* Followed by next code *)
+      (next = None && i = n-1 && pos+i <= name_size) (* Nothing after *)
     else raise (BoxFittingError
     "Some codes cannot be positionned due to non-consecutive 0xFF bytes.")
   in
@@ -87,14 +88,16 @@ let rec fit_code_at_pos ?(next=[]) fillers pos codes =
     nop_code@(fit_code_at_pos ~next fillers (pos + m) codes)
   end
 
-let add_codes_after fillers res codes =
+let add_codes_after ?(final=false) fillers res codes =
   let rec aux acc codes =
-  match codes with
-  | [] -> acc
-  | [codes] -> acc@(fit_code_at_pos fillers (List.length acc) codes)
-  | c1::c2::codes ->
-    let nc = fit_code_at_pos ~next:c2 fillers (List.length acc) c1 in
-    aux (acc@nc) (c2::codes)
+    match codes with
+    | [] -> acc
+    | [codes] ->
+      let next = if final then None else Some [] in
+      acc@(fit_code_at_pos ~next fillers (List.length acc) codes)
+    | c1::c2::codes ->
+      let nc = fit_code_at_pos ~next:(Some c2) fillers (List.length acc) c1 in
+      aux (acc@nc) (c2::codes)
   in
   aux res codes
 
@@ -106,7 +109,8 @@ let modulo x y =
 let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
   (* Main code *)
   let padding = pad_nb fillers 0 start in
-  let res = add_codes_after fillers padding codes in
+  let res =
+    add_codes_after ~final:(exit = None) fillers padding codes in
   (* Add exit code *)
   let res =
     match exit with
@@ -116,9 +120,9 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0)
       let (j,ecode) = Exit.get_preferred exit i in
       let padding = pad_nb fillers i (j-i) in
       let res = res@padding in
-      add_codes_after fillers res ecode
+      add_codes_after ~final:true fillers res ecode
   in
-  (* Split in boxes *)
+  (* Split by box *)
   let rec split finished current codes i =
     match codes with
     | [] ->
