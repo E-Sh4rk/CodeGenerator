@@ -127,7 +127,7 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0)
         let current =
           let n = List.length current in
           if fill_last && n = i (* If current box does not end by 0xFF *)
-          then current@(List.init (name_size-n) (fun _ -> Name.space))
+          then (List.init (name_size-n) (fun _ -> Name.space))@current
           else current
         in
         current::finished
