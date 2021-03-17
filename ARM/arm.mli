@@ -25,6 +25,8 @@ type arm =
   | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
 
+  | Branch of { l:bool ; cond: conditional ; target: int32 }
+
 exception InvalidCommand
 
 val sign_plus : sign

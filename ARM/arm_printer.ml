@@ -22,12 +22,18 @@ let sign_to_str sign =
 let s_to_str s =
   if s then "S" else ""
 
+let l_to_str l =
+  if l then "L" else ""
+
 let print_register fmt r =
   Format.fprintf fmt "r%d" r
 
+let print_immediate fmt i =
+  Format.fprintf fmt "#%#lx" i
+
 let print_operand fmt op =
   match op with
-  | Immediate i -> Format.fprintf fmt "#%#lx" i
+  | Immediate i -> print_immediate fmt i
   | Register r -> Format.fprintf fmt "%a" print_register r
   | ScaledRegister _ -> failwith "Not implemented"
 
@@ -69,3 +75,5 @@ let pp_arm fmt arm =
   | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a, %a, %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
+  | Branch {l;cond;target} -> Format.fprintf fmt "B%s%s %a"
+    (l_to_str l) (cond_to_str cond) print_immediate target

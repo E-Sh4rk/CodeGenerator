@@ -25,6 +25,8 @@ type arm =
   | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
 
+  | Branch of { l:bool ; cond: conditional ; target: int32 }
+
 open Int32
 
 exception InvalidCommand
@@ -54,12 +56,18 @@ let sign_minus = 0
 
 let int1 = 0b1
 let mask1 = int1 |> of_int
+let int2 = 0b11
+let mask2 = int2 |> of_int
 let int4 = 0b1111
 let mask4 = int4 |> of_int
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
+let int9 = 0b111111111
+let mask9 = int9 |> of_int
 let int12 = 0b111111111111
 let mask12 = int12 |> of_int
+let int24 = 0b111111111111_111111111111
+let mask24 = int24 |> of_int
 
 let condition_code c =
   begin match c with
@@ -166,6 +174,16 @@ let addr_mode_3 ro addr_typ = (* Other load and store *)
   let w = shift_left (of_int w) 21 in
   logor v u |> logor p |> logor w |> logor i
 
+let signed_immed24 i =
+  if equal (logand i mask2) zero
+  then
+    let i = shift_right i 2 in
+    let ms9 = shift_right_logical i 23 in
+    if equal ms9 mask9 || equal ms9 zero
+    then logand i mask24
+    else raise InvalidCommand
+  else raise InvalidCommand
+
 let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
   let check_post_addr () =
     match addr_typ with
@@ -212,7 +230,6 @@ let mov_mvn_to_binary is_mov s cond rd rs =
   addr_mode_1 rs |>
   List.map (fun addr_mode -> logor v addr_mode)
 
-
 let calculation_to_binary typ s cond rd rn op2 =
   let opcode = match typ with
   | "adc" -> 0b0000_1010_0000_0000_0000_0000_0000
@@ -230,6 +247,17 @@ let calculation_to_binary typ s cond rd rn op2 =
   addr_mode_1 op2 |>
   List.map (fun addr_mode -> logor v addr_mode)
 
+let branch_to_binary l cond target =
+  let opcode =
+    if l
+    then 0b1011_0000_0000_0000_0000_0000_0000
+    else 0b1010_0000_0000_0000_0000_0000_0000
+  in
+  let v = of_int opcode |>
+    add_condition_code cond in
+  let imm = signed_immed24 (sub target 8l) in
+  [logor v imm]
+
 let arm_to_binary arm =
   match arm with
   | Custom i -> [i]
@@ -240,6 +268,7 @@ let arm_to_binary arm =
   | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2
   | SBC {s;cond;rd;rn;op2} -> calculation_to_binary "sbc" s cond rd rn op2
   | BIC {s;cond;rd;rn;op2} -> calculation_to_binary "bic" s cond rd rn op2
+  | Branch {l;cond;target} -> branch_to_binary l cond target
 
 let reverse_endianness v =
   let v1 = shift_left (logand mask8 v) (3*8) in
