@@ -91,3 +91,6 @@ let env_from_headers fmt headers =
   let (printed, res) =
     List.fold_left treat_def (false, StrMap.empty) headers in
   if printed then Format.fprintf fmt "@." ; res
+
+let concat_env env1 env2 =
+  StrMap.fold (fun k v acc -> StrMap.add k v acc) env2 env1

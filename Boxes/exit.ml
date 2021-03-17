@@ -1,7 +1,7 @@
 
 type t = ((int * ((int list) list)) list) * (((int list) list) option)
 
-let load_from_dir dirname =
+let load_from_dir env dirname =
   try (
     Utils.enumerate_files dirname ".txt"
     |> List.map (fun x ->
@@ -9,7 +9,7 @@ let load_from_dir dirname =
       let str = Filename.basename x |> Filename.remove_extension in
       let i = int_of_string str in
       let arm = Parse.from_filename ~headers:false path |>
-        Parse.parsed_content_to_arm Utils.dummy_fmt ~optimize:false in
+        Parse.parsed_content_to_arm Utils.dummy_fmt ~optimize:false env in
       let codes = arm |>
         List.map (fun arm ->
           Arm.arm_to_binary arm |>
@@ -25,9 +25,9 @@ let load_from_dir dirname =
   with Optimizer.CannotOptimize ->
     failwith "Exit codes cannot be tweaked (please remove interrogation marks)."
 
-let load_from_parsed_file (h, arm) =
+let load_from_parsed_file fmt env (h, arm) =
   let codes = (h, arm) |>
-    Parse.parsed_content_to_arm Utils.dummy_fmt ~optimize:true |>
+    Parse.parsed_content_to_arm fmt ~optimize:true env |>
     List.map (fun arm ->
       Arm.arm_to_binary arm |>
       List.map Name.codes_for_command |>
@@ -39,9 +39,9 @@ let load_from_parsed_file (h, arm) =
   | HNone -> ([], Some codes)
   | _ -> failwith "Exit code has invalid headers."
 
-let load_from_file filename =
+let load_from_file fmt env filename =
   Parse.from_filename ~headers:true filename |>
-  load_from_parsed_file
+  load_from_parsed_file fmt env
 
 exception NoExitCode
 

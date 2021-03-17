@@ -9,14 +9,15 @@ let treat_input str =
   begin try (
     let fs = Fs.from_str str in
     let (headers, program) = Fs.main_file fs in
+    let env = Preprocess.env_from_headers fmt headers in
     let exit =
       match Preprocess.get_param headers "exit" with
       | HNone -> None
       | HString fn ->
-        Some (Fs.get_file fn fs |> Exit.load_from_parsed_file)
+        Some (Fs.get_file fn fs |> Exit.load_from_parsed_file fmt env)
       | _ -> failwith "Invalid headers."
     in
-    main fmt (headers, program) exit ;
+    main fmt env (headers, program) exit ;
 
   ) with e -> Buffer.add_string buffer (Printexc.to_string e) end ;
   Format.pp_print_flush fmt () ;

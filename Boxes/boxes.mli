@@ -4,6 +4,7 @@ exception BoxFittingError of string
 val default_fillers : (int list) array
 
 val fit_codes_into_boxes :
+  ?fill_last:bool ->
   ?fillers:((int list) array) ->
   ?start:int ->
   ?exit:(Exit.t option) ->

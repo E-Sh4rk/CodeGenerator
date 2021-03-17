@@ -24,3 +24,4 @@ val eval_meta_expr : env -> meta_expr -> int32
 
 val empty_env : env
 val env_from_headers : Format.formatter -> headers -> env
+val concat_env : env -> env -> env

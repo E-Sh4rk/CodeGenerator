@@ -103,7 +103,7 @@ let modulo x y =
   if result >= 0 then result
   else result + y
 
-let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
+let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
   (* Main code *)
   let padding = pad_nb fillers 0 start in
   let res = add_codes_after fillers padding codes in
@@ -121,7 +121,17 @@ let fit_codes_into_boxes ?(fillers=default_fillers) ?(start=0) ?(exit=None) code
   (* Split in boxes *)
   let rec split finished current codes i =
     match codes with
-    | [] -> if current <> [] then current::finished else finished
+    | [] ->
+      if i <> 0
+      then begin
+        let current =
+          let n = List.length current in
+          if fill_last && n = i (* If current box does not end by 0xFF *)
+          then current@(List.init (name_size-n) (fun _ -> Name.space))
+          else current
+        in
+        current::finished
+      end else finished
     | c::codes when i = name_size ->
       if c <> eof
       then raise (BoxFittingError
