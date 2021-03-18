@@ -184,6 +184,7 @@ let asm_cmd3_to_arm env cmd args =
   | "ADC" -> ADC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "SBC" -> SBC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "BIC" -> BIC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "AND" -> AND { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | _ -> raise StructError
   with Failure _ | Invalid_argument _ -> raise StructError
 

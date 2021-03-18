@@ -75,5 +75,8 @@ let pp_arm fmt arm =
   | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a, %a, %a"
     (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
+  | AND {s;cond;rd;rn;op2} -> Format.fprintf fmt "AND%s%s %a, %a, %a"
+    (cond_to_str cond) (s_to_str s)
+    print_register rd print_register rn print_operand op2
   | Branch {l;cond;target} -> Format.fprintf fmt "B%s%s %a"
     (l_to_str l) (cond_to_str cond) print_immediate target

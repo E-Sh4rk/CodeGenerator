@@ -24,6 +24,7 @@ type arm =
   | ADC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
+  | AND of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
 
   | Branch of { l:bool ; cond: conditional ; target: int32 }
 
@@ -235,6 +236,7 @@ let calculation_to_binary typ s cond rd rn op2 =
   | "adc" -> 0b0000_1010_0000_0000_0000_0000_0000
   | "sbc" -> 0b0000_1100_0000_0000_0000_0000_0000
   | "bic" -> 0b0001_1100_0000_0000_0000_0000_0000
+  | "and" -> 0b0000_0000_0000_0000_0000_0000_0000
   | _ -> assert false
   in
   let scode = if s then 1 else 0 in
@@ -268,6 +270,7 @@ let arm_to_binary arm =
   | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2
   | SBC {s;cond;rd;rn;op2} -> calculation_to_binary "sbc" s cond rd rn op2
   | BIC {s;cond;rd;rn;op2} -> calculation_to_binary "bic" s cond rd rn op2
+  | AND {s;cond;rd;rn;op2} -> calculation_to_binary "and" s cond rd rn op2
   | Branch {l;cond;target} -> branch_to_binary l cond target
 
 let reverse_endianness v =
