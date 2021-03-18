@@ -1,6 +1,5 @@
-@@ filename = "ShortCertificateFRA"
+@@ filename = "CertificateShortFRA"
 @@ start = 92
-
 @@
 
 adc r12,lr, #0xE30            ;  R12=LR+E30

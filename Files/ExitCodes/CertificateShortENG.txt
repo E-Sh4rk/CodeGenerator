@@ -1,4 +1,4 @@
-@@ filename = "ShortCertificateENG"
+@@ filename = "CertificateShortENG"
 @@ start = 92
 @@
 
@@ -6,4 +6,3 @@ sbc r12,lr, #0x2C40         ; R12=LR-2C40-1
 adc r12,r12, #0xD30000      ; R12=R12+D30000
 bic r12,r12, #0xC00000      ; R12=R12 and notC00000
 sbc r12,r12, #0xB0          ; R12=R12-B0
-adc r12,r12, #0x3FC0        ; R12=R12+3FC0=????ENG

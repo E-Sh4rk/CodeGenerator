@@ -1,6 +1,5 @@
-@@ title = "Short Exit Code (Certificate) Init (FRA)"
+@@ filename = "CertificateFullFRA"
 @@ start = 56
-
 @@
 
 adcs r12, pc, #0x38           ;  R12=&Box14Name + 3
@@ -13,4 +12,4 @@ adc r12,lr, #0xE30            ;  R12=LR+E30
 adc r12,r12, #0xD30000        ;  R12=R12+D30000
 bic r12,r12, #0xC00000        ;  R12=R12 and notC00000
 adc r0,r12, #0xE2             ;  R0=R12+E2=????FRA
-0                             ;  Fill box 14 with
+0                             ;  Fill box 14 with space
