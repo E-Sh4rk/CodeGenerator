@@ -1,0 +1,8 @@
+@@ filename = "CertificateShortSPA"
+@@ start = 92
+@@
+
+adc r12,lr, #0xE10            ;  R12=LR+E10
+adc r12,r12, #0xD30000        ;  R12=R12+D30000
+bic r12,r12, #0xC00000        ;  R12=R12 and notC00000
+adc r0,r12, #0xD6             ;  R0=R12+D6=????SPA
