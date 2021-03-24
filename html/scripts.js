@@ -1,4 +1,5 @@
 window.addEventListener ("load", () => {
+    const url = new URL(window.location.href);
     let prefix_for_examples = "files/";
     let list_path = "files/list.json";
     let empty_path = "files/empty.txt";
@@ -80,12 +81,22 @@ window.addEventListener ("load", () => {
         }, callback);
     }
 
+    function langChanged() {
+        url.searchParams.set('lang', lang.value);
+        window.history.replaceState(null, null, url);
+        updateSelectField();
+    }
+
+    let langval = url.searchParams.get('lang');
+    if (langval)
+        lang.value = langval;
+
     select.addEventListener ("change", () => {
         last_selected_example = select.value;
         updateCode();
     });
 
-    lang.addEventListener ("change", updateSelectField);
+    lang.addEventListener ("change", langChanged);
 
     fileToField(exit_codes_path, exit_codes, () => {
         fileToField(empty_path, code, () => {loadExamples(null);});
