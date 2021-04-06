@@ -2,14 +2,14 @@
 @@ start = 56
 @@
 
-ADCS r12, r15, #0x38        ; r12=&Box14Name + 3
-MVN r11, #0xe1              ; r11=ffffff1e
-BIC r11, r11, #0xed00000    ; r11=f12fff1e 
-BIC r11, r11, #0x10000003   ; r11=BX r12 (#0x1000000e for BX r0)
-STR r11, [r12, #0]!         ; Store r11=BX r12
+adcs r12, pc, #0x38           ;  R12=&Box14Name + 3
+mvn r11, #0xE1                ;  R11=notE1=FFFFFF1E
+bic r11, r11, #0xED00000      ;  R11=R11 and notED00000=F12FFF1E
+bic r11, r11, #0x1000000E     ;  R11=R11 and not1000000E=E12FFF10=bx r0 opcode
+str r11, [r12, #0]!           ;  Store bx r0 opcode in [r12]
 
-sbc r12,lr, #0x2C40         ; R12=LR-2C40-1
-adc r12,r12, #0xD30000      ; R12=R12+D30000
-bic r12,r12, #0xC00000      ; R12=R12 and notC00000
-sbc r12,r12, #0xB0          ; R12=R12-B0
-adc r12,r12, #0x3FC0        ; R12=R12+3FC0=????ENG
+ADC r12, lr, #0xee000         ; LR=080069E7
+ADC r12, r12, #0x39000
+ADC r12, r12, #0xa200
+ADC r0, r12, #0xce            ; R0=8137CB5=????ENG
+0
