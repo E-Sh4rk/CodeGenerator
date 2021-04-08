@@ -304,6 +304,6 @@ adc r0,r12, #0xD6             ;  R0=R12+D6=????SPA
 
 ====================
 
-@@ filename = "CertificateBootstrapped"
+@@ filename = "Bootstrapped"
 @@ start = 116
 @@
