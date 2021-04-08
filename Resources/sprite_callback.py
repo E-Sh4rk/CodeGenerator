@@ -1,4 +1,4 @@
-# Credits to Merrp
+# Credits to Merrp (from https://github.com/arantonitis/gen3tools)
 
 def read(f, addr: int, size: int = 4, signed: bool = False):
     f.seek(addr & 0xffffff)
