@@ -1,4 +1,5 @@
 open Int32
+open Utils
 open Arm
 
 exception CannotOptimize
@@ -58,9 +59,6 @@ let rec remove_while f lst =
   | [] -> []
   | i'::lst when f i' -> remove_while f lst
   | lst -> lst
-
-let int64_of_uint32 x =
-  Int64.of_int32 x |> Int64.logand 0xFFFFFFFFL
 
 let synthesis ~mov_mvn ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = tries_at_depth_0 in

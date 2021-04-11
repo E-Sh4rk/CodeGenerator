@@ -398,6 +398,6 @@ if __name__ == "__main__":
     i = start_cycle - cycle
     for s in seeds(frame=start_cycle):
         print(i,":",s,hex(s))
-        if i >= 5:
+        if i >= 10:
             break
         i+=1

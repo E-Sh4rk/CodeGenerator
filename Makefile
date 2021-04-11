@@ -42,7 +42,7 @@ buildd:
 rund:
 	dune exec ./pkmn_data.exe
 
-djs:
+datajs:
 	dune build pkmn_data_js.bc.js
 
 encoder: builde rune
@@ -53,8 +53,19 @@ builde:
 rune:
 	dune exec ./encoder.exe
 
-ejs:
+encoderjs:
 	dune build encoder_js.bc.js
+
+seed: buildseed runseed
+
+buildseed:
+	dune build seed_tools.exe
+
+runseed:
+	dune exec ./seed_tools.exe
+
+seedjs:
+	dune build seed_tools_js.bc.js
 
 clean:
 	dune clean

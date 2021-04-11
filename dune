@@ -5,28 +5,28 @@
   (libraries num str uutf)
   (modules ace_common arm_printer arm parser lexer parser_ast
     boxes charset exit name fs parse optimizer structure constants
-    pkmn_data_common save utils encoder_common preprocess)
+    pkmn_data_common save utils encoder_common preprocess seed seed_tools_common)
 ; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
 )
 
 (executable
  (name test)
- (libraries num str ace_common)
+ (libraries ace_common)
  (modules test)
 )
 (executable
  (name ace)
- (libraries num str ace_common)
+ (libraries ace_common)
  (modules ace)
 )
 (executable
  (name ace_p)
- (libraries num str ace_common)
+ (libraries ace_common)
  (modules ace_p)
 )
 (executable
   (name ace_js)
-  (libraries num str ace_common)
+  (libraries ace_common)
   (modules ace_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
@@ -34,18 +34,18 @@
 
 (executable
  (name save_edit)
- (libraries num str ace_common)
+ (libraries ace_common)
  (modules save_edit)
 )
 
 (executable
  (name pkmn_data)
- (libraries num str ace_common)
+ (libraries ace_common)
  (modules pkmn_data)
 )
 (executable
   (name pkmn_data_js)
-  (libraries num str ace_common)
+  (libraries ace_common)
   (modules pkmn_data_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
@@ -53,13 +53,26 @@
 
 (executable
  (name encoder)
- (libraries num str ace_common)
+ (libraries ace_common)
  (modules encoder)
 )
 (executable
   (name encoder_js)
-  (libraries num str ace_common)
+  (libraries ace_common)
   (modules encoder_js)
+  (modes js)
+  (preprocess (pps js_of_ocaml-ppx))
+)
+
+(executable
+ (name seed_tools)
+ (libraries ace_common)
+ (modules seed_tools)
+)
+(executable
+  (name seed_tools_js)
+  (libraries ace_common)
+  (modules seed_tools_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
 )

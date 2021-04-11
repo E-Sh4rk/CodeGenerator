@@ -9,9 +9,13 @@ window.addEventListener ("load", () => {
         event.preventDefault();
     });
 
+    let old_content = "";
     function checkOutputHeight(){
-        if(output.selectionStart == output.selectionEnd) {
-            output.scrollTop = output.scrollHeight;
+        if (old_content != output.value) {
+            if(output.selectionStart == output.selectionEnd) {
+                output.scrollTop = output.scrollHeight;
+            }
+            old_content = output.value;
         }
      }
      

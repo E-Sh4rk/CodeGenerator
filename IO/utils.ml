@@ -20,5 +20,8 @@ let uint32_of_str str =
 let uint32_to_int v =
   match Int32.unsigned_to_int v with None -> assert false | Some i -> i
 
+let int64_of_uint32 x =
+  Int64.of_int32 x |> Int64.logand 0xFFFFFFFFL
+
 let dummy_fmt =
   Format.make_formatter (fun _ _ _ -> ()) (fun _ -> ())
