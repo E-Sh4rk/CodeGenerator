@@ -106,23 +106,7 @@ let modulo x y =
   if result >= 0 then result
   else result + y
 
-let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
-  (* Main code *)
-  let padding = pad_nb fillers 0 start in
-  let res =
-    add_codes_after ~final:(exit = None) fillers padding codes in
-  (* Add exit code *)
-  let res =
-    match exit with
-    | None -> res
-    | Some exit ->
-      let i = List.length res in
-      let (j,ecode) = Exit.get_preferred exit i in
-      let padding = pad_nb fillers i (j-i) in
-      let res = res@padding in
-      add_codes_after ~final:true fillers res ecode
-  in
-  (* Split by box *)
+let split_raw_into_boxes ?(fill_last=false) raw =
   let rec split finished current codes i =
     match codes with
     | [] ->
@@ -149,11 +133,28 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0)
       "Result is inconsistent. Please check the fillers.") ;
       split finished (c::current) codes (i+1)
   in
+  split [] [] raw 0 |>
+  List.map List.rev |>
+  List.rev
+
+let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
+  (* Main code *)
+  let padding = pad_nb fillers 0 start in
   let res =
-    split [] [] res 0 |>
-    List.map List.rev |>
-    List.rev
+    add_codes_after ~final:(exit = None) fillers padding codes in
+  (* Add exit code *)
+  let res =
+    match exit with
+    | None -> res
+    | Some exit ->
+      let i = List.length res in
+      let (j,ecode) = Exit.get_preferred exit i in
+      let padding = pad_nb fillers i (j-i) in
+      let res = res@padding in
+      add_codes_after ~final:true fillers res ecode
   in
+  (* Split by box *)
+  let res = split_raw_into_boxes ~fill_last res in
   (* If a box is full of spaces... *)
   res |> List.mapi (fun i lst ->
     if Name.is_full_of_spaces lst

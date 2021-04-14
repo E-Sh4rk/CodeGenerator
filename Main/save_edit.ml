@@ -1,4 +1,11 @@
 
+let bytes_to_int_list b =
+  let res = ref [] in
+  b |> Bytes.iter (
+    fun c -> res := (Char.code c)::(!res)
+  ) ;
+  List.rev (!res)
+
 let main_box_name filename =
   let inc = open_in_gen [Open_rdonly;Open_binary] 0 filename in
   let (addr, section) = Save.read_section inc Save.box_names_section_id in
@@ -7,6 +14,9 @@ let main_box_name filename =
   let len = Bytes.length current in
   Format.printf "Current data (in hexadecimal):@." ;
   current |> Bytes.iter (fun c -> Format.printf "%02X " (Char.code c)) ;
+  Format.printf "@." ;
+  let boxes = Boxes.split_raw_into_boxes (bytes_to_int_list current) in
+  Boxes.pp_boxes_names Format.std_formatter boxes ;
   Format.printf "@.Please enter new data (in hexadecimal):@." ;
   let line = read_line () in
   let inc_data = Scanf.Scanning.from_string line in
