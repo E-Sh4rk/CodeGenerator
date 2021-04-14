@@ -42,6 +42,7 @@ let compute_all_constants _ =
 let constants_set = compute_all_constants ()
 let constants_set_no_carry =
   constants_set |> UInt32Set.filter (fun i -> carry_out i |> not)
+  |> UInt32Set.remove Int32.zero (* We try to avoid setting the zero flag *)
 
 let constants = constants_set |> UInt32Set.elements
 let rev_constants = List.rev constants
