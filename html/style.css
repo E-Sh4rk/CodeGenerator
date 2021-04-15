@@ -5,34 +5,33 @@ h2 {
 }
 
 select {
-    margin: 10px 20px 0px 20px;
-    flex-grow: 1;
+    margin: 10px 10px 0px 10px;
 }
 
 textarea {
     font-family: 'Consolas', 'Courier New', 'monospace';
-    margin: 10px 20px;
+    margin: 10px 10px;
     height: 100%;
     min-height: 500px;
 }
 
 button {
-    margin: 10px 20px;
-}
-
-#enter {
-    min-width: 75px;
-    padding: 10px 0px;
-    margin: 0px 20px;
+    margin: 10px 10px;
 }
 
 #output {
     min-height: 600px;
+    min-width: 350px;
 }
 
-input {
-    flex-grow: 1;
-    margin: 0px 20px;
+#main {
+    min-height: 500px;
+    min-width: 350px;
+}
+
+#secondary {
+    min-height: 550px;
+    min-width: 350px;
 }
 
 .row {
@@ -40,20 +39,37 @@ input {
     flex-direction: row;
     justify-content: center;
     align-items: stretch;
-    width:100%;
+    flex-grow: 1;
+    flex-wrap: wrap;
 }
 
 .column {
+    flex-basis: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    width: 90%;
+    flex-grow: 1;
 }
 
 .left {
-    max-width:100px;
+    flex-basis: 0;
     margin-right:0px;
+    flex-grow: 0;
+    flex-shrink: 1;
+}
+
+.middle {
+    flex-basis: 0;
+    margin-right:0px;
+    flex-grow: 0;
+    flex-shrink: 1;
+}
+
+.right {
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 /* ===== TABS ===== */
@@ -74,3 +90,15 @@ input {
     display: none;
   }
 
+/* Other scripts */
+
+#enter {
+    min-width: 75px;
+    padding: 10px 0px;
+    margin: 0px 10px;
+}
+
+input {
+    flex-grow: 1;
+    margin: 0px 10px;
+}

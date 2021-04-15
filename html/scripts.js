@@ -8,6 +8,7 @@ window.addEventListener ("load", () => {
     let exit_codes = document.getElementById ("secondary");
     let select = document.getElementById ("select");
     let lang = document.getElementById ("lang");
+    let cat = document.getElementById ("cat");
 
     let lock = false;
     let examples = null;
@@ -54,13 +55,14 @@ window.addEventListener ("load", () => {
         if (examples == null) return;
 
         let language = lang.value;
+        let category = cat.value;
         //last_selected_example = select.value;
         let newSelectedIndex = 0;
         
         let arrOptions = ["<option value='' selected>----------</option>"];
         let i = 1;
         examples.forEach((element,index) => {
-            if (language in element) {
+            if (language in element && (category == "" || element["cat"].includes(category))) {
                 let val = index.toString();
                 if (val == last_selected_example) newSelectedIndex = i;
                 arrOptions.push("<option value='"+val+"'>"+element["name"]+"</option>");
@@ -97,6 +99,7 @@ window.addEventListener ("load", () => {
     });
 
     lang.addEventListener ("change", langChanged);
+    cat.addEventListener ("change", updateSelectField);
 
     fileToField(exit_codes_path, exit_codes, () => {
         fileToField(empty_path, code, () => {loadExamples(null);});
