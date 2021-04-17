@@ -15,8 +15,10 @@ let main_box_name filename =
   Format.printf "Current data (in hexadecimal):@." ;
   current |> Bytes.iter (fun c -> Format.printf "%02X " (Char.code c)) ;
   Format.printf "@." ;
-  let boxes = Boxes.split_raw_into_boxes (bytes_to_int_list current) in
-  Boxes.pp_boxes_names Format.std_formatter boxes ;
+  try (
+    let boxes = Boxes.split_raw_into_boxes (bytes_to_int_list current) in
+    Boxes.pp_boxes_names Format.std_formatter boxes
+  ) with _ -> () ;
   Format.printf "@.Please enter new data (in hexadecimal):@." ;
   let line = read_line () in
   let inc_data = Scanf.Scanning.from_string line in
