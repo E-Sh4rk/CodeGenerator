@@ -10,26 +10,30 @@ let rec main fmt =
 
 and main_1 fmt str =
   let seed = Utils.uint32_of_str str in
-  let cycle = cycle_to seed in
-  Format.fprintf fmt "Cycle from seed 0: %lu@." cycle ;
-  let start_seed = ref (seed_at (Int32.sub cycle 25l)) in
-  for i = -25 to 5 do
-    Format.fprintf fmt "%i: %lu (%#lx)@." i (!start_seed) (!start_seed) ;
-    start_seed := next_seed (!start_seed)
-  done ;
   Format.fprintf fmt "Do you want to obtain this H1 seed using the freeze PRNG ACE code ?@." ;
   Format.fprintf fmt "1. Yes, for a wild pokemon using sweet scent.@." ;
   Format.fprintf fmt "2. Yes, for a wild pokemon using a rod.@." ;
   Format.fprintf fmt "3. Yes, for a stationnary pokemon.@." ;
-  Format.fprintf fmt "4. No (quit).@." ;
+  Format.fprintf fmt "4. No, but please show me the seeds in the vicinity.@." ;
+  Format.fprintf fmt "5. No (quit).@." ;
   Cont (main_2 seed)
+
+and show_vicinity fmt print_cycle seed start stop =
+  let cycle = cycle_to seed in
+  if print_cycle then Format.fprintf fmt "Cycle from seed 0: %lu@." cycle ;
+  let start_seed = ref (seed_at (Int32.add cycle (Int32.of_int start))) in
+  for i = start to stop do
+    Format.fprintf fmt "%i: %lu (%#lx)@." i (!start_seed) (!start_seed) ;
+    start_seed := next_seed (!start_seed)
+  done
 
 and main_2 seed fmt str =
   match str with
   | "1" ->
-    Format.fprintf fmt "You should use the seed at cycle -2.@." ;
-    Format.fprintf fmt "You should use sweet scent directly after triggering the ACE,@." ;
-    Format.fprintf fmt "without closing the pokemon menu.@." ;
+    Format.fprintf fmt "You should use the seed %#lx (2 cycles before your target).@."
+      (prev_seed (prev_seed seed)) ;
+    Format.fprintf fmt "You should use sweet scent directly after triggering the ACE," ;
+    Format.fprintf fmt " without closing the pokemon menu.@." ;
     NoCont
   | "2" ->
     Format.fprintf fmt "Please select your configuration:@." ;
@@ -40,10 +44,19 @@ and main_2 seed fmt str =
   | "3" ->
     Format.fprintf fmt "For most legendaries, you should use the seed at cycle -3.@." ;
     Format.fprintf fmt "Please refer to the instructions on the freeze PRNG ACE code for other stationnary pokemons.@." ;
-    Format.fprintf fmt "You should start the battle as soon as you can@." ;
-    Format.fprintf fmt "(just after having executed the ACE and closed the menu).@." ;
+    Format.fprintf fmt "You should start the battle as soon as you can" ;
+    Format.fprintf fmt " (just after having executed the ACE and closed the menu).@." ;
+    show_vicinity fmt false seed (-10) 0 ;
     NoCont
+  | "4" ->
+    Format.fprintf fmt "Please enter the range (example: -25 5):@." ;
+    Cont (main_vicinity seed)
   | _ -> NoCont
+
+and main_vicinity seed fmt str =
+  let (start, stop) = Scanf.sscanf str " %i %i" (fun i j -> (i, j)) in
+  show_vicinity fmt true seed start stop ;
+  NoCont
 
 and main_3 seed fmt str =
   let (route119, feebas) =
@@ -71,7 +84,7 @@ and main_3 seed fmt str =
       Format.fprintf fmt "\tWith lead: Must have Suction Cup or Sticky Hold lead@." ;
       Format.fprintf fmt "\tUse seed %#lx to generate target on advancement %i@." seed adv
   done ;
-  Format.fprintf fmt "You should use the rod directly after triggering the ACE@." ;
-  Format.fprintf fmt "(leave the pokemon menu and enter the bag).@." ;
+  Format.fprintf fmt "You should use the rod directly after triggering the ACE" ;
+  Format.fprintf fmt " (leave the pokemon menu and enter the bag).@." ;
   Format.fprintf fmt "Thanks to Shao for this script.@." ;
   NoCont
