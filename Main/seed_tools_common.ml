@@ -10,10 +10,10 @@ let rec main fmt =
 
 and main_1 fmt str =
   let seed = Utils.uint32_of_str str in
-  Format.fprintf fmt "Do you want to obtain this H1 seed using the freeze PRNG ACE code ?@." ;
-  Format.fprintf fmt "1. Yes, for a wild pokemon using sweet scent.@." ;
-  Format.fprintf fmt "2. Yes, for a wild pokemon using a rod.@." ;
-  Format.fprintf fmt "3. Yes, for a stationnary pokemon.@." ;
+  Format.fprintf fmt "Do you want to obtain this seed using the freeze PRNG ACE code ?@." ;
+  Format.fprintf fmt "1. Yes, for method H1 (wild pokemon) using sweet scent.@." ;
+  Format.fprintf fmt "2. Yes, for method H1 (wild pokemon) using a rod.@." ;
+  Format.fprintf fmt "3. Yes, for method 1 (stationnary pokemon).@." ;
   Format.fprintf fmt "4. No, but please show me the seeds in the vicinity.@." ;
   Format.fprintf fmt "5. No (quit).@." ;
   Cont (main_2 seed)
