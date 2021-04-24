@@ -4,11 +4,19 @@
     <meta charset="utf-8">
     <title>ACE Generator Lib Tests</title>
     <script src="ace_lib.bc.js"></script>
-    <!--<script src="scripts.js"></script>-->
+    <script src="ace_prama.js"></script>
   </head>
   <body>
+    <p id="ace_test"></p>
+    <div id="ace_test_src" style="display:none;">
+    @@
+    STRH r12, [r11, %offset%]!
+    </div>
     <script>
-      console.log(aceGen.build("@@\nSTRH r12, [r11, 0]!", ""));
+      function ace_test_preprocess(txt) {
+        return txt.replace("%offset%", "0");
+      }
     </script>
+    <button data-source="ace_test_src" data-preprocess="ace_test_preprocess" data-target="ace_test" onclick='generate(this)'>Generate</button>
   </body>
 </html>
