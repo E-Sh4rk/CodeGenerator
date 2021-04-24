@@ -7,6 +7,11 @@
     <script src="ace_prama.js"></script>
   </head>
   <body>
+    <datalist id="pokemonlist"></datalist>
+
+    <input list="pokemonlist" id="ace_test_species" value="0x100">
+    <button data-source="ace_test_src" data-preprocess="ace_test_preprocess" data-target="ace_test" onclick='generate(this)'>Générer le code</button>
+
     <p id="ace_test"></p>
     <pre id="ace_test_src" style="display:none;">
       @@ title = "Create pokemon from nothing (FRA)"
@@ -29,10 +34,8 @@
     <script>
       function ace_test_preprocess(txt) {
         let test_species = document.getElementById("ace_test_species");
-        return txt.replace("%SPECIES%", test_species.value);
+        return txt.replace("%SPECIES%", pokemon_identifier(test_species.value));
       }
     </script>
-    <input type="text" id="ace_test_species" value="0x100">
-    <button data-source="ace_test_src" data-preprocess="ace_test_preprocess" data-target="ace_test" onclick='generate(this)'>Generate</button>
   </body>
 </html>
