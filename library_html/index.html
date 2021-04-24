@@ -8,15 +8,31 @@
   </head>
   <body>
     <p id="ace_test"></p>
-    <div id="ace_test_src" style="display:none;">
-    @@
-    STRH r12, [r11, %offset%]!
-    </div>
+    <pre id="ace_test_src" style="display:none;">
+      @@ title = "Create pokemon from nothing (FRA)"
+      @@ author = "E-Sh4rk"
+      @@ exit = "CertificateFullFRA"
+      
+      species = %SPECIES% ; Please set the species you want (it should not be 0)
+      inaccurate_emu = 0 ; Set to 1 if you are using an innacurate emulator
+      
+      @@
+      
+      ; The Box 10 Slot 19 must be empty. A pokemon will appear there after execution of the code.
+      
+      sbc r11, r15, #0x2940          ; r11 = &Box10Slot19 + 9
+      
+      movs r12, {species & 0xFFFF} ?
+      strh r12, [r11, {28-(inaccurate_emu?7:9)}]!
+      strh r12, [r11, 4]!
+    </pre>
     <script>
       function ace_test_preprocess(txt) {
-        return txt.replace("%offset%", "0");
+        let test_species = document.getElementById("ace_test_species");
+        return txt.replace("%SPECIES%", test_species.value);
       }
     </script>
+    <input type="text" id="ace_test_species" value="0x100">
     <button data-source="ace_test_src" data-preprocess="ace_test_preprocess" data-target="ace_test" onclick='generate(this)'>Generate</button>
   </body>
 </html>

@@ -26,6 +26,6 @@ function generate(e) {
     let preprocess = e.dataset.preprocess;
     let target = document.getElementById(target_id);
     let source = document.getElementById(source_id);
-    let input = preprocess ? eval(preprocess+"(source.innerHTML)") : source.innerHTML;
+    let input = preprocess ? eval(preprocess+"(source.textContent)") : source.textContent ;
     target.innerHTML = html_for_code(input);
 }
