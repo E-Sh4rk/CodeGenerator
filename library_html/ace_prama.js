@@ -21,14 +21,18 @@ function html_for_code(txt) {
     return "<ul class=\"ace\">" + arr.join("\n") + "</ul>";
 }
 
-function generate(e) {
-    let target_id = e.dataset.target;
-    let source_id = e.dataset.source;
-    let preprocess = e.dataset.preprocess;
+function generate_with(source_id, target_id, preprocess) {
     let target = document.getElementById(target_id);
     let source = document.getElementById(source_id);
     let input = preprocess ? eval(preprocess+"(source.textContent)") : source.textContent ;
     target.innerHTML = html_for_code(input);
+}
+
+function generate(e) {
+    let source_id = e.dataset.source;
+    let target_id = e.dataset.target;
+    let preprocess = e.dataset.preprocess;
+    generate_with(source_id, target_id, preprocess);
 }
 
 /* ----- INPUT FIELDS ----- */
