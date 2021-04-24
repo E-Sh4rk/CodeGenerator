@@ -58,7 +58,7 @@ let main fmt env (headers,headers2) parsed exit =
     let res = List.concat (start::res) in
     Format.fprintf fmt "@.Raw data (in hexadecimal):@." ;
     List.iter (Format.fprintf fmt "%02X @?") res ;
-    Format.fprintf fmt "@."
+    Format.fprintf fmt "@." ; None
   end else
     try
       let boxes_codes =
@@ -79,6 +79,7 @@ let main fmt env (headers,headers2) parsed exit =
       end ;
       Format.fprintf fmt "Raw data (in hexadecimal):@." ;
       boxes_codes |> List.iter (Format.fprintf fmt "%a" Boxes.pp_box_raw) ;
-      Format.fprintf fmt "@."
+      Format.fprintf fmt "@." ;
+      Some (List.map (fun c -> Name.codes_to_chars c |> Utils.concat_strings) boxes_codes)
     with Exit.NoExitCode ->
-      Format.fprintf fmt "Error: The exit code overlaps this code (too long?).@."
+      failwith "The exit code overlaps this code (too long?).@."

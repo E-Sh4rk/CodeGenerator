@@ -19,8 +19,7 @@ let treat_input str =
         (Some exit, headers)
       | _ -> failwith "Invalid headers."
     in
-    main fmt env (headers, headers2) program exit ;
-
+    main fmt env (headers, headers2) program exit |> ignore
   ) with e -> Buffer.add_string buffer (Printexc.to_string e) end ;
   Format.pp_print_flush fmt () ;
   Buffer.contents buffer

@@ -15,4 +15,4 @@ let () =
       (Some exit, headers)
     | _ -> failwith "Invalid headers."
   in
-  main fmt env (headers, headers2) program exit
+  main fmt env (headers, headers2) program exit |> ignore

@@ -25,3 +25,9 @@ let int64_of_uint32 x =
 
 let dummy_fmt =
   Format.make_formatter (fun _ _ _ -> ()) (fun _ -> ())
+
+let concat_strings lst =
+  let pp fmt lst =
+    lst |> List.iter (fun str -> Format.fprintf fmt "%s" str)
+  in
+  Format.asprintf "%a" pp lst

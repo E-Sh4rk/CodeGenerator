@@ -34,6 +34,9 @@ runp:
 js:
 	dune build ace_js.bc.js
 
+lib:
+	dune build ace_lib.bc.js
+
 data: buildd rund
 
 buildd:
