@@ -10,17 +10,93 @@
     <datalist id="pokemonlist"></datalist>
     <datalist id="objectlist"></datalist>
 
-    <input list="pokemonlist" id="ace_test_species" value="0x100">
-    <button data-source="ace_test_src" data-preprocess="ace_test_preprocess" data-target="ace_test" onclick='generate(this)'>Générer le code</button>
+    <!-- Custom Mass Outbreaks -->
 
-    <p id="ace_test"></p>
-    <pre id="ace_test_src" style="display:none;">
+    <input type="checkbox" id="ace_cmo_emu" name="ace_cmo_emu">
+    <label for="ace_cmo_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <input list="pokemonlist" id="ace_cmo_species" value="">
+    <button data-source="ace_cmo_src" data-preprocess="ace_cmo_preprocess" data-target="ace_cmo" onclick='generate(this)'>Générer le code</button>    
+
+    <p id="ace_cmo"></p>
+    <pre id="ace_cmo_src" style="display:none;">
+      @@ exit = "WhiteOutFRA"
+      @@ filler1 = 0xB2AC00FF
+      @@ filler2 = 0xB2ACFF00
+      @@ filler3 = 0xBFFF0000
+      @@ filler4 = 0xFF000000
+
+      species = %SPECIES%
+      innacurate_emu = %EMU%
+
+      @@
+
+      sbc r12,pc,{innacurate_emu ? 0xC0 : 0xC2}
+      sbc r12,r12, 0xA100
+
+      movs r11, 0xED0000
+      bic r11,r11, 0xC00000 ; r11 = 0x2D0000
+      adc r11,r11, { species & 0xFFFF } ?
+
+      str r11, [r12, 0xC00]!
+    </pre>
+    <script>
+      function ace_cmo_preprocess(txt) {
+        let species = document.getElementById("ace_cmo_species");
+        let emu = document.getElementById("ace_cmo_emu");
+        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        return txt.replace("%SPECIES%", pokemon_identifier(species.value));
+      }
+    </script>
+
+    <!-- Any Item -->
+
+    <input type="checkbox" id="ace_item_emu" name="ace_item_emu">
+    <label for="ace_item_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <input list="objectlist" id="ace_item_obj" value="">
+    <button data-source="ace_item_src" data-preprocess="ace_item_preprocess" data-target="ace_item" onclick='generate(this)'>Générer le code</button>    
+
+    <p id="ace_item"></p>
+    <pre id="ace_item_src" style="display:none;">
+      @@ exit = "WhiteOutFRA"
+      @@ filler1 = 0xB2AC00FF
+      @@ filler2 = 0xB2ACFF00
+      @@ filler3 = 0xBFFF0000
+      @@ filler4 = 0xFF000000
+
+      obj = %OBJ%
+      innacurate_emu = %EMU%
+
+      @@
+
+      sbc r12,pc,{innacurate_emu ? 0x2B : 0x2D}
+      sbc r12,r12,0xAD00
+      movs r11, {obj & 0xFFFF} ?
+      strh r11, [r12]     %%  Store item index in lottery prize location
+    </pre>
+    <script>
+      function ace_item_preprocess(txt) {
+        let obj = document.getElementById("ace_item_obj");
+        let emu = document.getElementById("ace_item_emu");
+        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        return txt.replace("%OBJ%", object_identifier(obj.value));
+      }
+    </script>
+
+    <!-- Generate species -->
+
+    <input type="checkbox" id="ace_generate_emu" name="ace_generate_emu">
+    <label for="ace_generate_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <input list="pokemonlist" id="ace_generate_species" value="">
+    <button data-source="ace_generate_src" data-preprocess="ace_generate_preprocess" data-target="ace_generate" onclick='generate(this)'>Générer le code</button>
+
+    <p id="ace_generate"></p>
+    <pre id="ace_generate_src" style="display:none;">
       @@ title = "Create pokemon from nothing (FRA)"
       @@ author = "E-Sh4rk"
       @@ exit = "CertificateFullFRA"
       
       species = %SPECIES% ; Please set the species you want (it should not be 0)
-      inaccurate_emu = 0 ; Set to 1 if you are using an innacurate emulator
+      inaccurate_emu = %EMU% ; Set to 1 if you are using an innacurate emulator
       
       @@
       
@@ -33,9 +109,11 @@
       strh r12, [r11, 4]!
     </pre>
     <script>
-      function ace_test_preprocess(txt) {
-        let test_species = document.getElementById("ace_test_species");
-        return txt.replace("%SPECIES%", pokemon_identifier(test_species.value));
+      function ace_generate_preprocess(txt) {
+        let species = document.getElementById("ace_generate_species");
+        let emu = document.getElementById("ace_generate_emu");
+        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        return txt.replace("%SPECIES%", pokemon_identifier(species.value));
       }
     </script>
   </body>
