@@ -9,6 +9,7 @@
   <body>
     <datalist id="pokemonlist"></datalist>
     <datalist id="objectlist"></datalist>
+    <datalist id="attacklist"></datalist>
 
     <!-- Custom Mass Outbreaks -->
 
@@ -79,6 +80,36 @@
         let emu = document.getElementById("ace_item_emu");
         txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
         return txt.replace("%OBJ%", object_identifier(obj.value));
+      }
+    </script>
+
+    <!-- Any Move -->
+
+    <input type="checkbox" id="ace_move_emu" name="ace_move_emu">
+    <label for="ace_move_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <input list="attacklist" id="ace_move_attk" value="">
+    <button data-source="ace_move_src" data-preprocess="ace_move_preprocess" data-target="ace_move" onclick='generate(this)'>Générer le code</button>    
+
+    <p id="ace_move"></p>
+    <pre id="ace_move_src" style="display:none;">
+      @@ exit = "WhiteOutFRA"
+      @@ filler1 = 0xB2AC00FF
+      @@ filler2 = 0xB2ACFF00
+      @@ filler3 = 0xBFFF0000
+      @@ filler4 = 0xFF000000
+
+      obj = %ATTK%
+      innacurate_emu = %EMU%
+
+      @@
+
+    </pre>
+    <script>
+      function ace_move_preprocess(txt) {
+        let attk = document.getElementById("ace_move_attk");
+        let emu = document.getElementById("ace_move_emu");
+        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        return txt.replace("%ATTK%", attack_identifier(attk.value));
       }
     </script>
 

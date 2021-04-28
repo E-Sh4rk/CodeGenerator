@@ -1,0 +1,604 @@
+﻿Identifiant,Décimal,Pokémon,Attaque,Objet,Caractère
+$0 ,0,??????????,- (ne fait rien),????????,Espace
+$1 ,1,Bulbizarre,Ecras'face,Master Ball,À
+$2 ,2,Herbizarre,Poing-karaté,Super Ball,Á
+$3 ,3,Florizarre,Torgnoles,Hyper Ball,Â
+$4 ,4,Salamèche,Poing comête,Poké Ball,Ç
+$5 ,5,Reptincel,Ultimapoing,Safari Ball,È
+$6 ,6,Dracaufeu,Jackpot,Filet Ball,É
+$7 ,7,Carapuce,Poing de feu,Scuba Ball,Ê
+$8 ,8,Carabaffe,Poinglace,Faiblo Ball,Ë
+$9 ,9,Tortank,Poing-éclair,Bis Ball,Ì
+$000A,10,Chenipan,Griffe,Chrono Ball,こ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$000B,11,Chrysacier,Force poigne,Luxe Ball,Î
+$000C,12,Papilusion,Guillotine,Honor Ball,Ï
+$000D,13,Aspicot,Coupe-vent,Potion,Ò
+$000E,14,Coconfort,Danse-lames,Antidote,Ó
+$000F,15,Dardargnan,Coupe,Anti-brûle,Ô
+$10 ,16,Roucool,Tornade,Antigel,Œ
+$11 ,17,Roucoups,Cru-aile,Réveil,Ù
+$12 ,18,Roucarnage,Cyclone,Anti-Para,Ú
+$13 ,19,Rattata,Vol,Total Soin,Û
+$14 ,20,Rattatac,Etreinte,Potion Max,Ñ
+$15 ,21,Piafahec,Souplesse,Hyper Potion,ß
+$16 ,22,Rapasdepic,Fouet liane,Super Potion,à
+$17 ,23,Abo,Ecrasement,Guérison,á
+$18 ,24,Arbok,Double-Pied,Rappel,ね (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$19 ,25,Pikachu,Ultimawashi,Rappel Max,ç
+$001A,26,Raichu,Pied sauté,Eau Fraîche,è
+$001B,27,Sabelette,Mawashi geri,Soda Cool,é
+$001C,28,Sablaireau,Jet de sable,Limonade,ê
+$001D,29,Nidoran F,Coup d'Boule,Lait Meumeu,ë
+$001E,30,Nidorina,Koud'Korne,Poudrénergie,ì
+$001F,31,Nidoqueen,Furie,Racinénergie,ま (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$20 ,32,Nidoran M,Empal'korne,Poudre Soin,î
+$21 ,33,Nidorino,Charge,Herbe Rappel,ï
+$22 ,34,Nidoking,Plaquage,Huile,ò
+$23 ,35,Mélofée,Ligotage,Huile Max,ó
+$24 ,36,Mélodelfe,Bélier,Elixir,ô
+$25 ,37,Goupix,Mania,Max Elixir,œ
+$26 ,38,Feunard,Damoclès,Lava Cookie,ù
+$27 ,39,Rondoudou,Mimi-Queue,Flûte Bleue,ú
+$28 ,40,Grodoudou,Dard-Venin,Flûte Jaune,û
+$29 ,41,Nosférapti,Double-Dard,Flûte Rouge,ñ
+$002A,42,Nosféralto,Dard-Nuée,Flûte Noire,º
+$002B,43,Mystherhe,Gros'yeux,Flûte Blanche,ª
+$002C,44,Ortide,Morsure,Jus de Baie,ᵉʳ
+$002D,45,Rafflesia,Rugissement,Cendresacrée,&
+$002E,46,Paras,Hurlement,Sel Tréfonds,+
+$002F,47,Parasect,Berceuse,Co. Tréfonds,ぁ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$30 ,48,Mimitoss,Ultrason,Tesson Rouge,ぃ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$31 ,49,Aeromite,Sonicboom,Tesson Bleu,ぅ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$32 ,50,Taupiqueur,Entrave,Tesson Jaune,ぇ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$33 ,51,Triopikeur,Acide,Tesson Vert,ぉ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$34 ,52,Miaouss,Flammèche,????????,N.
+$35 ,53,Persian,Lanceflamme,????????,=
+$36 ,54,Psykokwak,Brume,????????,;
+$37 ,55,Akwakwak,Pistolet à O,????????,が (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$38 ,56,Ferosinge,Hydrocanon,????????,ぎ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$39 ,57,Colossinge,Surf,????????,ぐ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$003A,58,Caninos,Laser glace,????????,げ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$003B,59,Arcanin,Blizzard,????????,ご (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$003C,60,Ptitard,Psyko,????????,ざ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$003D,61,Tétarte,Bulle d'o,????????,じ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$003E,62,Tartard,Onde boréale,????????,ず (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$003F,63,Abra,Ultralaser,PV Plus,ぜ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$40 ,64,Kadahra,Picpic,Protéine,ぞ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$41 ,65,Alakazam,Bec Vrille,Fer,だ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$42 ,66,Machoc,Sacrifice,Carbone,ぢ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$43 ,67,Machopeur,Balayage,Calcium,づ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$44 ,68,Mackogneur,Riposte,Super Bonbon,で (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$45 ,69,Chétiflor,Frappe Atlas,PP Plus,ど (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$46 ,70,Boustiflor,Force,Zinc,ば (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$47 ,71,Empiflor,Vol-Vie,PP Max,び (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$48 ,72,Tentacool,Méga-sangsue,????????,ぶ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$49 ,73,Tentacruel,Vampigraine,Défense Spéc.,べ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$004A,74,Racaillou,Croissance,Muscle +,ぼ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$004B,75,Gravalanch,Tranch'herbe,Attaque +,ぱ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$004C,76,Grolem,Lance-Soleil,Défense +,ぴ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$004D,77,Ponyta,Poudre toxik,Vitesse +,ぷ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$004E,78,Galopa,Para-spore,Précision +,ぺ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$004F,79,Ramoloss,Poudre dodo,Spécial +,ぽ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$50 ,80,Flagadoss,Danse-fleur,Poké Poupée,っ (R/S)
+,,,,,▯ (E)
+,,,,,"Espace (RF/VF, inutilisé)"
+$51 ,81,Magneti,Sécretion,Queue Skitty,¿
+$52 ,82,Magneton,Draco-rage,????????,¡
+$53 ,83,Canarticho,Danseflamme,Super Repousse,Symbole PK
+$54 ,84,Doduo,Eclair,Max Repousse,Symbole MN
+$55 ,85,Dodrio,Tonnerre,Corde Sortie,Symbole PO
+$56 ,86,Otaria,Cage-Eclair,Repousse,Symbole Ké
+$57 ,87,Lamantine,Fatal-Foudre,????????,Symbole BL
+$58 ,88,Tadmorv,Jet Pierres,????????,Symbole O
+$59 ,89,Grotadmorv,Séisme,????????,Symbole C
+$005A,90,Kokiyas,Abîme,????????,Í
+$005B,91,Crustabri,Tunnel,????????,%
+$005C,92,Fantominus,Toxik,????????,(
+$005D,93,Spectrum,Choc mental,Pierresoleil,)
+$005E,94,Ectoplasma,Psyko,Pierre Lune,セ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$005F,95,Onix,Hypnose,Pierre Feu,ソ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$60 ,96,Soporifik,Yoga,Pierrefoudre,タ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$61 ,97,Hypnomade,Hâte,Pierre Eau,チ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$62 ,98,Krabby,Vive-Attaque,Pierreplante,ツ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$63 ,99,Kraboss,Frénésie,????????,テ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$64 ,100,Voltorbe,Téléport,????????,ト (R/S)
+,,,,,PCo (E)
+,,,,,"Espace (RF/VF, inutilisé)"
+$65 ,101,Electrode,Ténèbres,Petit Champi,ナ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$66 ,102,Noeunoeuf,Copie,Gros Champi,"ニ (R/S), Espace (E/RF/VF, inutilisé)"
+$67 ,103,Noadkoko,Grincement,????????,ヌ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$68 ,104,Osselait,Reflet,Perle,â
+$69 ,105,Ossateur,Soin,Grosse Perle,ノ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$006A,106,Kicklee,Armure,Pouss. Étoile,ハ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$006B,107,Tygnon,Lilliput,Morc. Étoile,ヒ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$006C,108,Excelangue,Brouillard,Pépite,フ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$006D,109,Smogo,Onde folie,Écaillecoeur,ヘ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$006E,110,Smogogo,Repli,????????,ホ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$006F,111,Rhinocorne,Boul'armure,????????,í
+$70 ,112,Rhinoféros,Bouclier,????????,ミ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$71 ,113,Leveinard,Mur lumière,????????,ム (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$72 ,114,Saquedeneu,Buée noire,????????,メ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$73 ,115,Kangourex,Protection,????????,モ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$74 ,116,Hypotrempe,Puissance,????????,ヤ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$75 ,117,Hypocéan,Patience,????????,ユ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$76 ,118,Poissirène,Metronome,????????,ヨ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$77 ,119,Poissoroy,Mimique,????????,ラ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$78 ,120,Stari,Destruction,????????,リ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$79 ,121,Staross,Bomb'oeuf,Lettre Oranj,Flèche haut
+$007A,122,M.Mime,Lechouille,Lettre Port,Flèche bas
+$007B,123,Insécateur,Puredpois,Lettre Brill,Flèche gauche
+$007C,124,Lippoutou,Détritus,Lettre Meca,Flèche droite
+$007D,125,Elektek,Massd'os,Lettre Bois,ヲ (R/S)
+,,,,,"Espace, 1 pixel (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$007E,126,Magmar,Déflagration,Lettre Vague,ン (R/S)
+,,,,,"Espace, 2 pixels (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$007F,127,Scarabrute,Cascade,Lettre Bulle,ァ (R/S)
+,,,,,"Espace, 3 pixels (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$80 ,128,Taurus,Claquoir,Lettre Ombre,ィ (R/S)
+,,,,,"Espace, 4 pixels (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$81 ,129,Magicarpe,Météores,Lettre Tropi,ゥ (R/S)
+,,,,,"Espace, 5 pixels (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$82 ,130,Léviator,Coud'Krâne,Lettre Songe,ェ (R/S)
+,,,,,"Espace, 6 pixels (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$83 ,131,Lokhlass,Picanon,Lettre Cool,ォ (R/S)
+,,,,,"Espace, 7 pixels (E)"
+,,,,,"Espace (RF/VF, inutilisé)"
+$84 ,132,Metamorph,Constriction,Lettre Retro,ᵉ
+$85 ,133,Évoli,Amnésie,Baie Ceriz,<
+$86 ,134,Aquali,Télékinésie,Baie Maron,>
+$87 ,135,Voltali,E-coque,Baie Pecha,ガ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$88 ,136,Pyroli,Pied voltige,Baie Fraive,ギ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$89 ,137,Porygon,Intimidation,Baie Willia,グ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$008A,138,Amonita,Dêvoreve,Baie Mepo,ゲ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$008B,139,Amonistar,Gaz toxik,Baie Oran,ゴ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$008C,140,Kabuto,Barrage,Baie Kika,ザ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$008D,141,Kabutops,Vampirisme,Baie Prine,ジ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$008E,142,Ptéra,Grobisou,Baie Sitrus,ズ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$008F,143,Ronflex,Piqué,Baie Figuy,ゼ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$90 ,144,Artikodin,Morphing,Baie Wiki,ゾ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$91 ,145,Electhor,Ecume,Baie Mago,ダ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$92 ,146,Sulfura,Uppercut,Baie Gowav,ヂ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$93 ,147,Minidraco,Spore,Baie Papaya,ヅ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$94 ,148,Draco,Flash,Baie Framby,デ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$95 ,149,Dracolosse,Vague psy,Baie Remu,ド (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$96 ,150,Mewtwo,Tempette,Baie Nanab,バ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$97 ,151,Mew,Acidarmure,Baie Repoi,ビ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$98 ,152,Germignon,Pince-masse,Baie Nanana,ブ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$99 ,153,Macronium,Explosion,Baie Grena,ベ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$009A,154,Méganium,Combo-griffe,Baie Alga,ボ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$009B,155,Héricendre,Osmerang,Baie Qualot,パ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$009C,156,Feurisson,Repos,Baie Lonme,ピ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$009D,157,Typhlosion,Eboulement,Baie Resin,プ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$009E,158,Kaïminus,Croc de mort,Baie Tomato,ペ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$009F,159,Crocrodil,Affûtage,Baie Siam,ポ (R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$00A0,160,Aligatueur,Adaptation,Baie Mangou,ʳᵉ
+$00A1,161,Fouinette,Triplattaque,Baie Rabuta,0
+$00A2,162,Fouinar,Croc fatal,Baie Tronci,1
+$00A3,163,Hoothoot,Tranche,Baie Kiwan,2
+$00A4,164,Noarfang,Clonage,Baie Palma,3
+$00A5,165,Coxy,Lutte,Baie Stekpa,4
+$00A6,166,Coxyclaque,Gribouille,Baie Durin,5
+$00A7,167,Mimigal,Triple Pied,Baie Myrte,6
+$00A8,168,Migalos,Larcin,Baie Lichii,7
+$00A9,169,Nostenfer,Toile,Baie Lingan,8
+$00AA,170,Loupio,Lire-esprit,Baie Sailak,9
+$00AB,171,Lanturn,Cauchemar,Baie Pitaye,!
+$00AC,172,Pichu,Roue de feu,Baie Abriko,?
+$00AD,173,Mélo,Ronflement,Baie Lansat,.
+$00AE,174,Toudoudou,Malédiction,Baie Frista,-
+$00AF,175,Togépi,Fléau,Baie Enigma,・(R/S)
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$00B0,176,Togétic,Adaptation 2,????????,...
+$00B1,177,Natu,Aéroblast,????????,«
+$00B2,178,Xatu,Spore coton,????????,»
+$00B3,179,Wattouat,Contre,PoudreClaire,‘
+$00B4,180,Lainergie,Dépit,HerbeBlanche,’
+$00B5,181,Pharamp,Poudreuse,Brac. Macho,♂
+$00B6,182,Joliflor,Abri,Multi Exp,♀
+$00B7,183,Marill,Mach Punch,Vive Griffe,Symbole Pokédollar
+$00B8,184,Azumarill,Grimace,Grelot Zen,","
+$00B9,185,Simularbre,Feinte,Herbe Mental,×
+$00BA,186,Tarpaud,Doux baiser,Band. Choix,/
+$00BB,187,Granivol,Cognobidon,Roche Royale,A
+$00BC,188,Floravol,Bombe-beurk,Poudre Argent,B
+$00BD,189,Cotovol,Coud'boue,Piece Rune,C
+$00BE,190,Capumain,Octazooka,Rune Purif.,D
+$00BF,191,Tournegrin,Picôts,Rosée Âme,E
+$00C0,192,Héliatronc,Elécanon,Dent Océan,F
+$00C1,193,Yanma,Clairvoyance,Écaille Océan,G
+$00C2,194,Axoloto,Prlvt Destin,Boule Fumée,H
+$00C3,195,Maraiste,Requiem,Pierre Stase,I
+$00C4,196,Mentali,Vent Glace,Bandeau,J
+$00C5,197,Noctali,Detection,Oeuf Chance,K
+$00C6,198,Cornèbre,Charge-os,Lentilscope,L
+$00C7,199,Roigada,Verrouillage,Peau Métal,M
+$00C8,200,Feuforêve,Colère,Restes,N
+$00C9,201,Zarbi A,Tempêtesable,Écailledraco,O
+$00CA,202,Qulbutoké,Giga-sangsue,Ballelumière,P
+$00CB,203,Girafarig,Tenacité,Sable Doux,Q
+$00CC,204,Pomdepik,Charme,Pierre Dure,R
+$00CD,205,Foretress,Roulade,Grain Miracl,S
+$00CE,206,lnsolourdo,Faux-Chage,Lunet. Noires,T
+$00CF,207,Scorplane,Vantardise,Ceint. Noire,U
+$00D0,208,Steelix,Lait à boire,Aimant,V
+$00D1,209,Snubbull,Etincelle,Eau Mystique,W
+$00D2,210,Granbull,Taillade,Bec Pointu,X
+$00D3,211,Qwilfish,Aile d'acier,Pic Venin,Y
+$00D4,212,Cizayox,Regard noir,Glacéternel,Z
+$00D5,213,Caratroc,Attraction,Rune Sort,a
+$00D6,214,Scarhino,Blabla dodo,Cuillertordu,b
+$00D7,215,Farfuret,Glas de soin,Charbon,c
+$00D8,216,Teddiursa,Retour,Croc Dragon,d
+$00D9,217,Ursaring,Cadeau,Mouch. Soie,e
+$00DA,218,Limagma,Frustration,Améliorator,f
+$00DB,219,Volcaropod,Rune protect,Grelot Coque,g
+$00DC,220,Marcacrin,Balance,Encens Mer,h
+$00DD,221,Cochignon,Feu sacré,Encens Doux,i
+$00DE,222,Corayon,Ampleur,Poing Chance,j
+$00DF,223,Remoraid,Dynamopoing,Poudre Métal,k
+0.00E+00,224,Octillery,Mégacorne,Masse Os,l
+0.00E+00,225,Cadoizo,Dracosouffle,Bâton,m
+0.00E+00,226,Demanta,Relais,????????,n
+0.00E+00,227,Airmure,Encore,????????,o
+0.00E+00,228,Malosse,Poursuite,????????,p
+0.00E+00,229,Demolosse,Tour rapide,????????,q
+0.00E+00,230,Hyporoi,Doux parfum,????????,r
+0.00E+00,231,Phanpy,Queue de fer,????????,s
+0.00E+00,232,Donphan,Griffe acier,????????,t
+0.00E+00,233,Porygon 2,Corps perdu,????????,u
+$00EA,234,Cerfrousse,Aurore,????????,v
+$00EB,235,Queulorior,Synthèse,????????,w
+$00EC,236,Debugant,Rayon lune,????????,x
+$00ED,237,Kapoera,Puis. Cachée,????????,y
+$00EE,238,Lippouti,Coup-croix,????????,z
+$00EF,239,Elekid,Ouragan,????????,Symbole triangle
+$00F0,240,Maghy,Danse pluie,????????,:
+$00F1,241,Ecremeuh,Zénith,????????,Ä
+$00F2,242,Leuphorie,Mâchouille,????????,Ö
+$00F3,243,Raikou,Voile Miroir,????????,Ü
+$00F4,244,Entei,Boost,????????,ä
+$00F5,245,Suicune,Vit.Extrême,????????,ö
+$00F6,246,Embrylex,Pouv.Antique,????????,ü
+$00F7,247,Ymphect,Ball'Ombre,????????,"Flèche haut (R/S, inutilisé)"
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$00F8,248,Tyranocif,Prescience,????????,"Flèche bas (R/S, inutilisé)"
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$00F9,249,Lugia,Eclate-roc,????????,"Flèche gauche (R/S, inutilisé)"
+,,,,,"Espace (E/RF/VF, inutilisé)"
+$00FA,250,Ho-oh,Siphon,????????,Caractère spécial (voir plus bas)
+$00FB,251,Celebi,Baston,????????,Caractère spécial (voir plus bas)
+$00FC,252,?,Bluff,????????,Caractère spécial (voir plus bas)
+$00FD,253,?,Brouhaha,????????,Caractère spécial (voir plus bas)
+$00FE,254,?,Stockage,Foul. Rouge,Saut de ligne
+$00FF,255,?,Relâche,Foul. Bleu,Marqueur de fin
+$100 ,256,?,Avale,Foul. Rose,
+$101 ,257,?,Canicule,Foul. Vert,
+$102 ,258,?,Grêle,Foul. Jaune,
+$103 ,259,?,Tourmente,Vélo Course,
+$104 ,260,?,Flatterie,Boite Jetons,
+$105 ,261,?,Feu follet,Cherch'Objet,
+$106 ,262,?,Souvenir,Canne,
+$107 ,263,?,Façade,Super Canne,
+$108 ,264,?,Mitra-Poing,Mega Canne,
+$109 ,265,?,Stimulant,Passe Bateau,
+$010A,266,?,Par ici,Passeconcour,
+$010B,267,?,Force-Nature,????????,
+$010C,268,?,Chargeur,Seau Wailmer,
+$010D,269,?,Provoc,Pack Devon,
+$010E,270,?,Coup d'Main,Sac à suie,
+$010F,271,?,Tourmagik,Clé Sous-sol,
+$110 ,272,?,Imitation,Vélo Cross,
+$111 ,273,?,Voeu,Boite Pokéblocs,
+$112 ,274,?,Assistance,Lettre,
+$113 ,275,?,Racines,Passe Éon,
+$114 ,276,?,Surpuissance,Orbe Rouge,
+$115 ,277,Arcko,Reflet magik,Orbe Bleu,
+$116 ,278,Massko,Recyclage,Scanner,
+$117 ,279,Jungko,Vendetta,Lunet. Sable,
+$118 ,280,Poussifeu,Casse-Brique,Météorite,
+$119 ,281,Galifeu,Bâillement,Clé Salle 1,
+$011A,282,Brasegali,Sabotage,Clé Salle 2,
+$011B,283,Gobou,Effort,Clé salle 4,
+$011C,284,Flobio,Eruption,Clé salle 6,
+$011D,285,Laggron,Echange,Clé Stockage,
+$011E,286,Medhyena,Possessif,Foss. Racine,
+$011F,287,Grahyena,Régénération,Foss. Griffe,
+$120 ,288,Zigzaton,Rancune,Devon Scope,
+$121 ,289,Linéon,Saisie,CT01,
+$122 ,290,Chenipotte,Force cachée,CT02,
+$123 ,291,Armulys,Plongée,CT03,
+$124 ,292,Charmillon,Cogne,CT04,
+$125 ,293,Blindalys,Camouflage,CT05,
+$126 ,294,Papinox,Lumiqueue,CT06,
+$127 ,295,Nénupiot,Lumi-éclat,CT07,
+$128 ,296,Lomhre,Ball'Brume,CT08,
+$129 ,297,Ludicolo,Danse-Plume,CT09,
+$012A,298,Grainipiot,Danse-Folle,CT10,
+$012B,299,Pifeuil,Pied brûleur,CT11,
+$012C,300,Tengalice,Lance-Boue,CT12,
+$012D,301,Ningale,Ball'Glace,CT13,
+$012E,302,Ninjask,Poing dard,CT14,
+$012F,303,Munja,Paresse,CT15,
+$130 ,304,Nirondelle,Megaphone,CT16,
+$131 ,305,Hélédelle,Crochetvenin,CT17,
+$132 ,306,Balignon,Eclategriffe,CT18,
+$133 ,307,Chapignon,Rafale feu,CT19,
+$134 ,308,Spinda,Hydroblast,CT20,
+$135 ,309,Goélise,Poing Méteor,CT21,
+$136 ,310,Bekipan,Etonnement,CT22,
+$137 ,311,Arakdo,Ball'Météo,CT23,
+$138 ,312,Maskadra,Aromatherapi,CT24,
+$139 ,313,Wailmer,Croco larme,CT25,
+$013A,314,Wailord,Tranch'Air,CT26,
+$013B,315,Skitty,Surchauffe,CT27,
+$013C,316,Delcatty,Flair,CT28,
+$013D,317,Kecleon,Tomberoche,CT29,
+$013E,318,Balhuto,Vent Argenté,CT30,
+$013F,319,Kaorine,Srido-Son,CT31,
+$140 ,320,Tarinor,Siffl'Herbe,CT32,
+$141 ,321,Chartor,Chatouille,CT33,
+$142 ,322,Tenefix,Force cosmique,CT34,
+$143 ,323,Barloche,Giclédo,CT35,
+$144 ,324,Barbicha,Rayon signal,CT36,
+$145 ,325,Lovdisc,Poing ombre,CT37,
+$146 ,326,Écrapince,Extrasenseur,CT38,
+$147 ,327,Colhomard,Stratopercut,CT39,
+$148 ,328,Barpau,Tourbi-Sable,CT40,
+$149 ,329,Milobellus,Glaciation,CT41,
+$014A,330,Carvanha,Ocroupi,CT42,
+$014B,331,Sharpedo,Balle graine,CT43,
+$014C,332,Kraknoix,Aeropique,CT44,
+$014D,333,Vibraninf,Stalactite,CT45,
+$014E,334,Libégon,Mur de fer,CT46,
+$014F,335,Makuhita,Barrage,CT47,
+$150 ,336,Hariyama,Grondement,CT48,
+$151 ,337,Dynavolt,Dracogriffe,CT49,
+$152 ,338,Elecsprint,Végé-Attak,CT50,
+$153 ,339,Chamallot,Gonflette,CS01,
+$154 ,340,Camerupt,Rebond,CS02,
+$155 ,341,Obalie,Tir de boue,CS03,
+$156 ,342,Phogleur,Queue-Poison,CS04,
+$157 ,343,Kaimorse,Implore,CS05,
+$158 ,344,Cacnea,Electacle,CS06,
+$159 ,345,Cacturne,Feuille Magik,CS07,
+$015A,346,Stalgamin,Tourniquet,CS08,
+$015B,347,Oniglali,Plénitude,????????,
+$015C,348,Séléroc,Lame-feuille,????????,
+$015D,349,Solaroc,Danse draco,Colis Chen,
+$015E,350,Azurill,Boule roc,Pokéflute,
+$015F,351,Spoink,Onde de choc,Clé Secrète,
+$160 ,352,Groret,Vibraqua,Bon Commande,
+$161 ,353,Posipi,Carnareket,Dent d'Or,
+$162 ,354,Négapi,Psycho Boost,Vieil Ambre,
+$163 ,355,Mysdibule,Attaque glitch,Carte Magn.,
+$164 ,356,Meditikka,Assaut Noir,Clé Asc.,
+$165 ,357,Charmina,Charge Noire,Nautile,
+$166 ,358,Tylton,Bélier Noir,Fossile Dome,
+$167 ,359,Altaria,Retour Noir,Scope Sylphe,
+$168 ,360,Okéoké,Onde Noire,Bicyclette,
+$169 ,361,Skélénox,Rage Noire,Carte,
+$016A,362,Téraclope,Typhon Noir,Cherche VS,
+$016B,363,Rosélia,Ardeur Noire,Memorydex,
+$016C,364,Parecool,Eclair Noir,Boite CT,
+$016D,365,Vigoroth,Froid Noir,Sac à Baies,
+$016E,366,Monaflemit,Aéro Noir,TV ABC,
+$016F,367,Gloupti,Ciel Noir,Tri-Passe,
+$170 ,368,Avaltout,Blocage Noir,Passe Prime,
+$171 ,369,Tropius,Brume Noire,Thé,
+$172 ,370,Chuchmur,Folie Noire,Ticketmystik,
+$173 ,371,Ramboum,Souffle Noir,Ticketaurora,
+$174 ,372,Brouhabam,Percée Noire,Pot Poudre,
+$175 ,373,Coquiperl,Chute Noire,Rubis,
+$176 ,374,Serpang,Attaques glitch,Saphir,
+$177 ,375,Rosabyss,,Sceau Magma,
+$178 ,376,Absol,,Vieillecarte,
+$179 ,377,Polichombr,,????????,
+$017A,378,Branette,,,
+$017B,379,Seviper,,,
+$017C,380,Mangriff,,,
+$017D,381,Relicanth,,,
+$017E,382,Galekid,,,
+$017F,383,Galegon,,,
+$180 ,384,Galeking,,,
+$181 ,385,Morphéo,,,
+$182 ,386,Muciole,,,
+$183 ,387,Lumivole,,,
+$184 ,388,Lilia,,,
+$185 ,389,Vacilys,,,
+$186 ,390,Anorith,,,
+$187 ,391,Armaldo,,,
+$188 ,392,Tarsal,,,
+$189 ,393,Kirlia,,,
+$018A,394,Gardevoir,,,
+$018B,395,Draby,,,
+$018C,396,Drackhaus,,,
+$018D,397,Drattak,,,
+$018E,398,Terhal,,,
+$018F,399,Metang,,,
+$190 ,400,Metalosse,,,
+$191 ,401,Regirock,,,
+$192 ,402,Regice,,,
+$193 ,403,Registeel,,,
+$194 ,404,Kyogre,,,
+$195 ,405,Groudon,,,
+$196 ,406,Rayquaza,,,
+$197 ,407,Latias,,,
+$198 ,408,Latios,,,
+$199 ,409,Jirachi,,,
+$019A,410,Deoxys,,,
+$019B,411,Eoko,,,
+$019C,412,Oeuf,,,
+$019D,413,??????????,,,
+,,Zarbi B (données de forme),,,
+,,Manzaï (Pokémon XD),,,
+$019E,414,??????????,,,
+,,Zarbi C (données de forme),,,
+,,Goinfrex (Pokémon XD),,,
+$019F,415,??????????,,,
+,,Zarbi D (données de forme),,,
+,,Zarbi B (Pokémon XD),,,
+$01A0,416,??????????,,,
+,,Zarbi E (données de forme),,,
+,,Zarbi C (Pokémon XD),,,
+$01A1,417,??????????,,,
+,,Zarbi F (données de forme),,,
+,,Zarbi D (Pokémon XD),,,
+$01A2,418,??????????,,,
+,,Zarbi G (données de forme),,,
+,,Zarbi E (Pokémon XD),,,
+$01A3,419,??????????,,,
+,,Zarbi H (données de forme),,,
+,,Zarbi F (Pokémon XD),,,
+$01A4,420,??????????,,,
+,,Zarbi I (données de forme),,,
+,,Zarbi G (Pokémon XD),,,
+$01A5,421,??????????,,,
+,,Zarbi J (données de forme),,,
+,,Zarbi H (Pokémon XD),,,
+$01A6,422,??????????,,,
+,,Zarbi K (données de forme),,,
+,,Zarbi I (Pokémon XD),,,
+$01A7,423,??????????,,,
+,,Zarbi L (données de forme),,,
+,,Zarbi J (Pokémon XD),,,
+$01A8,424,??????????,,,
+,,Zarbi M (données de forme),,,
+,,Zarbi K (Pokémon XD),,,
+$01A9,425,??????????,,,
+,,Zarbi N (données de forme),,,
+,,Zarbi L (Pokémon XD),,,
+$01AA,426,??????????,,,
+,,Zarbi O (données de forme),,,
+,,Zarbi M (Pokémon XD),,,
+$01AB,427,??????????,,,
+,,Zarbi P (données de forme),,,
+,,Zarbi N (Pokémon XD),,,
+$01AC,428,??????????,,,
+,,Zarbi Q (données de forme),,,
+,,Zarbi O (Pokémon XD),,,
+$01AD,429,??????????,,,
+,,Zarbi R (données de forme),,,
+,,Zarbi P (Pokémon XD),,,
+$01AE,430,??????????,,,
+,,Zarbi S (données de forme),,,
+,,Zarbi Q (Pokémon XD),,,
+$01AF,431,??????????,,,
+,,Zarbi T (données de forme),,,
+,,Zarbi R (Pokémon XD),,,
+$01B0,432,??????????,,,
+,,Zarbi U (données de forme),,,
+,,Zarbi S (Pokémon XD),,,
+$01B1,433,??????????,,,
+,,Zarbi V (données de forme),,,
+,,Zarbi T (Pokémon XD),,,
+$01B2,434,??????????,,,
+,,Zarbi W (données de forme),,,
+,,Zarbi U (Pokémon XD),,,
+$01B3,435,??????????,,,
+,,Zarbi X (données de forme),,,
+,,Zarbi V (Pokémon XD),,,
+$01B4,436,??????????,,,
+,,Zarbi Y (données de forme),,,
+,,Zarbi W (Pokémon XD),,,
+$01B5,437,??????????,,,
+,,Zarbi Z (données de forme),,,
+,,Zarbi X (Pokémon XD),,,
+$01B6,438,??????????,,,
+,,Zarbi ! (données de forme),,,
+,,Zarbi Y (Pokémon XD),,,
+$01B7,439,??????????,,,
+,,Zarbi ? (données de forme),,,
+,,Zarbi Z (Pokémon XD),,,
+$01B8,440,??????????,,,
+,,Zarbi ! (Pokémon XD),,,
+$01B9,441,??????????,,,
+,,Zarbi ? (Pokémon XD),,,
+De $01BA à $FFFF,De 442 à 65535,??????????,,,
+,,,,,
