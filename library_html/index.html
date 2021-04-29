@@ -27,11 +27,11 @@
       @@ filler4 = 0xFF000000
 
       species = %SPECIES%
-      innacurate_emu = %EMU%
+      inaccurate_emu = %EMU%
 
       @@
 
-      sbc r12,pc,{innacurate_emu ? 0xC0 : 0xC2}
+      sbc r12,pc,{inaccurate_emu ? 0xC0 : 0xC2}
       sbc r12,r12, 0xA100
 
       movs r11, 0xED0000
@@ -65,11 +65,11 @@
       @@ filler4 = 0xFF000000
 
       obj = %OBJ%
-      innacurate_emu = %EMU%
+      inaccurate_emu = %EMU%
 
       @@
 
-      sbc r12,pc,{innacurate_emu ? 0x2B : 0x2D}
+      sbc r12,pc,{inaccurate_emu ? 0x2B : 0x2D}
       sbc r12,r12,0xAD00
       movs r11, {obj & 0xFFFF} ?
       strh r11, [r12]     %%  Store item index in lottery prize location
@@ -99,7 +99,7 @@
       @@ filler4 = 0xFF000000
 
       obj = %ATTK%
-      innacurate_emu = %EMU%
+      inaccurate_emu = %EMU%
 
       @@
 
