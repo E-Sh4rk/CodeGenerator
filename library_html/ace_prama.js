@@ -24,7 +24,10 @@ function html_for_code(txt) {
 function generate_with(source_id, target_id, preprocess) {
     let target = document.getElementById(target_id);
     let source = document.getElementById(source_id);
-    let input = preprocess ? eval(preprocess+"(source.textContent)") : source.textContent ;
+    let src_content = source.textContent;
+    src_content = src_content.replace(/\\{/g, "{");
+    src_content = src_content.replace(/\\}/g, "}");
+    let input = preprocess ? eval(preprocess+"(src_content)") : src_content ;
     target.innerHTML = html_for_code(input);
 }
 

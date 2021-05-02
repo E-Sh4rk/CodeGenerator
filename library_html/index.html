@@ -31,12 +31,12 @@
 
       @@
 
-      sbc r12,pc,{inaccurate_emu ? 0xC0 : 0xC2}
+      sbc r12,pc, \{ inaccurate_emu ? 0xC0 : 0xC2 \}
       sbc r12,r12, 0xA100
 
       movs r11, 0xED0000
       bic r11,r11, 0xC00000 ; r11 = 0x2D0000
-      adc r11,r11, { species & 0xFFFF } ?
+      adc r11,r11, \{ species & 0xFFFF \} ?
 
       str r11, [r12, 0xC00]!
     </pre>
@@ -69,9 +69,9 @@
 
       @@
 
-      sbc r12,pc,{inaccurate_emu ? 0x2B : 0x2D}
+      sbc r12,pc, \{ inaccurate_emu ? 0x2B : 0x2D \}
       sbc r12,r12,0xAD00
-      movs r11, {obj & 0xFFFF} ?
+      movs r11, \{ obj & 0xFFFF \} ?
       strh r11, [r12]     %%  Store item index in lottery prize location
     </pre>
     <script>
@@ -135,8 +135,8 @@
       
       sbc r11, r15, #0x2940          ; r11 = &Box10Slot19 + 9
       
-      movs r12, {species & 0xFFFF} ?
-      strh r12, [r11, {28-(inaccurate_emu?7:9)}]!
+      movs r12, \{ species & 0xFFFF \} ?
+      strh r12, [r11, \{ 28-(inaccurate_emu?7:9) \}]!
       strh r12, [r11, 4]!
     </pre>
     <script>
