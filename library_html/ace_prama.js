@@ -7,6 +7,8 @@ function translate(code){
     code = code.replace(/“/g, "«");
     code = code.replace(/”/g, "»");
     code = code.replace(/–/g, "-");
+    code = code.replace(/‘/g, "❛");
+    code = code.replace(/’/g, "❜");
     return code; 
 }
 
@@ -27,6 +29,10 @@ function generate_with(source_id, target_id, preprocess) {
     let src_content = source.textContent;
     src_content = src_content.replace(/\\{/g, "{");
     src_content = src_content.replace(/\\}/g, "}");
+    src_content = src_content.replace(/\\ls/g, "<<");
+    src_content = src_content.replace(/\\rs/g, ">>");
+    src_content = src_content.replace(/\\lt/g, "<");
+    src_content = src_content.replace(/\\gt/g, ">");
     let input = preprocess ? eval(preprocess+"(src_content)") : src_content ;
     target.innerHTML = html_for_code(input);
 }
@@ -68,6 +74,10 @@ function attack_identifier(str) {
         return attk[str].toString();
     else
         return str.replace("$", "0x");
+}
+
+function normalize_int(str) {
+    return str.replace("$", "0x");
 }
 
 window.addEventListener ("load", () => {

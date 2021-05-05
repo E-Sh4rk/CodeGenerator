@@ -11,10 +11,37 @@
     <datalist id="objectlist"></datalist>
     <datalist id="attacklist"></datalist>
 
-    <!-- Custom Mass Outbreaks -->
+    <!-- Change TID/SID -->
 
-    <input type="checkbox" id="ace_cmo_emu" name="ace_cmo_emu">
-    <label for="ace_cmo_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <input type="text" id="ace_tid_tid" placeholder="TID" value=""><input type="text" id="ace_tid_sid" placeholder="SID" value="">
+    <button data-source="ace_tid_src" data-preprocess="ace_tid_preprocess" data-target="ace_tid" onclick='generate(this)'>Générer le code</button>    
+
+    <p id="ace_tid"></p>
+    <pre id="ace_tid_src" style="display:none;">
+      @@ exit = "CertificateFullFRA"
+
+      tid = %TID%
+      sid = %SID%
+
+      @@
+
+      sbc r11,pc,\{ 0xD0EE-1+8 \} ?
+      movs r12, \{ (sid \ls 16) + tid \} ?
+      str r12, [r11]!
+    </pre>
+    <script>
+      function ace_tid_preprocess(txt) {
+        let tid = document.getElementById("ace_tid_tid");
+        let sid = document.getElementById("ace_tid_sid");
+        txt = txt.replace("%TID%", normalize_int(tid.value));
+        return txt.replace("%SID%", normalize_int(sid.value));
+      }
+    </script>
+
+    <!-- Custom Mass Outbreaks (sleipnir's) -->
+
+    <!--<input type="checkbox" id="ace_cmo_emu" name="ace_cmo_emu">
+    <label for="ace_cmo_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>-->
     <input list="pokemonlist" id="ace_cmo_species" value="">
     <button data-source="ace_cmo_src" data-preprocess="ace_cmo_preprocess" data-target="ace_cmo" onclick='generate(this)'>Générer le code</button>    
 
@@ -43,16 +70,16 @@
     <script>
       function ace_cmo_preprocess(txt) {
         let species = document.getElementById("ace_cmo_species");
-        let emu = document.getElementById("ace_cmo_emu");
-        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        //let emu = document.getElementById("ace_cmo_emu");
+        txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
         return txt.replace("%SPECIES%", pokemon_identifier(species.value));
       }
     </script>
 
     <!-- Any Item -->
 
-    <input type="checkbox" id="ace_item_emu" name="ace_item_emu">
-    <label for="ace_item_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <!--<input type="checkbox" id="ace_item_emu" name="ace_item_emu">
+    <label for="ace_item_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>-->
     <input list="objectlist" id="ace_item_obj" value="">
     <button data-source="ace_item_src" data-preprocess="ace_item_preprocess" data-target="ace_item" onclick='generate(this)'>Générer le code</button>    
 
@@ -77,16 +104,16 @@
     <script>
       function ace_item_preprocess(txt) {
         let obj = document.getElementById("ace_item_obj");
-        let emu = document.getElementById("ace_item_emu");
-        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        //let emu = document.getElementById("ace_item_emu");
+        txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
         return txt.replace("%OBJ%", object_identifier(obj.value));
       }
     </script>
 
     <!-- Any Move -->
 
-    <input type="checkbox" id="ace_move_emu" name="ace_move_emu">
-    <label for="ace_move_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <!--<input type="checkbox" id="ace_move_emu" name="ace_move_emu">
+    <label for="ace_move_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>-->
     <input list="attacklist" id="ace_move_attk" value="">
     <button data-source="ace_move_src" data-preprocess="ace_move_preprocess" data-target="ace_move" onclick='generate(this)'>Générer le code</button>    
 
@@ -107,16 +134,16 @@
     <script>
       function ace_move_preprocess(txt) {
         let attk = document.getElementById("ace_move_attk");
-        let emu = document.getElementById("ace_move_emu");
-        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        //let emu = document.getElementById("ace_move_emu");
+        txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
         return txt.replace("%ATTK%", attack_identifier(attk.value));
       }
     </script>
 
     <!-- Generate species -->
 
-    <input type="checkbox" id="ace_generate_emu" name="ace_generate_emu">
-    <label for="ace_generate_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>
+    <!--<input type="checkbox" id="ace_generate_emu" name="ace_generate_emu">
+    <label for="ace_generate_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>-->
     <input list="pokemonlist" id="ace_generate_species" value="">
     <button data-source="ace_generate_src" data-preprocess="ace_generate_preprocess" data-target="ace_generate" onclick='generate(this)'>Générer le code</button>
 
@@ -142,8 +169,8 @@
     <script>
       function ace_generate_preprocess(txt) {
         let species = document.getElementById("ace_generate_species");
-        let emu = document.getElementById("ace_generate_emu");
-        txt = txt.replace("%EMU%", emu.checked ? "1" : "0");
+        //let emu = document.getElementById("ace_generate_emu");
+        txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
         return txt.replace("%SPECIES%", pokemon_identifier(species.value));
       }
     </script>
