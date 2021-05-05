@@ -25,6 +25,7 @@ function html_for_code(txt) {
 
 function generate_with(source_id, target_id, preprocess) {
     let target = document.getElementById(target_id);
+    target.innerHTML = "";
     let source = document.getElementById(source_id);
     let src_content = source.textContent;
     src_content = src_content.replace(/\\{/g, "{");
@@ -34,7 +35,7 @@ function generate_with(source_id, target_id, preprocess) {
     src_content = src_content.replace(/\\lt/g, "<");
     src_content = src_content.replace(/\\gt/g, ">");
     let input = preprocess ? eval(preprocess+"(src_content)") : src_content ;
-    target.innerHTML = html_for_code(input);
+    setTimeout(function(){ target.innerHTML = html_for_code(input); }, 10);
 }
 
 function generate(e) {
