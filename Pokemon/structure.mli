@@ -7,6 +7,7 @@ val int32_to_low_high : int32 -> int32 * int32
 val pkmn_from_bytes : Bytes.t -> pokemon
 
 val substructure_position : pokemon -> char -> int
+val substructure_offset : pokemon -> char -> int
 
 (* Global operations *)
 

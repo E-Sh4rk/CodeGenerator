@@ -98,6 +98,27 @@ let main_team filename =
     Format.printf "Save has been successfully modified.@."
   end
 
+  let main_read filename =
+    let inc = open_in_gen [Open_rdonly;Open_binary] 0 filename in
+    let (_, section) = Save.read_section inc Save.team_items_section_id in
+    close_in inc ;
+    let team = Save.extract_team_from_section section in
+    Format.printf "Which pokemon do you want to read? (1-%i)@." (List.length team) ;
+    let i = (read_int ()) - 1 in
+    let current = List.nth team i in
+
+    Format.printf "Which substructure to read ? (GAEM)@." ;
+    let s = read_line () in
+    let pkmn = Structure.pkmn_from_bytes current in
+    let offset = Structure.substructure_offset pkmn (s.[0]) in
+
+    for o=0 to 3 do
+      let v = Bytes.get_int32_le current (offset+o*4) in
+      let v = Structure.decrypt_aligned_int32 pkmn v in
+      Format.printf " %08lX" v
+    done ;
+    Format.printf "@."
+
 let () =
   let filenames = Utils.enumerate_files (Sys.getcwd ()) ".sav" in
   filenames |> List.iteri (fun i str -> Format.printf "%i. %s@." i str) ;
@@ -105,8 +126,10 @@ let () =
   let filename = List.nth filenames (read_int ()) in
   Format.printf "1. Modify box names@." ;
   Format.printf "2. Modify team@." ;
+  Format.printf "3. Read team@." ;
   Format.printf "Your choice: @?" ;
   let choice = read_int () in
   if choice = 1 then main_box_name filename
   else if choice = 2 then main_team filename
+  else if choice = 3 then main_read filename
   else Format.printf "No action performed.@."
