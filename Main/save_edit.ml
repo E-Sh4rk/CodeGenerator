@@ -120,6 +120,7 @@ let main_team filename =
     Format.printf "@."
 
 let () =
+  (*Printexc.record_backtrace true ;*)
   let filenames = Utils.enumerate_files (Sys.getcwd ()) ".sav" in
   filenames |> List.iteri (fun i str -> Format.printf "%i. %s@." i str) ;
   Format.printf "Your choice: @?" ;

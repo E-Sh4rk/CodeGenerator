@@ -83,7 +83,9 @@ let empty_pkmn () =
   Bytes.create pkmn_data_size
 
 let extract_team_from_section buf =
-  let nb = Bytes.get_int32_le buf team_size_offset |> Utils.uint32_to_int in
+  (*let nb = Bytes.get_int32_le buf team_size_offset |> Utils.uint32_to_int in
+  let nb = if nb > 6 then 6 else nb in*)
+  let nb = 6 in
   let rec extract_pkmns acc i =
     if i < 0 then acc
     else (
