@@ -12,10 +12,11 @@ and main_1 fmt str =
   let seed = Utils.uint32_of_str str in
   Format.fprintf fmt "Do you want to obtain this seed using the freeze PRNG ACE code ?@." ;
   Format.fprintf fmt "1. Yes, for method H1 (wild pokemon) using sweet scent.@." ;
-  Format.fprintf fmt "2. Yes, for method H1 (wild pokemon) using a rod.@." ;
-  Format.fprintf fmt "3. Yes, for method 1 (stationnary pokemon).@." ;
-  Format.fprintf fmt "4. No, but please show me the seeds in the vicinity.@." ;
-  Format.fprintf fmt "5. No (quit).@." ;
+  Format.fprintf fmt "2. Yes, for mass outbreaks (method H1, using sweet scent).@." ;
+  Format.fprintf fmt "3. Yes, for method H1 (wild pokemon) using a rod.@." ;
+  Format.fprintf fmt "4. Yes, for method 1 (stationnary pokemon).@." ;
+  Format.fprintf fmt "5. No, but please show me the seeds in the vicinity.@." ;
+  Format.fprintf fmt "6. No (quit).@." ;
   Cont (main_2 seed)
 
 and show_vicinity fmt print_cycle seed start stop =
@@ -36,19 +37,25 @@ and main_2 seed fmt str =
     Format.fprintf fmt " without closing the pokemon menu.@." ;
     NoCont
   | "2" ->
+    Format.fprintf fmt "You should use the seed %#lx (1 cycle before your target).@."
+      (prev_seed seed) ;
+    Format.fprintf fmt "You should use sweet scent directly after triggering the ACE," ;
+    Format.fprintf fmt " without closing the pokemon menu.@." ;
+    NoCont
+  | "3" ->
     Format.fprintf fmt "Please select your configuration:@." ;
     Format.fprintf fmt "1. I will not be fishing on route 119.@." ;
     Format.fprintf fmt "2. I will be fishing on route 119, but not for a feebas.@." ;
     Format.fprintf fmt "3. I will be fishing for feebas on a feebas tile.@." ;
     Cont (main_3 seed)
-  | "3" ->
+  | "4" ->
     Format.fprintf fmt "For most legendaries, you should use the seed at cycle -3.@." ;
     Format.fprintf fmt "Please refer to the instructions on the freeze PRNG ACE code for other stationnary pokemons.@." ;
     Format.fprintf fmt "You should start the battle as soon as you can" ;
     Format.fprintf fmt " (just after having executed the ACE and closed the menu).@." ;
     show_vicinity fmt false seed (-10) 0 ;
     NoCont
-  | "4" ->
+  | "5" ->
     Format.fprintf fmt "Please enter the range (example: -25 5):@." ;
     Cont (main_vicinity seed)
   | _ -> NoCont
