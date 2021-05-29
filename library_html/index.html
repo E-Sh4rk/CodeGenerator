@@ -10,6 +10,7 @@
     <datalist id="pokemonlist"></datalist>
     <datalist id="objectlist"></datalist>
     <datalist id="attacklist"></datalist>
+    <datalist id="maplist"></datalist>
 
     <!-- Change TID/SID -->
 
@@ -72,6 +73,86 @@
         let species = document.getElementById("ace_cmo_species");
         //let emu = document.getElementById("ace_cmo_emu");
         txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
+        return txt.replace("%SPECIES%", pokemon_identifier(species.value));
+      }
+    </script>
+
+    <!-- Custom Mass Outbreaks (E-Sh4rk's) -->
+
+    <!--<input type="checkbox" id="ace_cmo2_emu" name="ace_cmo2_emu">
+    <label for="ace_cmo2_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>-->
+    <input list="attacklist" id="ace_cmo2_attk1" value="" placeholder="Capacité 1">
+    <input list="attacklist" id="ace_cmo2_attk2" value="" placeholder="Capacité 2">
+    <input list="attacklist" id="ace_cmo2_attk3" value="" placeholder="Capacité 3">
+    <input list="attacklist" id="ace_cmo2_attk4" value="" placeholder="Capacité 4"><br>
+    <input list="pokemonlist" id="ace_cmo2_species" value="" placeholder="Pokemon">
+    <input list="maplist" id="ace_cmo2_map" value="" placeholder="Map">
+    <input type="number" id="ace_cmo2_level" value="" placeholder="Niveau">
+    <button data-source1="ace_cmo2_1_src" data-source2="ace_cmo2_2_src" data-preprocess="ace_cmo2_preprocess" data-target1="ace_cmo2_1" data-target2="ace_cmo2_2" onclick='generate2(this)'>Générer les codes</button>    
+
+    <p id="ace_cmo2_1"></p>
+    <p id="ace_cmo2_2"></p>
+    <pre id="ace_cmo2_1_src" style="display:none;">
+    @@ exit = "Bootstrapped"
+
+    days_left = 0xFFFF
+    encounter_probability = 100
+    move1 = %M1%
+    move2 = %M2%
+    move3 = %M3%
+    move4 = %M4%
+
+    @@
+
+    sbc r11, pc, \{ 0x95BC + 8 - 1 - 4*4 + 0xC00 \} ?
+
+    movs r12, \{ (days_left \ls 16) | (encounter_probability \ls 8) \} ?
+    str r12, [r11, 0xC00]!
+    sbc r11, r11, 3
+
+    movs r12, \{ (move4 \ls 16) | move3 \} ?
+    str r12, [r11, 0]!
+    sbc r11, r11, 3
+
+    movs r12, \{ (move2 \ls 16) | move1 \} ?
+    str r12, [r11, 0]!
+    </pre>
+    <pre id="ace_cmo2_2_src" style="display:none;">
+    @@ exit = "Bootstrapped"
+
+    species = %SPECIES%
+    map_group = 0
+    map_num = %MAPNUM%
+    level = %LEVEL%
+
+    @@
+
+    sbc r11, pc, \{ 0x95BC + 8 - 1 - 1*4 + 0xC00 \} ?
+
+    movs r12, \{ level \} ?
+    str r12, [r11, 0xC00]!
+    sbc r11, r11, 3
+
+    movs r12, \{ (map_group \ls 24) | (map_num \ls 16) | species \} ?
+    str r12, [r11, 0]!
+    </pre>
+    <script>
+      function ace_cmo2_preprocess(txt) {
+        let species = document.getElementById("ace_cmo2_species");
+        let map = document.getElementById("ace_cmo2_map");
+        let level = document.getElementById("ace_cmo2_level");
+        let m1 = document.getElementById("ace_cmo2_attk1");
+        let m2 = document.getElementById("ace_cmo2_attk2");
+        let m3 = document.getElementById("ace_cmo2_attk3");
+        let m4 = document.getElementById("ace_cmo2_attk4");
+        //let emu = document.getElementById("ace_cmo2_emu");
+        txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
+        txt = txt.replace("%M1%", attack_identifier(m1.value));
+        txt = txt.replace("%M2%", attack_identifier(m2.value));
+        txt = txt.replace("%M3%", attack_identifier(m3.value));
+        txt = txt.replace("%M4%", attack_identifier(m4.value));
+        txt = txt.replace("%MAPNUM%", map_identifier(map.value));
+        txt = txt.replace("%LEVEL%", normalize_int(level.value));
         return txt.replace("%SPECIES%", pokemon_identifier(species.value));
       }
     </script>

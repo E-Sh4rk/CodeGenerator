@@ -45,6 +45,16 @@ function generate(e) {
     generate_with(source_id, target_id, preprocess);
 }
 
+function generate2(e) {
+    let source1_id = e.dataset.source1;
+    let target1_id = e.dataset.target1;
+    let source2_id = e.dataset.source2;
+    let target2_id = e.dataset.target2;
+    let preprocess = e.dataset.preprocess;
+    generate_with(source1_id, target1_id, preprocess);
+    generate_with(source2_id, target2_id, preprocess);
+  }
+
 /* ----- INPUT FIELDS ----- */
 
 let pkmn = {};
@@ -55,6 +65,9 @@ obj["Master Ball"]=1;obj["Super Ball"]=2;obj["Hyper Ball"]=3;obj["Poké Ball"]=4
 
 let attk = {};
 attk["Ecras'face"]=1;attk["Poing-karaté"]=2;attk["Torgnoles"]=3;attk["Poing comête"]=4;attk["Ultimapoing"]=5;attk["Jackpot"]=6;attk["Poing de feu"]=7;attk["Poinglace"]=8;attk["Poing-éclair"]=9;attk["Griffe"]=10;attk["Force poigne"]=11;attk["Guillotine"]=12;attk["Coupe-vent"]=13;attk["Danse-lames"]=14;attk["Coupe"]=15;attk["Tornade"]=16;attk["Cru-aile"]=17;attk["Cyclone"]=18;attk["Vol"]=19;attk["Etreinte"]=20;attk["Souplesse"]=21;attk["Fouet liane"]=22;attk["Ecrasement"]=23;attk["Double-Pied"]=24;attk["Ultimawashi"]=25;attk["Pied sauté"]=26;attk["Mawashi geri"]=27;attk["Jet de sable"]=28;attk["Coup d'Boule"]=29;attk["Koud'Korne"]=30;attk["Furie"]=31;attk["Empal'korne"]=32;attk["Charge"]=33;attk["Plaquage"]=34;attk["Ligotage"]=35;attk["Bélier"]=36;attk["Mania"]=37;attk["Damoclès"]=38;attk["Mimi-Queue"]=39;attk["Dard-Venin"]=40;attk["Double-Dard"]=41;attk["Dard-Nuée"]=42;attk["Gros'yeux"]=43;attk["Morsure"]=44;attk["Rugissement"]=45;attk["Hurlement"]=46;attk["Berceuse"]=47;attk["Ultrason"]=48;attk["Sonicboom"]=49;attk["Entrave"]=50;attk["Acide"]=51;attk["Flammèche"]=52;attk["Lanceflamme"]=53;attk["Brume"]=54;attk["Pistolet à O"]=55;attk["Hydrocanon"]=56;attk["Surf"]=57;attk["Laser glace"]=58;attk["Blizzard"]=59;attk["Psyko"]=60;attk["Bulle d'o"]=61;attk["Onde boréale"]=62;attk["Ultralaser"]=63;attk["Picpic"]=64;attk["Bec Vrille"]=65;attk["Sacrifice"]=66;attk["Balayage"]=67;attk["Riposte"]=68;attk["Frappe Atlas"]=69;attk["Force"]=70;attk["Vol-Vie"]=71;attk["Méga-sangsue"]=72;attk["Vampigraine"]=73;attk["Croissance"]=74;attk["Tranch'herbe"]=75;attk["Lance-Soleil"]=76;attk["Poudre toxik"]=77;attk["Para-spore"]=78;attk["Poudre dodo"]=79;attk["Danse-fleur"]=80;attk["Sécretion"]=81;attk["Draco-rage"]=82;attk["Danseflamme"]=83;attk["Eclair"]=84;attk["Tonnerre"]=85;attk["Cage-Eclair"]=86;attk["Fatal-Foudre"]=87;attk["Jet Pierres"]=88;attk["Séisme"]=89;attk["Abîme"]=90;attk["Tunnel"]=91;attk["Toxik"]=92;attk["Choc mental"]=93;attk["Psyko"]=94;attk["Hypnose"]=95;attk["Yoga"]=96;attk["Hâte"]=97;attk["Vive-Attaque"]=98;attk["Frénésie"]=99;attk["Téléport"]=100;attk["Ténèbres"]=101;attk["Copie"]=102;attk["Grincement"]=103;attk["Reflet"]=104;attk["Soin"]=105;attk["Armure"]=106;attk["Lilliput"]=107;attk["Brouillard"]=108;attk["Onde folie"]=109;attk["Repli"]=110;attk["Boul'armure"]=111;attk["Bouclier"]=112;attk["Mur lumière"]=113;attk["Buée noire"]=114;attk["Protection"]=115;attk["Puissance"]=116;attk["Patience"]=117;attk["Metronome"]=118;attk["Mimique"]=119;attk["Destruction"]=120;attk["Bomb'oeuf"]=121;attk["Lechouille"]=122;attk["Puredpois"]=123;attk["Détritus"]=124;attk["Massd'os"]=125;attk["Déflagration"]=126;attk["Cascade"]=127;attk["Claquoir"]=128;attk["Météores"]=129;attk["Coud'Krâne"]=130;attk["Picanon"]=131;attk["Constriction"]=132;attk["Amnésie"]=133;attk["Télékinésie"]=134;attk["E-coque"]=135;attk["Pied voltige"]=136;attk["Intimidation"]=137;attk["Dêvoreve"]=138;attk["Gaz toxik"]=139;attk["Barrage"]=140;attk["Vampirisme"]=141;attk["Grobisou"]=142;attk["Piqué"]=143;attk["Morphing"]=144;attk["Ecume"]=145;attk["Uppercut"]=146;attk["Spore"]=147;attk["Flash"]=148;attk["Vague psy"]=149;attk["Tempette"]=150;attk["Acidarmure"]=151;attk["Pince-masse"]=152;attk["Explosion"]=153;attk["Combo-griffe"]=154;attk["Osmerang"]=155;attk["Repos"]=156;attk["Eboulement"]=157;attk["Croc de mort"]=158;attk["Affûtage"]=159;attk["Adaptation"]=160;attk["Triplattaque"]=161;attk["Croc fatal"]=162;attk["Tranche"]=163;attk["Clonage"]=164;attk["Lutte"]=165;attk["Gribouille"]=166;attk["Triple Pied"]=167;attk["Larcin"]=168;attk["Toile"]=169;attk["Lire-esprit"]=170;attk["Cauchemar"]=171;attk["Roue de feu"]=172;attk["Ronflement"]=173;attk["Malédiction"]=174;attk["Fléau"]=175;attk["Adaptation 2"]=176;attk["Aéroblast"]=177;attk["Spore coton"]=178;attk["Contre"]=179;attk["Dépit"]=180;attk["Poudreuse"]=181;attk["Abri"]=182;attk["Mach Punch"]=183;attk["Grimace"]=184;attk["Feinte"]=185;attk["Doux baiser"]=186;attk["Cognobidon"]=187;attk["Bombe-beurk"]=188;attk["Coud'boue"]=189;attk["Octazooka"]=190;attk["Picôts"]=191;attk["Elécanon"]=192;attk["Clairvoyance"]=193;attk["Prlvt Destin"]=194;attk["Requiem"]=195;attk["Vent Glace"]=196;attk["Detection"]=197;attk["Charge-os"]=198;attk["Verrouillage"]=199;attk["Colère"]=200;attk["Tempêtesable"]=201;attk["Giga-sangsue"]=202;attk["Tenacité"]=203;attk["Charme"]=204;attk["Roulade"]=205;attk["Faux-Chage"]=206;attk["Vantardise"]=207;attk["Lait à boire"]=208;attk["Etincelle"]=209;attk["Taillade"]=210;attk["Aile d'acier"]=211;attk["Regard noir"]=212;attk["Attraction"]=213;attk["Blabla dodo"]=214;attk["Glas de soin"]=215;attk["Retour"]=216;attk["Cadeau"]=217;attk["Frustration"]=218;attk["Rune protect"]=219;attk["Balance"]=220;attk["Feu sacré"]=221;attk["Ampleur"]=222;attk["Dynamopoing"]=223;attk["Mégacorne"]=224;attk["Dracosouffle"]=225;attk["Relais"]=226;attk["Encore"]=227;attk["Poursuite"]=228;attk["Tour rapide"]=229;attk["Doux parfum"]=230;attk["Queue de fer"]=231;attk["Griffe acier"]=232;attk["Corps perdu"]=233;attk["Aurore"]=234;attk["Synthèse"]=235;attk["Rayon lune"]=236;attk["Puis. Cachée"]=237;attk["Coup-croix"]=238;attk["Ouragan"]=239;attk["Danse pluie"]=240;attk["Zénith"]=241;attk["Mâchouille"]=242;attk["Voile Miroir"]=243;attk["Boost"]=244;attk["Vit.Extrême"]=245;attk["Pouv.Antique"]=246;attk["Ball'Ombre"]=247;attk["Prescience"]=248;attk["Eclate-roc"]=249;attk["Siphon"]=250;attk["Baston"]=251;attk["Bluff"]=252;attk["Brouhaha"]=253;attk["Stockage"]=254;attk["Relâche"]=255;attk["Avale"]=256;attk["Canicule"]=257;attk["Grêle"]=258;attk["Tourmente"]=259;attk["Flatterie"]=260;attk["Feu follet"]=261;attk["Souvenir"]=262;attk["Façade"]=263;attk["Mitra-Poing"]=264;attk["Stimulant"]=265;attk["Par ici"]=266;attk["Force-Nature"]=267;attk["Chargeur"]=268;attk["Provoc"]=269;attk["Coup d'Main"]=270;attk["Tourmagik"]=271;attk["Imitation"]=272;attk["Voeu"]=273;attk["Assistance"]=274;attk["Racines"]=275;attk["Surpuissance"]=276;attk["Reflet magik"]=277;attk["Recyclage"]=278;attk["Vendetta"]=279;attk["Casse-Brique"]=280;attk["Bâillement"]=281;attk["Sabotage"]=282;attk["Effort"]=283;attk["Eruption"]=284;attk["Echange"]=285;attk["Possessif"]=286;attk["Régénération"]=287;attk["Rancune"]=288;attk["Saisie"]=289;attk["Force cachée"]=290;attk["Plongée"]=291;attk["Cogne"]=292;attk["Camouflage"]=293;attk["Lumiqueue"]=294;attk["Lumi-éclat"]=295;attk["Ball'Brume"]=296;attk["Danse-Plume"]=297;attk["Danse-Folle"]=298;attk["Pied brûleur"]=299;attk["Lance-Boue"]=300;attk["Ball'Glace"]=301;attk["Poing dard"]=302;attk["Paresse"]=303;attk["Megaphone"]=304;attk["Crochetvenin"]=305;attk["Eclategriffe"]=306;attk["Rafale feu"]=307;attk["Hydroblast"]=308;attk["Poing Méteor"]=309;attk["Etonnement"]=310;attk["Ball'Météo"]=311;attk["Aromatherapi"]=312;attk["Croco larme"]=313;attk["Tranch'Air"]=314;attk["Surchauffe"]=315;attk["Flair"]=316;attk["Tomberoche"]=317;attk["Vent Argenté"]=318;attk["Srido-Son"]=319;attk["Siffl'Herbe"]=320;attk["Chatouille"]=321;attk["Force cosmique"]=322;attk["Giclédo"]=323;attk["Rayon signal"]=324;attk["Poing ombre"]=325;attk["Extrasenseur"]=326;attk["Stratopercut"]=327;attk["Tourbi-Sable"]=328;attk["Glaciation"]=329;attk["Ocroupi"]=330;attk["Balle graine"]=331;attk["Aeropique"]=332;attk["Stalactite"]=333;attk["Mur de fer"]=334;attk["Barrage"]=335;attk["Grondement"]=336;attk["Dracogriffe"]=337;attk["Végé-Attak"]=338;attk["Gonflette"]=339;attk["Rebond"]=340;attk["Tir de boue"]=341;attk["Queue-Poison"]=342;attk["Implore"]=343;attk["Electacle"]=344;attk["Feuille Magik"]=345;attk["Tourniquet"]=346;attk["Plénitude"]=347;attk["Lame-feuille"]=348;attk["Danse draco"]=349;attk["Boule roc"]=350;attk["Onde de choc"]=351;attk["Vibraqua"]=352;attk["Carnareket"]=353;attk["Psycho Boost"]=354;attk["Attaque glitch"]=355;attk["Assaut Noir"]=356;attk["Charge Noire"]=357;attk["Bélier Noir"]=358;attk["Retour Noir"]=359;attk["Onde Noire"]=360;attk["Rage Noire"]=361;attk["Typhon Noir"]=362;attk["Ardeur Noire"]=363;attk["Eclair Noir"]=364;attk["Froid Noir"]=365;attk["Aéro Noir"]=366;attk["Ciel Noir"]=367;attk["Blocage Noir"]=368;attk["Brume Noire"]=369;attk["Folie Noire"]=370;attk["Souffle Noir"]=371;attk["Percée Noire"]=372;attk["Chute Noire"]=373;
+
+let mapnum = {};
+mapnum["Clémenti-Ville"]=0;mapnum["Poivressel"]=1;mapnum["Lavandia"]=2;mapnum["Mérouville"]=3;mapnum["Cimetronelle"]=4;mapnum["Nénucrique"]=5;mapnum["Algatia"]=6;mapnum["Atalanopolis"]=7;mapnum["Éternara"]=8;mapnum["Bourg-en-Vol"]=9;mapnum["Rosyères"]=10;mapnum["Myokara"]=11;mapnum["Vermilava"]=12;mapnum["Autéquia"]=13;mapnum["Vergazon"]=14;mapnum["Pacifiville"]=15;mapnum["Route 101"]=16;mapnum["Route 102"]=17;mapnum["Route 103"]=18;mapnum["Route 104"]=19;mapnum["Chenal 105"]=20;mapnum["Chenal 106"]=21;mapnum["Chenal 107"]=22;mapnum["Chenal 108"]=23;mapnum["Chenal 109"]=24;mapnum["Route 110"]=25;mapnum["Route 111"]=26;mapnum["Route 112"]=27;mapnum["Route 113"]=28;mapnum["Route 114"]=29;mapnum["Route 115"]=30;mapnum["Route 116"]=31;mapnum["Route 117"]=32;mapnum["Route 118"]=33;mapnum["Route 119"]=34;mapnum["Route 120"]=35;mapnum["Route 121"]=36;mapnum["Chenal 122"]=37;mapnum["Route 123"]=38;mapnum["Chenal 124"]=39;mapnum["Chenal 125"]=40;mapnum["Chenal 126"]=41;mapnum["Chenal 127"]=42;mapnum["Chenal 128"]=43;mapnum["Chenal 129"]=44;mapnum["Chenal 130 (Île Mirage)"]=45;mapnum["Chenal 131"]=46;mapnum["Chenal 132"]=47;mapnum["Chenal 133"]=48;mapnum["Chenal 134"]=49;mapnum["Fond Marin 124"]=50;mapnum["Fond Marin 126"]=51;mapnum["Fond Marin 127"]=52;mapnum["Fond Marin 128"]=53;mapnum["Fond Marin 129"]=54;mapnum["Fond Marin 105"]=55;mapnum["Fond Marin 125"]=56;
 
 function pokemon_identifier(str) {
     if (str in pkmn)
@@ -77,6 +90,13 @@ function attack_identifier(str) {
         return str.replace("$", "0x");
 }
 
+function map_identifier(str) {
+    if (str in mapnum)
+        return mapnum[str].toString();
+    else
+        return str.replace("$", "0x");
+}
+
 function normalize_int(str) {
     return str.replace("$", "0x");
 }
@@ -87,17 +107,23 @@ window.addEventListener ("load", () => {
         var option = document.createElement('option');
         option.value = item;
         pkmnlist.appendChild(option);
-     });
-     let objlist = document.getElementById('objectlist');
-     Object.keys(obj).forEach(function(item){
-         var option = document.createElement('option');
-         option.value = item;
-         objlist.appendChild(option);
-      });
-     let attklist = document.getElementById('attacklist');
-     Object.keys(attk).forEach(function(item){
-         var option = document.createElement('option');
-         option.value = item;
-         attklist.appendChild(option);
-      });
+    });
+    let objlist = document.getElementById('objectlist');
+    Object.keys(obj).forEach(function(item){
+        var option = document.createElement('option');
+        option.value = item;
+        objlist.appendChild(option);
+    });
+    let attklist = document.getElementById('attacklist');
+    Object.keys(attk).forEach(function(item){
+        var option = document.createElement('option');
+        option.value = item;
+        attklist.appendChild(option);
+    });
+    let maplist = document.getElementById('maplist');
+    Object.keys(mapnum).forEach(function(item){
+        var option = document.createElement('option');
+        option.value = item;
+        maplist.appendChild(option);
+    });
 });
