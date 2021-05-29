@@ -19,16 +19,19 @@
 
     <p id="ace_tid"></p>
     <pre id="ace_tid_src" style="display:none;">
-      @@ exit = "CertificateFullFRA"
+      @@ exit = "Bootstrapped"
 
       tid = %TID%
       sid = %SID%
+      inaccurate_emu = 0
 
       @@
 
-      sbc r11,pc,\{ 0xD0EE-1+8 \} ?
-      movs r12, \{ (sid \ls 16) + tid \} ?
-      str r12, [r11]!
+      sbc r11,pc, \{ 0xD0EE-1+(inaccurate_emu ? 8 : 10) \} ?
+      movs r12, \{ tid \} ?
+      strh r12, [r11]!
+      movs r12, \{ sid \} ?
+      strh r12, [r11, 2]
     </pre>
     <script>
       function ace_tid_preprocess(txt) {
