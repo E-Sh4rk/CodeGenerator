@@ -115,27 +115,47 @@
     <!--<input type="checkbox" id="ace_move_emu" name="ace_move_emu">
     <label for="ace_move_emu">Sur emulateur (&lt; mGBA 0.9) ?</label><br>-->
     <input list="attacklist" id="ace_move_attk" value="">
+    <select id="ace_move_slot">
+      <option value="0">Emplacement 1</option>
+      <option value="1">Emplacement 2</option>
+      <option value="2">Emplacement 3</option>
+      <option value="3">Emplacement 4</option>
+    </select>
     <button data-source="ace_move_src" data-preprocess="ace_move_preprocess" data-target="ace_move" onclick='generate(this)'>Générer le code</button>    
 
     <p id="ace_move"></p>
     <pre id="ace_move_src" style="display:none;">
-      @@ exit = "WhiteOutFRA"
-      @@ filler1 = 0xB2AC00FF
-      @@ filler2 = 0xB2ACFF00
-      @@ filler3 = 0xBFFF0000
-      @@ filler4 = 0xFF000000
+      @@ exit = "Bootstrapped"
 
-      obj = %ATTK%
-      inaccurate_emu = %EMU%
+      move = %ATTK%
+      slot = %SLOT%
+      innacurate_emu = %EMU%
+
+      Y = (move \rs 12) & 0xF
+      y = (move \rs 8) & 0xF
+      X = (move \rs 4) & 0xF
+      x = (move \rs 0) & 0xF
 
       @@
 
+      sbc r12,pc, 0xB300
+      movs r11, \{ (X \ls 28)|(x \ls 24)|(slot \ls 16)|0x17B \} ?5
+      0
+      str  r11, [r12]!
+
+      movs r11, \{ 0x0200|(Y \ls 4)|y \} ?5
+      strh r11, [r12, \{ innacurate_emu ? 2 : 4 \}]
+      sbc r12,r12, 0xED              %%  R12=R12-ED
+      sbc r11,r12, 0xCC              %%  R11=R12-CC
+      str r12, [r11]!
     </pre>
     <script>
       function ace_move_preprocess(txt) {
         let attk = document.getElementById("ace_move_attk");
+        let slot = document.getElementById("ace_move_slot");
         //let emu = document.getElementById("ace_move_emu");
         txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
+        txt = txt.replace("%SLOT%", slot.value);
         return txt.replace("%ATTK%", attack_identifier(attk.value));
       }
     </script>
