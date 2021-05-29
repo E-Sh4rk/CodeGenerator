@@ -150,10 +150,10 @@
         let m4 = document.getElementById("ace_cmo2_attk4");
         //let emu = document.getElementById("ace_cmo2_emu");
         txt = txt.replace("%EMU%", /*emu.checked ? "1" :*/ "0");
-        txt = txt.replace("%M1%", attack_identifier(m1.value));
-        txt = txt.replace("%M2%", attack_identifier(m2.value));
-        txt = txt.replace("%M3%", attack_identifier(m3.value));
-        txt = txt.replace("%M4%", attack_identifier(m4.value));
+        txt = txt.replace("%M1%", m1.value ? attack_identifier(m1.value) : "0");
+        txt = txt.replace("%M2%", m2.value ? attack_identifier(m2.value) : "0");
+        txt = txt.replace("%M3%", m3.value ? attack_identifier(m3.value) : "0");
+        txt = txt.replace("%M4%", m4.value ? attack_identifier(m4.value) : "0");
         txt = txt.replace("%MAPNUM%", map_identifier(map.value));
         txt = txt.replace("%LEVEL%", normalize_int(level.value));
         return txt.replace("%SPECIES%", pokemon_identifier(species.value));
