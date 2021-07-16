@@ -1,0 +1,21 @@
+SystemID GBA
+5D80	d	s	0	IWRAM	PRNG Seed
+26F8	d	u	0	IWRAM	state
+26F9	b	u	0	IWRAM	inBattle
+022FEC	d	u	0	EWRAM	gBattleTypeFlags
+22C0	d	u	0	IWRAM	clbk1
+22C4	d	u	0	IWRAM	clbk2
+22C8	d	u	0	IWRAM	saved
+22CC	d	u	0	IWRAM	vblank
+22D0	d	u	0	IWRAM	hblank
+22D4	d	u	0	IWRAM	vcount
+22D8	d	u	0	IWRAM	serial
+22DC	d	u	0	IWRAM	intrCheck
+22E0	d	u	0	IWRAM	vblank counter 1
+22E4	d	u	0	IWRAM	vblank counter 2
+0244EC	d	u	0	EWRAM	Team PID
+024744	d	u	0	EWRAM	Opponent PID
+5D8C	d	u	0	IWRAM	gSaveBlock1Ptr
+5D90	d	u	0	IWRAM	gSaveBlock2Ptr
+5D94	d	u	0	IWRAM	gPokemonStoragePtr
+
