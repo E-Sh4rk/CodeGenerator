@@ -3,7 +3,7 @@
   (name ace_common)
   (wrapped false)
   (libraries num str uutf)
-  (modules ace_common arm_printer arm parser lexer parser_ast
+  (modules ace_common settings arm_printer arm parser lexer parser_ast
     boxes charset exit name fs parse optimizer structure constants
     pkmn_data_common save utils encoder_common preprocess seed seed_tools_common)
 ; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
