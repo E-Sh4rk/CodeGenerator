@@ -5,7 +5,7 @@ type pkmn_char = Unused | Unreadable of string
 let charset_eng =
   [|
   (* 0x0. *)
-  Available   "␣" ; Unavailable "À" ; Unavailable "Á" ; Unavailable "Â" ;
+  Available   "_" ; Unavailable "À" ; Unavailable "Á" ; Unavailable "Â" ;
   Unavailable "Ç" ; Unavailable "È" ; Unavailable "É" ; Unavailable "Ê" ;
   Unavailable "Ë" ; Unavailable "Ì" ; Unused          ; Unavailable "Î" ;
   Unavailable "Ï" ; Unavailable "Ò" ; Unavailable "Ó" ; Unavailable "Ô" ;
@@ -102,7 +102,7 @@ let charset_fra =
 let charset_jap =
   [|
   (* 0x0. *)
-  Available "␣"  ; Available "あ" ; Available "い" ; Available "う" ;
+  Available "_"  ; Available "あ" ; Available "い" ; Available "う" ;
   Available "え" ; Available "お" ; Available "か" ; Available "き" ;
   Available "く" ; Available "け" ; Available "こ" ; Available "さ" ;
   Available "し" ; Available "す" ; Available "せ" ; Available "そ" ;
@@ -207,6 +207,7 @@ let is_code_used code =
   | Available _ | Unavailable _ | Unreadable _ -> true
   | Unused -> false
 
+let spacing_char = "_"
 let invalid_char = "✖"
 
 let char_at code =

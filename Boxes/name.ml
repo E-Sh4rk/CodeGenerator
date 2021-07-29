@@ -46,7 +46,7 @@ let pp_chars fmt lst =
 
 let pp_chars_raw fmt lst =
   lst |> List.iter (fun str ->
-    let str = if str = "␣" then " " else str in
+    let str = if str = spacing_char then " " else str in
     Format.fprintf fmt "%s" str
   )
 

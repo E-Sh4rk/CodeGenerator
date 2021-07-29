@@ -3,6 +3,7 @@ val is_code_available : int -> bool
 val is_code_readable : int -> bool
 val is_code_used : int -> bool
 
+val spacing_char : string
 val invalid_char : string
 val char_at : int -> string
 val readable_char_at : int -> string
