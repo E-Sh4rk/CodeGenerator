@@ -12,7 +12,7 @@ type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
-type data_proc_instr = ADC | SBC | (*ADD | SUB |*) BIC | AND
+type data_proc_instr = ADC | SBC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR
 type mov_instr = MOV | MVN
 type mem_instr = LDR | STR
 
@@ -232,6 +232,10 @@ let calculation_to_binary instr s cond rd rn op2 =
   | SBC -> 0b0000_1100_0000_0000_0000_0000_0000
   | BIC -> 0b0001_1100_0000_0000_0000_0000_0000
   | AND -> 0b0000_0000_0000_0000_0000_0000_0000
+  | ADD -> 0b0000_1000_0000_0000_0000_0000_0000
+  | SUB -> 0b0000_0100_0000_0000_0000_0000_0000
+  | ORR -> 0b0001_1000_0000_0000_0000_0000_0000
+  | EOR -> 0b0000_0010_0000_0000_0000_0000_0000
   in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in

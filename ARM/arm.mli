@@ -12,7 +12,7 @@ type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
-type data_proc_instr = ADC | SBC | (*ADD | SUB |*) BIC | AND
+type data_proc_instr = ADC | SBC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR
 type mov_instr = MOV | MVN
 type mem_instr = LDR | STR
 
