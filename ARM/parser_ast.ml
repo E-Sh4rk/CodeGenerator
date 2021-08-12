@@ -177,14 +177,14 @@ let asm_cmd3_to_arm env cmd args =
   let typ = match typ with None -> W | Some typ -> typ in
 
   try match String.sub cmd 0 3 with
-  | "LDR" -> LDR { typ ; cond ; rd=get_rd args ; ro=get_ro env args }
-  | "STR" -> STR { typ ; cond ; rd=get_rd args ; ro=get_ro env args }
-  | "MOV" -> MOV { s ; cond ; rd=get_rd args ; rs=get_rs env args }
-  | "MVN" -> MVN { s ; cond ; rd=get_rd args ; rs=get_rs env args }
-  | "ADC" -> ADC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
-  | "SBC" -> SBC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
-  | "BIC" -> BIC { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
-  | "AND" -> AND { s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "LDR" -> Mem { instr=LDR ; typ ; cond ; rd=get_rd args ; ro=get_ro env args }
+  | "STR" -> Mem { instr=STR ; typ ; cond ; rd=get_rd args ; ro=get_ro env args }
+  | "MOV" -> Mov { instr=MOV ; s ; cond ; rd=get_rd args ; rs=get_rs env args }
+  | "MVN" -> Mov { instr=MVN; s ; cond ; rd=get_rd args ; rs=get_rs env args }
+  | "ADC" -> DataProc { instr=ADC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "SBC" -> DataProc { instr=SBC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "BIC" -> DataProc { instr=BIC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "AND" -> DataProc { instr=AND ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | _ -> raise StructError
   with Failure _ | Invalid_argument _ -> raise StructError
 

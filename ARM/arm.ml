@@ -12,20 +12,15 @@ type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
+type data_proc_instr = ADC | SBC | (*ADD | SUB |*) BIC | AND
+type mov_instr = MOV | MVN
+type mem_instr = LDR | STR
+
 type arm =
   | Custom of int32
-
-  | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
-  | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
-
-  | MOV of { s:bool ; cond: conditional ; rd: register ; rs: operand }
-  | MVN of { s:bool ; cond: conditional ; rd: register ; rs: operand }
-
-  | ADC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-  | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-  | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-  | AND of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-
+  | Mem of { instr: mem_instr ; typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
+  | Mov of { instr: mov_instr ; s:bool ; cond: conditional ; rd: register ; rs: operand }
+  | DataProc of { instr: data_proc_instr ; s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | Branch of { l:bool ; cond: conditional ; target: int32 }
 
 open Int32
@@ -185,27 +180,27 @@ let signed_immed24 i =
     else raise InvalidCommand
   else raise InvalidCommand
 
-let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
+let ldr_str_to_binary instr typ cond rd (rn, addr_typ) =
   let check_post_addr () =
     match addr_typ with
     | PostIndexed -> ()
     | _ -> raise InvalidCommand
   in
-  let opcode = match is_ldr, typ with
-  | true, B  -> 0b0100_0101_0000_0000_0000_0000_0000
-  | true, SB -> 0b0000_0001_0000_0000_0000_1101_0000
-  | true, H  -> 0b0000_0001_0000_0000_0000_1011_0000
-  | true, SH -> 0b0000_0001_0000_0000_0000_1111_0000
-  | true, W  -> 0b0100_0001_0000_0000_0000_0000_0000
-  | true, T  -> check_post_addr () ; 0b0100_0011_0000_0000_0000_0000_0000
-  | true, BT -> check_post_addr () ; 0b0100_0111_0000_0000_0000_0000_0000
-  | false, B  -> 0b0100_0100_0000_0000_0000_0000_0000
-  | false, SB -> raise InvalidCommand
-  | false, H  -> 0b0000_0000_0000_0000_0000_1011_0000
-  | false, SH -> raise InvalidCommand
-  | false, W  -> 0b0100_0000_0000_0000_0000_0000_0000
-  | false, T  -> check_post_addr () ; 0b0100_0010_0000_0000_0000_0000_0000
-  | false, BT -> check_post_addr () ; 0b0100_0110_0000_0000_0000_0000_0000
+  let opcode = match instr, typ with
+  | LDR, B  -> 0b0100_0101_0000_0000_0000_0000_0000
+  | LDR, SB -> 0b0000_0001_0000_0000_0000_1101_0000
+  | LDR, H  -> 0b0000_0001_0000_0000_0000_1011_0000
+  | LDR, SH -> 0b0000_0001_0000_0000_0000_1111_0000
+  | LDR, W  -> 0b0100_0001_0000_0000_0000_0000_0000
+  | LDR, T  -> check_post_addr () ; 0b0100_0011_0000_0000_0000_0000_0000
+  | LDR, BT -> check_post_addr () ; 0b0100_0111_0000_0000_0000_0000_0000
+  | STR, B  -> 0b0100_0100_0000_0000_0000_0000_0000
+  | STR, SB -> raise InvalidCommand
+  | STR, H  -> 0b0000_0000_0000_0000_0000_1011_0000
+  | STR, SH -> raise InvalidCommand
+  | STR, W  -> 0b0100_0000_0000_0000_0000_0000_0000
+  | STR, T  -> check_post_addr () ; 0b0100_0010_0000_0000_0000_0000_0000
+  | STR, BT -> check_post_addr () ; 0b0100_0110_0000_0000_0000_0000_0000
   in
   let v = of_int opcode |>
     add_condition_code cond |>
@@ -218,10 +213,10 @@ let ldr_str_to_binary is_ldr typ cond rd (rn, addr_typ) =
   in
   [logor v addr_mode]
 
-let mov_mvn_to_binary is_mov s cond rd rs =
-  let opcode = if is_mov
-  then 0b0001_1010_0000_0000_0000_0000_0000
-  else 0b0001_1110_0000_0000_0000_0000_0000 in
+let mov_mvn_to_binary instr s cond rd rs =
+  let opcode = match instr with
+  | MOV -> 0b0001_1010_0000_0000_0000_0000_0000
+  | MVN -> 0b0001_1110_0000_0000_0000_0000_0000 in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in
   let v = of_int opcode |>
@@ -231,13 +226,12 @@ let mov_mvn_to_binary is_mov s cond rd rs =
   addr_mode_1 rs |>
   List.map (fun addr_mode -> logor v addr_mode)
 
-let calculation_to_binary typ s cond rd rn op2 =
-  let opcode = match typ with
-  | "adc" -> 0b0000_1010_0000_0000_0000_0000_0000
-  | "sbc" -> 0b0000_1100_0000_0000_0000_0000_0000
-  | "bic" -> 0b0001_1100_0000_0000_0000_0000_0000
-  | "and" -> 0b0000_0000_0000_0000_0000_0000_0000
-  | _ -> assert false
+let calculation_to_binary instr s cond rd rn op2 =
+  let opcode = match instr with
+  | ADC -> 0b0000_1010_0000_0000_0000_0000_0000
+  | SBC -> 0b0000_1100_0000_0000_0000_0000_0000
+  | BIC -> 0b0001_1100_0000_0000_0000_0000_0000
+  | AND -> 0b0000_0000_0000_0000_0000_0000_0000
   in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in
@@ -263,14 +257,9 @@ let branch_to_binary l cond target =
 let arm_to_binary arm =
   match arm with
   | Custom i -> [i]
-  | LDR {typ;cond;rd;ro} -> ldr_str_to_binary true typ cond rd ro
-  | STR {typ;cond;rd;ro} -> ldr_str_to_binary false typ cond rd ro
-  | MOV {s;cond;rd;rs}   -> mov_mvn_to_binary true s cond rd rs
-  | MVN {s;cond;rd;rs}   -> mov_mvn_to_binary false s cond rd rs
-  | ADC {s;cond;rd;rn;op2} -> calculation_to_binary "adc" s cond rd rn op2
-  | SBC {s;cond;rd;rn;op2} -> calculation_to_binary "sbc" s cond rd rn op2
-  | BIC {s;cond;rd;rn;op2} -> calculation_to_binary "bic" s cond rd rn op2
-  | AND {s;cond;rd;rn;op2} -> calculation_to_binary "and" s cond rd rn op2
+  | Mem {instr;typ;cond;rd;ro} -> ldr_str_to_binary instr typ cond rd ro
+  | Mov {instr;s;cond;rd;rs}   -> mov_mvn_to_binary instr s cond rd rs
+  | DataProc {instr;s;cond;rd;rn;op2} -> calculation_to_binary instr s cond rd rn op2
   | Branch {l;cond;target} -> branch_to_binary l cond target
 
 let reverse_endianness v =

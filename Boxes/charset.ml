@@ -92,6 +92,11 @@ let charset_ger =
   let cs = Array.copy charset_eng in
   cs.(0xB1) <- Available "„" ;
   cs.(0xB2) <- Available "“" ;
+  for i=0xF1 to 0xF6 do
+    cs.(i) <- match cs.(i) with
+      | Unavailable c -> Available c
+      | _ -> assert false
+  done ;
   cs
 let charset_fra =
   let cs = Array.copy charset_eng in

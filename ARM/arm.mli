@@ -12,20 +12,15 @@ type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 
+type data_proc_instr = ADC | SBC | (*ADD | SUB |*) BIC | AND
+type mov_instr = MOV | MVN
+type mem_instr = LDR | STR
+
 type arm =
   | Custom of int32
-
-  | LDR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
-  | STR of { typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
-
-  | MOV of { s:bool ; cond: conditional ; rd: register ; rs: operand }
-  | MVN of { s:bool ; cond: conditional ; rd: register ; rs: operand }
-
-  | ADC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-  | SBC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-  | BIC of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-  | AND of { s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
-
+  | Mem of { instr: mem_instr ; typ: ldr_str_type ; cond: conditional ; rd: register ; ro: register_offset * addressing_type }
+  | Mov of { instr: mov_instr ; s:bool ; cond: conditional ; rd: register ; rs: operand }
+  | DataProc of { instr: data_proc_instr ; s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | Branch of { l:bool ; cond: conditional ; target: int32 }
 
 exception InvalidCommand

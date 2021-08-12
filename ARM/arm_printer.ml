@@ -53,30 +53,29 @@ let print_register_offset fmt (ro, addr_typ) =
     print_register r (sign_to_str s) print_register ro str
   | OScaledRegister _, _ -> failwith "Not implemented"
 
+let mem_instr_to_str instr =
+  match instr with
+  | STR -> "STR" | LDR -> "LDR"
+
+let mov_instr_to_str instr =
+  match instr with
+  | MOV -> "MOV" | MVN -> "MVN"
+
+let data_proc_instr_to_str instr =
+  match instr with
+  | ADC -> "ADC" | SBC -> "SBC" | AND -> "AND" | BIC -> "BIC"
+
 let pp_arm fmt arm =
   match arm with
   | Custom i -> pp_hex fmt i
-  | LDR {typ;cond;rd;ro} -> Format.fprintf fmt "LDR%s%s %a, %a"
-    (cond_to_str cond) (ldr_str_type_to_str typ)
+  | Mem {instr;typ;cond;rd;ro} -> Format.fprintf fmt "%s%s%s %a, %a"
+    (mem_instr_to_str instr) (cond_to_str cond) (ldr_str_type_to_str typ)
     print_register rd print_register_offset ro
-  | STR {typ;cond;rd;ro} -> Format.fprintf fmt "STR%s%s %a, %a"
-    (cond_to_str cond) (ldr_str_type_to_str typ)
-    print_register rd print_register_offset ro
-  | MOV {s;cond;rd;rs}   -> Format.fprintf fmt "MOV%s%s %a, %a"
-    (cond_to_str cond) (s_to_str s) print_register rd print_operand rs
-  | MVN {s;cond;rd;rs}   -> Format.fprintf fmt "MVN%s%s %a, %a"
-    (cond_to_str cond) (s_to_str s) print_register rd print_operand rs
-  | ADC {s;cond;rd;rn;op2} -> Format.fprintf fmt "ADC%s%s %a, %a, %a"
-    (cond_to_str cond) (s_to_str s)
-    print_register rd print_register rn print_operand op2
-  | SBC {s;cond;rd;rn;op2} -> Format.fprintf fmt "SBC%s%s %a, %a, %a"
-    (cond_to_str cond) (s_to_str s)
-    print_register rd print_register rn print_operand op2
-  | BIC {s;cond;rd;rn;op2} -> Format.fprintf fmt "BIC%s%s %a, %a, %a"
-    (cond_to_str cond) (s_to_str s)
-    print_register rd print_register rn print_operand op2
-  | AND {s;cond;rd;rn;op2} -> Format.fprintf fmt "AND%s%s %a, %a, %a"
-    (cond_to_str cond) (s_to_str s)
+  | Mov {instr;s;cond;rd;rs}   -> Format.fprintf fmt "%s%s%s %a, %a"
+    (mov_instr_to_str instr) (cond_to_str cond) (s_to_str s)
+    print_register rd print_operand rs
+  | DataProc {instr;s;cond;rd;rn;op2} -> Format.fprintf fmt "%s%s%s %a, %a, %a"
+    (data_proc_instr_to_str instr) (cond_to_str cond) (s_to_str s)
     print_register rd print_register rn print_operand op2
   | Branch {l;cond;target} -> Format.fprintf fmt "B%s%s %a"
     (l_to_str l) (cond_to_str cond) print_immediate target
