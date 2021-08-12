@@ -22,6 +22,8 @@ type arm =
   | Mov of { instr: mov_instr ; s:bool ; cond: conditional ; rd: register ; rs: operand }
   | DataProc of { instr: data_proc_instr ; s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | Branch of { l:bool ; cond: conditional ; target: int32 }
+  | BranchX of { l:bool ; cond: conditional ; rm: register }
+  (* BLX_imm is not supported yet *)
 
 open Int32
 
@@ -83,6 +85,10 @@ let add_rn_code rn v =
 
 let add_rd_code rd v =
   shift_left (of_int rd) 12
+  |> logor v
+
+let add_rm_code rm v =
+  of_int rm
   |> logor v
 
 let register_of_register_offset ro =
@@ -258,6 +264,16 @@ let branch_to_binary l cond target =
   let imm = signed_immed24 (sub target 8l) in
   [logor v imm]
 
+let branchx_to_binary l cond rm =
+  let opcode =
+    if l
+    then 0b0001_0010_0000_0000_0000_0011_0000
+    else 0b0001_0010_0000_0000_0000_0001_0000
+  in
+  [of_int opcode |>
+  add_condition_code cond |>
+  add_rm_code rm]
+
 let arm_to_binary arm =
   match arm with
   | Custom i -> [i]
@@ -265,6 +281,7 @@ let arm_to_binary arm =
   | Mov {instr;s;cond;rd;rs}   -> mov_mvn_to_binary instr s cond rd rs
   | DataProc {instr;s;cond;rd;rn;op2} -> calculation_to_binary instr s cond rd rn op2
   | Branch {l;cond;target} -> branch_to_binary l cond target
+  | BranchX {l;cond;rm} -> branchx_to_binary l cond rm
 
 let reverse_endianness v =
   let v1 = shift_left (logand mask8 v) (3*8) in

@@ -80,3 +80,5 @@ let pp_arm fmt arm =
     print_register rd print_register rn print_operand op2
   | Branch {l;cond;target} -> Format.fprintf fmt "B%s%s %a"
     (l_to_str l) (cond_to_str cond) print_immediate target
+  | BranchX {l;cond;rm} -> Format.fprintf fmt "B%sX%s %a"
+  (l_to_str l) (cond_to_str cond) print_register rm

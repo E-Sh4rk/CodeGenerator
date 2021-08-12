@@ -22,6 +22,8 @@ type arm =
   | Mov of { instr: mov_instr ; s:bool ; cond: conditional ; rd: register ; rs: operand }
   | DataProc of { instr: data_proc_instr ; s:bool ; cond: conditional ; rd: register ; rn: register ; op2: operand }
   | Branch of { l:bool ; cond: conditional ; target: int32 }
+  | BranchX of { l:bool ; cond: conditional ; rm: register }
+  (* BLX_imm is not supported yet *)
 
 exception InvalidCommand
 

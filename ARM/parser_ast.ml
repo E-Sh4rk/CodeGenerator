@@ -73,6 +73,7 @@ let recognize_1 str i =
   match str with
   | "S" -> (Some "S", i+1)
   | "L" -> (Some "L", i+1)
+  | "X" -> (Some "X", i+1)
   | _ -> (None, i)
 
 let combine_opt o1 o2 =
@@ -87,12 +88,13 @@ let combine_bool b1 b2 =
   | true, false | false, true -> true
   | true, true -> raise StructError
 
-let combine_modifiers (cond, lst, s, l) (cond', lst', s', l') =
+let combine_modifiers (cond, lst, s, l, x) (cond', lst', s', l', x') =
   let cond = combine_opt cond cond' in
   let lst = combine_opt lst lst' in
   let s = combine_bool s s' in
   let l = combine_bool l l' in
-  (cond, lst, s, l)
+  let x = combine_bool x x' in
+  (cond, lst, s, l, x)
 
 let recognize_modifiers str i =
   let n = String.length str in
@@ -101,20 +103,21 @@ let recognize_modifiers str i =
     else
       let (nmods, i) =
         match recognize_condition str i with
-        | (Some c, i) -> ((Some c, None, false, false), i)
+        | (Some c, i) -> ((Some c, None, false, false, false), i)
         | (None, i) ->
           match recognize_ldr_str_type str i with
-          | (Some lst, i) -> ((None, Some lst, false, false), i)
+          | (Some lst, i) -> ((None, Some lst, false, false, false), i)
           | (None, i) ->
             match recognize_1 str i with
-            | (Some "S", i) -> ((None, None, true, false), i)
-            | (Some "L", i) -> ((None, None, false, true), i)
+            | (Some "S", i) -> ((None, None, true, false, false), i)
+            | (Some "L", i) -> ((None, None, false, true, false), i)
+            | (Some "X", i) -> ((None, None, false, false, true), i)
             | _ -> raise StructError
       in
       let mods = combine_modifiers mods nmods in
       aux mods i
   in
-  aux (None, None, false, false) i
+  aux (None, None, false, false, false) i
 
 let register_of_str str =
   let str = String.lowercase_ascii str in
@@ -135,6 +138,8 @@ let get_rd args = get_register (List.hd args)
 let get_rn args =
   let n = List.length args in
   get_register (List.nth args (n-2))
+
+let get_rm = get_rd
 
 let get_immediate env arg =
   match arg with
@@ -172,7 +177,7 @@ let get_target env args =
 let asm_cmd3_to_arm env cmd args =
   if String.length cmd < 3 then raise StructError ;
   let cmd = String.uppercase_ascii cmd in
-  let (cond, typ, s, _) = recognize_modifiers cmd 3 in
+  let (cond, typ, s, _, _) = recognize_modifiers cmd 3 in
   let cond = match cond with None -> AL | Some c -> c in
   let typ = match typ with None -> W | Some typ -> typ in
 
@@ -195,10 +200,11 @@ let asm_cmd3_to_arm env cmd args =
 let asm_cmd1_to_arm env cmd args =
   if String.length cmd < 1 then raise StructError ;
   let cmd = String.uppercase_ascii cmd in
-  let (cond, _, _, l) = recognize_modifiers cmd 1 in
+  let (cond, _, _, l, x) = recognize_modifiers cmd 1 in
   let cond = match cond with None -> AL | Some c -> c in
 
   try match String.sub cmd 0 1 with
+  | "B" when x -> BranchX { l ; cond ; rm=get_rm args }
   | "B" -> Branch { l ; cond ; target=get_target env args }
   | _ -> raise StructError
   with Failure _ | Invalid_argument _ -> raise StructError
