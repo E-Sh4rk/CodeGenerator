@@ -177,24 +177,25 @@ let tweak_mov_mvn instr s cond rd rs max_card =
     | _ -> assert false
     end
 
-let tweak_adc_sbc instr s cond rd rn op2 max_card =
-  assert (instr = ADC || instr = SBC) ;
+let tweak_arith instr s cond rd rn op2 max_card =
+  assert (instr = ADC || instr = SBC || instr = ADD || instr = SUB) ;
   let cmd = DataProc {instr;s;cond;rd;rn;op2} in
   match op2 with
   | Register _ -> [cmd]
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
+    let is_addition =  instr = ADC || instr = ADD in
     let mk_cmd_first fst =
-      if instr = ADC
+      if is_addition
       then DataProc {instr=ADC;s=(rn=15 || rn=0);cond;rd;rn;op2=Immediate fst}
       else DataProc {instr=SBC;s=false;cond;rd;rn;op2=Immediate fst}
     in
     let mk_cmd additive i =
-      if (additive && instr = ADC) || (not additive && instr = SBC)
+      if (additive && is_addition) || (not additive && not is_addition)
       then DataProc {instr=ADC;s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
       else DataProc {instr=SBC;s=false;cond;rd;rn=rd;op2=Immediate i}
     in
-    begin match synthesis_optimal ~mov_mvn:false ~inv:(instr=SBC) max_card i
+    begin match synthesis_optimal ~mov_mvn:false ~inv:(not is_addition) max_card i
                   (fun i -> mk_cmd_first i |> is_command_valid)
                   (fun add i -> mk_cmd add i |> is_command_valid) with
     | None -> [cmd]
@@ -208,8 +209,9 @@ let tweak_command (arm, optimize) =
     let res =
       match arm with
       | Mov {instr;s;cond;rd;rs} -> tweak_mov_mvn instr s cond rd rs n
-      | DataProc {instr;s;cond;rd;rn;op2} when instr = ADC || instr = SBC->
-        tweak_adc_sbc instr s cond rd rn op2 n
+      | DataProc {instr;s;cond;rd;rn;op2}
+      when instr = ADC || instr = SBC || instr = ADD || instr = SUB ->
+        tweak_arith instr s cond rd rn op2 n
       | _ -> [arm]
     in
     if pad
