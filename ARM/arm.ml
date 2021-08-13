@@ -267,8 +267,8 @@ let branch_to_binary l cond target =
 let branchx_to_binary l cond rm =
   let opcode =
     if l
-    then 0b0001_0010_0000_0000_0000_0011_0000
-    else 0b0001_0010_0000_0000_0000_0001_0000
+    then 0b0001_0010_1111_1111_1111_0011_0000
+    else 0b0001_0010_1111_1111_1111_0001_0000
   in
   [of_int opcode |>
   add_condition_code cond |>
