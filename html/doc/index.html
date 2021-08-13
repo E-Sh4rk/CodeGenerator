@@ -83,6 +83,8 @@
 
       <h3>ARM commands and ARM tweaker</h3>
 
+      <h4>USA/European versions</h4>
+
       <p>ARM commands can be written with the syntax defined in the <a href="https://documentation-service.arm.com/static/5f8dacc8f86e16515cdb865a?token=">ARM documentation</a>.
       Comments can be inserted at the end of a line using one of the following: <code>@ %% ; //</code></p>
 
@@ -106,6 +108,19 @@
       just add a <code>?</code> (interrogation mark) at the end of the command that should be tweaked. You can also specify a number just after
       (for instance <code>?4</code>) if you want to force the result to use a fixed number of commands. Note that using the register <code>r12</code> usually gives best results
       (it makes more constants to be writable). Also note that the ARM tweaker assumes that the carry flag in CPSR is unset.</p>
+
+      <h4>Japanese version</h4>
+
+      <p>The information above still applies to the Japanese version. However, as more characters are available in the Japanese version, some additional commands are available:</p>
+      <ul>
+        <li>ADD, SUB, ORR and EOR</li>
+        <li>BX and BLX (only with a register as operand)</li>
+      </ul>
+
+      <p>When selecting the Japanese language, the tweaker also takes advantage of the extended charset.
+      In particular, it does not assume anymore that the carry flag in CPSR is unset (ADD and SUB commands are used instead of ADC and SBC).</p>
+
+      <p><strong>Please note that Japanese support is in beta (it has not been tested yet).</strong></p>
 
       <h2>Exit codes</h2>
 
