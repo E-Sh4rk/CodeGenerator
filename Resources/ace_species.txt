@@ -1,3 +1,11 @@
+
+Unstable species (hatch egg or contest):
+
+Europe: 0x611 (ARM execution)
+Japanese: 0x615 (ARM execution)
+
+Stable species:
+
 (credits to Sleipnir)
 
 Spanish: 0x45DB (THUMB execution, bootstrap needed)
@@ -5,5 +13,6 @@ French: 0x40ED* (THUMB execution, bootstrap needed)
 German: 0x4130 (ARM execution, no bootstrap needed)
 Italian: 0x415E* (ARM execution, no bootstrap needed)
 English: 0x4167* (ARM execution, no bootstrap needed)
+Japansese: 0x085F (THUMB execution, no bootstrap needed)
 
 *main summary page is unstable, to use just open the summary of an adjacent Pokémon, move to the statistic tab and switch to the glitch Pokémon in order to skip the main page
