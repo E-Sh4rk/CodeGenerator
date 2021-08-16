@@ -46,6 +46,10 @@
         It should be a multiple of 4. If not specified (or if <code>null</code> is specified), then the code will start immediately.</td></tr>
         <tr><td><code>exit</code></td><td>String</td><td>Optional</td><td>Specify the name of the exit code to include at the end of the code.
         If not specified (or if <code>null</code> is specified), no exit code will be inserted.</td></tr>
+		<tr><td><code>filler0</code></td><td>Integer</td><td>Optional</td><td>A no-op command to use when filling the space inside a box name.
+		Default: <code>0x00000000</code>.</td></tr>
+		<tr><td><code>filler0_alt</code></td><td>Integer</td><td>Optional</td><td>A command that substitutes the command <code>0x00000000</code>.
+		Used when a box name only contain spaces. Default: <code>0x>B0000000</code>.</td></tr>
         <tr><td><code>filler1</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
         Should be of the form <code>0x......FF</code>. Default: <code>0x000000FF</code>.</td></tr>
         <tr><td><code>filler2</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.

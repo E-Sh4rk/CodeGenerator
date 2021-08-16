@@ -1,11 +1,13 @@
 
 exception BoxFittingError of string
 
-val default_fillers : (int list) array
+type fillers =
+  { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
+val default_fillers : fillers
 
 val fit_codes_into_boxes :
   ?fill_last:bool ->
-  ?fillers:((int list) array) ->
+  ?fillers:fillers ->
   ?start:int ->
   ?exit:(Exit.t option) ->
   (int list) list ->

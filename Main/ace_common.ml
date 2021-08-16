@@ -31,13 +31,25 @@ let main fmt env (headers,headers2) parsed exit =
     Array.init 4 (fun n ->
       let header_name = Format.sprintf "filler%n" (n+1) in
       match Preprocess.get_param headers header_name with
-      | HNone -> Boxes.default_fillers.(n)
+      | HNone -> Boxes.default_fillers.fillers.(n)
       | HInt i ->
         let codes = Name.codes_for_command i in
         if List.nth codes n <> Name.eof then failwith "Invalid filler." ;
         codes
       | _ -> failwith "Invalid headers."
     )
+  in
+  let nop_code =
+    match Preprocess.get_param headers "filler0" with
+    | HNone -> Boxes.default_fillers.nop_code
+    | HInt i -> Name.codes_for_command i
+    | _ -> failwith "Invalid headers."
+  in
+  let nop_code_alt =
+    match Preprocess.get_param headers "filler0_alt" with
+    | HNone -> Boxes.default_fillers.nop_code_alt
+    | HInt i -> Name.codes_for_command i
+    | _ -> failwith "Invalid headers."
   in
   let fill_last =
     match Preprocess.get_param headers "fill",
@@ -61,6 +73,7 @@ let main fmt env (headers,headers2) parsed exit =
     Format.fprintf fmt "@." ; None
   end else
     try
+      let fillers = { Boxes.fillers; Boxes.nop_code; Boxes.nop_code_alt } in
       let boxes_codes =
         Boxes.fit_codes_into_boxes ~fill_last ~fillers ~start ~exit res in
       Format.fprintf fmt "@.%a@." Boxes.pp_boxes_names boxes_codes ;

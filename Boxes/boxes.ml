@@ -1,16 +1,18 @@
 
 exception BoxFittingError of string
 
-let default_fillers =
-  [|
+type fillers =
+  { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
+let default_fillers = {
+  nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *);
+  nop_code_alt = [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *);
+  fillers= [|
     [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
     [0x00 ; 0xFF ; 0x00 ; 0x00](* 0000FF00 *) ;
     [0x00 ; 0x00 ; 0xFF ; 0x00](* 00FF0000 *) ;
     [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
   |]
-
-let nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
-let nop_code2 = [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
+  }
 
 let name_size = 8
 let nb_boxes = 14
@@ -48,10 +50,10 @@ let first_non_eof_index codes =
 
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
-  let n = List.length nop_code in
+  let n = List.length fillers.nop_code in
   if pos + n <= name_size
-  then nop_code
-  else fillers.(name_size-pos)
+  then fillers.nop_code
+  else fillers.fillers.(name_size-pos)
 
 let rec pad_nb fillers pos nb =
   if nb < 0
@@ -81,10 +83,10 @@ let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
   in
   if is_ok_here then codes
   else begin
-    let m = List.length nop_code in
+    let m = List.length fillers.nop_code in
     let nop_code =
-      if pos + m <= name_size then nop_code
-      else fillers.(name_size-pos)
+      if pos + m <= name_size then fillers.nop_code
+      else fillers.fillers.(name_size-pos)
     in
     let m = List.length nop_code in
     nop_code@(fit_code_at_pos ~next fillers (pos + m) codes)
@@ -161,14 +163,14 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0)
   res |> List.mapi (fun i lst ->
     if Name.is_full_of_spaces lst
     then
-      let m = List.length nop_code2 in
+      let m = List.length fillers.nop_code_alt in
       let pos = modulo (-i*(name_size+1)) m in
       let prefix = List.init pos (fun _ -> Name.space) in
       let suffix_len = (List.length lst)-pos-m in
       if suffix_len < 0 then lst
       else
         let suffix = List.init suffix_len (fun _ -> Name.space) in
-        List.concat [prefix ; nop_code2 ; suffix]
+        List.concat [prefix ; fillers.nop_code_alt ; suffix]
     else lst
   )
 
