@@ -79,6 +79,21 @@ adc r0,r12, #0xD6             ;  R0=R12+D6=????SPA
 
 ====================
 
+@@ filename = "CertificateJAP"
+@@ start = 64
+@@
+
+; LR=080066FF
+; Diploma: 0x08137D25
+; ADD r0, lr, { 0x08137D25 - 0x080066FF } ?
+ADD r0, r14, #0x3b8000
+SUB r0, r0, #0x284000
+SUB r0, r0, #0x2900
+SUB r0, r0, #0xda
+BX r0
+
+====================
+
 @@ filename = "WhiteOutENG"
 @@ start = 64
 @@
@@ -159,6 +174,21 @@ sbc r0,r12, #0xD5         ;  R0=R12-D5-1=SetCB2WhiteOutSPA
 
 ====================
 
+@@ filename = "WhiteOutJAP"
+@@ start = 64
+@@
+
+; LR=080066FF
+; WhiteOut: 0x081378ED
+;ADD r0, lr, { 0x081378ED - 0x080066FF } ?
+ADD r0, r14, #0xee000
+ADD r0, r0, #0x39000
+ADD r0, r0, #0xa100
+ADD r0, r0, #0xee
+BX r0
+
+====================
+
 @@ filename = "CertificateShortENG"
 @@ start = 92
 @@
@@ -211,6 +241,17 @@ adc r12,lr, #0xE10            ;  R12=LR+E10
 adc r12,r12, #0xD30000        ;  R12=R12+D30000
 bic r12,r12, #0xC00000        ;  R12=R12 and notC00000
 adc r0,r12, #0xD6             ;  R0=R12+D6=????SPA
+
+====================
+
+@@ filename = "CertificateShortJAP"
+@@ start = 92
+@@
+
+ADD r0, r14, #0x3b8000
+SUB r0, r0, #0x284000
+SUB r0, r0, #0x2900
+SUB r0, r0, #0xda
 
 ====================
 
@@ -301,6 +342,24 @@ adc r12,r12, #0xD30000        ;  R12=R12+D30000
 bic r12,r12, #0xC00000        ;  R12=R12 and notC00000
 adc r0,r12, #0xD6             ;  R0=R12+D6=????SPA
 0                             ;  Fill box 14 with space
+
+====================
+
+@@ filename = "CertificateFullJAP"
+@@ start = 56
+@@
+
+adcs r12, pc, #0x38           ;  R12=&Box14Name + 3
+mvn r11, #0xE1                ;  R11=notE1=FFFFFF1E
+bic r11, r11, #0xED00000      ;  R11=R11 and notED00000=F12FFF1E
+bic r11, r11, #0x1000000E     ;  R11=R11 and not1000000E=E12FFF10=bx r0 opcode
+str r11, [r12, #0]!           ;  Store bx r0 opcode in [r12]
+
+ADD r0, r14, #0x3b8000
+SUB r0, r0, #0x284000
+SUB r0, r0, #0x2900
+SUB r0, r0, #0xda
+0
 
 ====================
 
