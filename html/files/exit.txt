@@ -349,7 +349,7 @@ adc r0,r12, #0xD6             ;  R0=R12+D6=????SPA
 @@ start = 56
 @@
 
-adcs r12, pc, #0x38           ;  R12=&Box14Name + 3
+add r12, pc, #0x38            ;  R12=&Box14Name + 3
 mvn r11, #0xE1                ;  R11=notE1=FFFFFF1E
 bic r11, r11, #0xED00000      ;  R11=R11 and notED00000=F12FFF1E
 bic r11, r11, #0x1000000E     ;  R11=R11 and not1000000E=E12FFF10=bx r0 opcode
