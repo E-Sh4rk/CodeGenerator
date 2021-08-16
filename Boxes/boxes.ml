@@ -54,7 +54,8 @@ let pad fillers pos =
   else fillers.(name_size-pos)
 
 let rec pad_nb fillers pos nb =
-  if nb < 0 then failwith "Invalid starting position."
+  if nb < 0
+  then raise (BoxFittingError "Cannot pad the required amount. Is starting position valid?")
   else if nb = 0 then []
   else
     let code = pad fillers pos in
@@ -80,8 +81,9 @@ let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
   in
   if is_ok_here then codes
   else begin
+    let m = List.length nop_code in
     let nop_code =
-      if pos + n <= name_size then nop_code
+      if pos + m <= name_size then nop_code
       else fillers.(name_size-pos)
     in
     let m = List.length nop_code in
