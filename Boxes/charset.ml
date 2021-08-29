@@ -188,6 +188,90 @@ let charset_jap =
   Unreadable "0xFC" ; Unreadable "0xFD" ; Unreadable "0xFE" ; Unreadable "0xFF" ;
   |]
 
+  let charset_full =
+    [|
+    (* 0x0. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x1. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x2. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x3. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x4. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x5. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x6. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x7. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x8. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0x9. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0xA. *)
+    Available "_"  ; Available "0"   ; Available "1" ; Available "2"  ;
+    Available "3"  ; Available "4"   ; Available "5" ; Available "6"  ;
+    Available "7"  ; Available "8"   ; Available "9" ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0xB. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "A"  ;
+    Available "B"  ; Available "C"  ; Available "D"  ; Available "E"  ;
+    (* 0xC. *)
+    Available "F"  ; Available "G"  ; Available "H"  ; Available "I"  ;
+    Available "J"  ; Available "K"  ; Available "L"  ; Available "M"  ;
+    Available "N"  ; Available "O"  ; Available "P"  ; Available "Q"  ;
+    Available "R"  ; Available "S"  ; Available "T"  ; Available "U"  ;
+    (* 0xD. *)
+    Available "V"  ; Available "W"  ; Available "X"  ; Available "Y"  ;
+    Available "Z"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0xE. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    (* 0xF. *)
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    Available "_"  ; Available "_"  ; Available "_"  ; Available "_"  ;
+    |]
+
 let charset () =
   match !Settings.lang with
   | ENG -> charset_eng
@@ -196,6 +280,7 @@ let charset () =
   | SPA -> charset_spa
   | GER -> charset_ger
   | JAP -> charset_jap
+  | ABC -> charset_full
 
 let is_code_available code =
   match (charset ()).(code) with

@@ -174,6 +174,24 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0)
     else lst
   )
 
+let fit_codes_into_hex_boxes ?(exit=None) codes =
+  (* Add exit code *)
+  let codes =
+    match exit with
+    | None -> codes
+    | Some exit ->
+      let (_,ecode) = Exit.get_preferred exit 0 in
+      codes @ ecode
+  in
+  (* Fit into boxes *)
+  codes |> List.map (fun code ->
+    code |> List.map (fun i ->
+      let hex1 = Format.sprintf "%X" (i mod 16) in
+      let hex2 = Format.sprintf "%X" (i / 16) in
+      [ Charset.encode_writable_char hex2 ; Charset.encode_writable_char hex1 ]
+    ) |> List.flatten
+  )
+
 let pp_boxes_names fmt lst =
   let pp_box i codes =
     let chars = Name.codes_to_chars codes in

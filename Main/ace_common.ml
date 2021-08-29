@@ -75,7 +75,10 @@ let main fmt env (headers,headers2) parsed exit =
     try
       let fillers = { Boxes.fillers; Boxes.nop_code; Boxes.nop_code_alt } in
       let boxes_codes =
-        Boxes.fit_codes_into_boxes ~fill_last ~fillers ~start ~exit res in
+        if !Settings.hex_box_mode
+        then Boxes.fit_codes_into_hex_boxes ~exit res
+        else Boxes.fit_codes_into_boxes ~fill_last ~fillers ~start ~exit res
+      in
       Format.fprintf fmt "@.%a@." Boxes.pp_boxes_names boxes_codes ;
       let size = List.length boxes_codes in
       begin
