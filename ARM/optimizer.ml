@@ -60,7 +60,7 @@ let constants_mov_mvn_strict =
 let rev_constants_mov_mvn = List.rev constants_mov_mvn
 let rev_constants_mov_mvn_strict = List.rev constants_mov_mvn_strict
 
-let tries_at_depth_0 = [| 0x10000 ; 0x10000 ; 0x10000 ; 0x200 ; 0x40 ; 0x8 ; 0x1 |]
+let tries_at_depth_0 = [| 0x10000 ; 0x10000 ; 0x10000 ; 0x1000 ; 0x100 ; 0x10 ; 0x1 |]
 
 let rec remove_while f lst =
   match lst with
