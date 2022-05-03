@@ -132,11 +132,15 @@ let main fmt env (headers,headers2) parsed exit =
         else if List.exists Name.is_full_of_spaces boxes_codes
         then Format.fprintf fmt "Warning: A box name cannot be written (only contains spaces)...@."
       end ;
-      Format.fprintf fmt "All commands (with exit code and fillers):@." ;
-      let data = List.map append_terminators boxes_codes |> List.concat |>
-                 regroup_by 4 |> List.map Name.command_for_codes in
-      compare_and_print_commands fmt data descr exit ;
-      Format.fprintf fmt "@." ;
+      begin
+        if !Settings.hex_box_mode |> not then (
+          Format.fprintf fmt "All commands (with exit code and fillers):@." ;
+          let data = List.map append_terminators boxes_codes |> List.concat |>
+                    regroup_by 4 |> List.map Name.command_for_codes in
+          compare_and_print_commands fmt data descr exit ;
+          Format.fprintf fmt "@." ;
+        )
+      end ;
       Format.fprintf fmt "Raw data (in hexadecimal):@." ;
       boxes_codes |> List.iter (Format.fprintf fmt "%a" Boxes.pp_box_raw) ;
       Format.fprintf fmt "@." ;
