@@ -1,5 +1,15 @@
 
-type t = ((int * ((int list) list)) list) * (((int list) list) option)
+type t = ((int * ((int list * (int32 * Arm.arm)) list)) list) *
+         (((int list * (int32 * Arm.arm)) list) option)
+
+let assemble_arm arm =
+  let code =
+    Arm.arm_to_binary arm |>
+    List.map Name.codes_for_command |>
+    Name.preferred_code
+  in
+  let hex = Name.command_for_codes code in
+  (code, (hex, arm))
 
 let load_from_dir env dirname =
   try (
@@ -10,12 +20,7 @@ let load_from_dir env dirname =
       let i = int_of_string str in
       let arm = Parse.from_filename ~headers:false path |>
         Parse.parsed_content_to_arm Utils.dummy_fmt ~optimize:false env in
-      let codes = arm |>
-        List.map (fun arm ->
-          Arm.arm_to_binary arm |>
-          List.map Name.codes_for_command |>
-          Name.preferred_code
-        )
+      let codes = arm |> List.map assemble_arm
       in
       (i, codes)
     )
@@ -28,11 +33,7 @@ let load_from_dir env dirname =
 let load_from_parsed_file fmt env (h, arm) =
   let codes = (h, arm) |>
     Parse.parsed_content_to_arm fmt ~optimize:true env |>
-    List.map (fun arm ->
-      Arm.arm_to_binary arm |>
-      List.map Name.codes_for_command |>
-      Name.preferred_code
-    )
+    List.map assemble_arm
   in
   match Preprocess.get_param h "start" with
   | HInt i -> ([(Utils.uint32_to_int i, codes)], None)
@@ -60,3 +61,10 @@ let get_preferred (lst, default) i =
     | Some c -> (i, c)
   )
 
+let get_preferred_raw a b =
+  let (i,lst) = get_preferred a b in
+  (i, List.map fst lst)
+
+let get_preferred_descr a b =
+  let (i,lst) = get_preferred a b in
+  (i, List.map snd lst)

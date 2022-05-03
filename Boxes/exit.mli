@@ -9,4 +9,5 @@ val load_from_parsed_file :
 
 exception NoExitCode
 
-val get_preferred : t -> int -> int * ((int list) list)
+val get_preferred_raw : t -> int -> int * (int list list)
+val get_preferred_descr : t -> int -> int * ((int32 * Arm.arm) list)

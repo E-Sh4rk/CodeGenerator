@@ -10,7 +10,46 @@ let treat_command fmt arm =
     Name.pp_chars chars
     Arm_printer.pp_hex hex
     Arm_printer.pp_arm arm ;
-  code
+  (code, (hex, arm))
+
+let append_terminators lst =
+  let i = (Boxes.name_size+1) - (List.length lst) in
+  lst@(List.init i (fun _ -> Name.eof))
+
+let regroup_by n data =
+  let rec aux acc k data =
+    match data with
+    | [] ->
+      begin match acc with
+      | _::acc when k > 0 -> acc
+      | acc -> acc
+      end
+    | d::data ->
+      if k = 0 then aux ([d]::acc) (n-1) data
+      else begin
+        match acc with
+        | a::acc -> aux ((d::a)::acc) (k-1) data
+        | _ -> assert false
+      end
+  in
+  aux [] 0 data |> List.rev |> List.map List.rev
+
+let compare_and_print_commands fmt data descr exit =
+  let rec aux data descr is_exit i =
+    match data, descr with
+    | [], _ -> ()
+    | d::data, (hex, arm)::descr when Int32.equal d hex ->
+      Format.fprintf fmt "%a@." Arm_printer.pp_arm arm ;
+      aux data descr false (i+4)
+    | _, [] when not is_exit && exit <> None ->
+      let exit = Option.get exit in
+      Format.fprintf fmt "; ======== EXIT CODE ========@." ;
+      aux data (Exit.get_preferred_descr exit i |> snd) true i
+    | d::data, _ ->
+      Format.fprintf fmt "%a \t\t\t; (filler)@." Arm_printer.pp_arm (Arm.Custom d) ;
+      aux data descr false (i+4)
+  in
+  aux data descr false 0
 
 let main fmt env (headers,headers2) parsed exit =
   let onlyraw =
@@ -61,9 +100,9 @@ let main fmt env (headers,headers2) parsed exit =
       failwith "The 'fill' header has a different value in the main code and in the exit code."
     | _ -> failwith "Invalid headers."
   in
-  let res =
+  let (res, descr) =
     Parse.parsed_ast_to_arm ~optimize:true env parsed |>
-    List.map (treat_command fmt) in
+    List.map (treat_command fmt) |> List.split in
   if onlyraw
   then begin
     let start = List.init start (fun _ -> 0) in
@@ -93,6 +132,11 @@ let main fmt env (headers,headers2) parsed exit =
         else if List.exists Name.is_full_of_spaces boxes_codes
         then Format.fprintf fmt "Warning: A box name cannot be written (only contains spaces)...@."
       end ;
+      Format.fprintf fmt "All commands (with exit code and fillers):@." ;
+      let data = List.map append_terminators boxes_codes |> List.concat |>
+                 regroup_by 4 |> List.map Name.command_for_codes in
+      compare_and_print_commands fmt data descr exit ;
+      Format.fprintf fmt "@." ;
       Format.fprintf fmt "Raw data (in hexadecimal):@." ;
       boxes_codes |> List.iter (Format.fprintf fmt "%a" Boxes.pp_box_raw) ;
       Format.fprintf fmt "@." ;

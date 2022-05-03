@@ -68,7 +68,7 @@ let data_proc_instr_to_str instr =
 
 let pp_arm fmt arm =
   match arm with
-  | Custom i -> pp_hex fmt i
+  | Custom i -> Format.fprintf fmt "0x%08lX" i
   | Mem {instr;typ;cond;rd;ro} -> Format.fprintf fmt "%s%s%s %a, %a"
     (mem_instr_to_str instr) (cond_to_str cond) (ldr_str_type_to_str typ)
     print_register rd print_register_offset ro

@@ -24,3 +24,4 @@ val pp_boxes_names : Format.formatter -> (int list) list -> unit
 val pp_box_raw : Format.formatter -> int list -> unit
 
 val nb_boxes : int
+val name_size : int

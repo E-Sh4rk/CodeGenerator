@@ -16,7 +16,6 @@ let default_fillers = {
 
 let name_size = 8
 let nb_boxes = 14
-
 let eof = Name.eof
 
 let no_eof codes =
@@ -152,7 +151,7 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0)
     | None -> res
     | Some exit ->
       let i = List.length res in
-      let (j,ecode) = Exit.get_preferred exit i in
+      let (j,ecode) = Exit.get_preferred_raw exit i in
       let padding = pad_nb fillers i (j-i) in
       let res = res@padding in
       add_codes_after ~final:true fillers res ecode
@@ -180,7 +179,7 @@ let fit_codes_into_hex_boxes ?(exit=None) codes =
     match exit with
     | None -> codes
     | Some exit ->
-      let (_,ecode) = Exit.get_preferred exit 0 in
+      let (_,ecode) = Exit.get_preferred_raw exit 0 in
       codes @ ecode
   in
   (* Fit into boxes *)
