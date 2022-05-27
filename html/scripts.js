@@ -1,9 +1,10 @@
 window.addEventListener ("load", () => {
     const url = new URL(window.location.href);
-    let prefix_for_examples = "files/";
-    let list_path = "files/list.json";
-    let empty_path = "files/empty.txt";
-    let exit_codes_path = "files/exit.txt";
+    let workspace = document.getElementById ("script_workspace").value;
+    let prefix_for_examples = workspace + "/";
+    let list_path = prefix_for_examples+"list.json";
+    let empty_path = prefix_for_examples+"empty.txt";
+    let exit_codes_path = prefix_for_examples+"exit.txt";
     let code = document.getElementById ("main");
     let exit_codes = document.getElementById ("secondary");
     let select = document.getElementById ("select");
