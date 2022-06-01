@@ -162,7 +162,7 @@ let is_command_valid arm =
 let tweak_mov_mvn strict instr s cond rd rs max_card =
   let cmd = Mov {instr;s;cond;rd;rs} in
   match rs with
-  | Register _ -> [cmd]
+  | Register _ -> raise TweakingFailed
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
     let mk_cmd_first fst =
@@ -200,7 +200,7 @@ let tweak_arith strict instr s cond rd rn op2 max_card =
   assert (instr = ADC || instr = SBC || instr = ADD || instr = SUB) ;
   let cmd = DataProc {instr;s;cond;rd;rn;op2} in
   match op2 with
-  | Register _ -> [cmd]
+  | Register _ -> raise TweakingFailed
   | ScaledRegister _ -> failwith "Not implemented"
   | Immediate i ->
     let i = if not strict && instr = SUB then pred i else i in (* Because the SUB will be replaced by SBC *)
