@@ -160,7 +160,7 @@ let is_command_valid arm =
   ) with InvalidCommand -> false
 
 let tweak_mov_mvn strict instr s cond rd rs max_card =
-  let cmd = Mov {instr;s;cond;rd;rs} in
+  (*let cmd = Mov {instr;s;cond;rd;rs} in*)
   match rs with
   | Register _ -> raise TweakingFailed
   | ScaledRegister _ -> failwith "Not implemented"
@@ -198,7 +198,7 @@ let tweak_mov_mvn strict instr s cond rd rs max_card =
 
 let tweak_arith strict instr s cond rd rn op2 max_card =
   assert (instr = ADC || instr = SBC || instr = ADD || instr = SUB) ;
-  let cmd = DataProc {instr;s;cond;rd;rn;op2} in
+  (*let cmd = DataProc {instr;s;cond;rd;rn;op2} in*)
   match op2 with
   | Register _ -> raise TweakingFailed
   | ScaledRegister _ -> failwith "Not implemented"
