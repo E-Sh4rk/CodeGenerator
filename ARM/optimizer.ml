@@ -2,7 +2,8 @@ open Int32
 open Utils
 open Arm
 
-exception CannotOptimize
+exception TweakingDisabled
+exception TweakingFailed
 
 type tweaking_settings =
   | NoTweaking
@@ -189,7 +190,7 @@ let tweak_mov_mvn strict instr s cond rd rs max_card =
                   ~incr_add:false ~incr_sub:(not strict) max_card i
                   (fun i -> mk_cmd_first i |> is_command_valid)
                   (fun add i -> mk_cmd add i |> is_command_valid) with
-    | None -> [cmd]
+    | None -> raise TweakingFailed
     | Some (fst::lst, additive) ->
       (mk_cmd_first fst)::(List.map (mk_cmd additive) lst)
     | _ -> assert false
@@ -222,7 +223,7 @@ let tweak_arith strict instr s cond rd rn op2 max_card =
                   ~incr_sub:(is_addition && not strict) max_card i
                   (fun i -> mk_cmd_first i |> is_command_valid)
                   (fun add i -> mk_cmd add i |> is_command_valid) with
-    | None -> [cmd]
+    | None -> raise TweakingFailed
     | Some (fst::lst, additive) ->
       (mk_cmd_first fst)::(List.map (mk_cmd additive) lst)
     | _ -> assert false
@@ -240,7 +241,7 @@ let tweak_command (arm, optimize) =
       | DataProc {instr;s;cond;rd;rn;op2}
       when instr = ADC || instr = SBC || instr = ADD || instr = SUB ->
         tweak_arith strict instr s cond rd rn op2 n
-      | _ -> [arm]
+      | _ -> raise TweakingFailed
     in
     if pad
     then
@@ -258,5 +259,5 @@ let tweak_arm lst =
 
 let do_not_tweak_arm lst =
   lst |> List.map (fun (arm, optimize) ->
-    if optimize <> NoTweaking then raise CannotOptimize else arm
+    if optimize <> NoTweaking then raise TweakingDisabled else arm
   )

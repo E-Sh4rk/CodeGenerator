@@ -27,7 +27,7 @@ let load_from_dir env dirname =
     |> List.sort (fun (i,_) (j,_) -> compare i j)
     |> (fun x -> (x, None))
   )
-  with Optimizer.CannotOptimize ->
+  with Optimizer.TweakingDisabled ->
     failwith "Exit codes cannot be tweaked (please remove interrogation marks)."
 
 let load_from_parsed_file fmt env (h, arm) =

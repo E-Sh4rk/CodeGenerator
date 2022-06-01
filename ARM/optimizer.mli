@@ -1,5 +1,6 @@
 
-exception CannotOptimize
+exception TweakingDisabled
+exception TweakingFailed
 
 (* NOTE: The optimizer assumes that the Carry flag is unset.
    The generated commands will not set the Carry flag. *)

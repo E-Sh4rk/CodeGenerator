@@ -1,5 +1,7 @@
 
 (* 0x20244ecl *)
+(* 0xfbc27117l *)
+(* 0x7f8695d6l *)
 
 let () =
   (* Charset *)
@@ -13,6 +15,6 @@ let () =
   done ;
   (* Tweaker *)
   Format.printf "Starting...@." ;
-  match Optimizer.synthesis_test 5 0xfbc27117l with
+  match Optimizer.synthesis_test 5 0x7f8695d6l with
   | None -> Format.printf "Fail.@."
   | Some (lst, _) -> Format.printf "Success: %i@." (List.length lst)
