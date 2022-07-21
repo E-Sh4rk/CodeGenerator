@@ -36,7 +36,11 @@ window.addEventListener ("load", () => {
     };
 
     function fileToField(url, field, callback) {
-        getFile(url, (content) => {field.value = content;}, callback);
+        getFile(url, (content) => {
+            let str = content.replace("{LANG}", lang.value.toUpperCase());
+            str = str.replace("{lang}", lang.value.toLowerCase());
+            field.value = str;
+        }, callback);
     }
 
     function updateCode() {
