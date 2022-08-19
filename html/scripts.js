@@ -40,7 +40,7 @@ window.addEventListener ("load", () => {
         getFile(url, (content) => {
             let str = content.replace("{LANG}", lang.value.toUpperCase());
             str = str.replace("{lang}", lang.value.toLowerCase());
-            str = content.replace("{GAME}", game.value.toUpperCase());
+            str = str.replace("{GAME}", game.value.toUpperCase());
             str = str.replace("{game}", game.value.toLowerCase());
             field.value = str;
         }, callback);
