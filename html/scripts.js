@@ -63,7 +63,7 @@ window.addEventListener ("load", () => {
         if (examples == null) return;
 
         let language = lang.value;
-        let game = game.value;
+        let gam = game.value;
         let category = cat.value;
         //last_selected_example = select.value;
         let newSelectedIndex = 0;
@@ -73,7 +73,7 @@ window.addEventListener ("load", () => {
         examples.forEach((element,index) => {
             if (language in element
                 && (category == "" || ("cat" in element && element["cat"].includes(category)))
-                && (game == "" || ("game" in element && element["game"].includes(game)))) {
+                && (gam == "" || ("game" in element && element["game"].includes(gam)))) {
                 let val = index.toString();
                 if (val == last_selected_example) newSelectedIndex = i;
                 arrOptions.push("<option value='"+val+"'>"+element["name"]+"</option>");
