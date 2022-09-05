@@ -10,6 +10,7 @@ window.addEventListener ("load", () => {
     let select = document.getElementById ("select");
     let lang = document.getElementById ("lang");
     let cat = document.getElementById ("cat");
+    let game = document.getElementById ("game");
 
     let lock = false;
     let examples = null;
@@ -39,6 +40,8 @@ window.addEventListener ("load", () => {
         getFile(url, (content) => {
             let str = content.replace("{LANG}", lang.value.toUpperCase());
             str = str.replace("{lang}", lang.value.toLowerCase());
+            str = str.replace("{GAME}", game.value.toUpperCase());
+            str = str.replace("{game}", game.value.toLowerCase());
             field.value = str;
         }, callback);
     }
@@ -60,6 +63,7 @@ window.addEventListener ("load", () => {
         if (examples == null) return;
 
         let language = lang.value;
+        let gam = game.value;
         let category = cat.value;
         //last_selected_example = select.value;
         let newSelectedIndex = 0;
@@ -67,7 +71,9 @@ window.addEventListener ("load", () => {
         let arrOptions = ["<option value='' selected>----------</option>"];
         let i = 1;
         examples.forEach((element,index) => {
-            if (language in element && (category == "" || element["cat"].includes(category))) {
+            if (language in element
+                && (category == "" || ("cat" in element && element["cat"].includes(category)))
+                && (gam == "" || ("game" in element && element["game"].includes(gam)))) {
                 let val = index.toString();
                 if (val == last_selected_example) newSelectedIndex = i;
                 arrOptions.push("<option value='"+val+"'>"+element["name"]+"</option>");
@@ -93,10 +99,19 @@ window.addEventListener ("load", () => {
         window.history.replaceState(null, null, url);
         updateSelectField();
     }
+    function gameChanged() {
+        url.searchParams.set('game', game.value);
+        window.history.replaceState(null, null, url);
+        updateSelectField();
+    }
 
     let langval = url.searchParams.get('lang');
     if (langval)
         lang.value = langval;
+
+    let gameval = url.searchParams.get('game');
+    if (gameval)
+        game.value = gameval;
 
     select.addEventListener ("change", () => {
         last_selected_example = select.value;
@@ -104,6 +119,7 @@ window.addEventListener ("load", () => {
     });
 
     lang.addEventListener ("change", langChanged);
+    game.addEventListener ("change", gameChanged);
     cat.addEventListener ("change", updateSelectField);
 
     fileToField(exit_codes_path, exit_codes, () => {
