@@ -8,11 +8,41 @@ Stable species:
 
 (credits to Sleipnir)
 
-Spanish: 0x45DB (THUMB execution, bootstrap needed)
-French: 0x40ED* (THUMB execution, bootstrap needed)
-German: 0x4130 (ARM execution, no bootstrap needed)
-Italian: 0x415E* (ARM execution, no bootstrap needed)
-English: 0x4167* (ARM execution, no bootstrap needed)
-Japansese: 0x085F (THUMB execution, no bootstrap needed)
+English:
+ -Shiny THUMB:     0x45BB (metastable)
+ -Shiny ARM:       0x4167 (metastable)
+ -Non-shiny THUMB: 0x40E9 (stable); 0x45BB (metastable)
+ -Non-shiny ARM:   0x4167 (metastable)
 
-*main summary page is unstable, to use just open the summary of an adjacent Pokémon, move to the statistic tab and switch to the glitch Pokémon in order to skip the main page
+Italian:
+ -Shiny THUMB:     0x45B7 (stable)
+ -Shiny ARM:       0x415E (metastable)
+ -Non-shiny THUMB: 0x45B7 (stable)
+ -Non-shiny ARM:   0x415E (metastable)
+
+German:
+ -Shiny THUMB:     0x44F1 (metastable)
+ -Shiny ARM:       0x0599 (metastable); 0x4130 (stable)
+ -Non-shiny THUMB: 0x44F1 (metastable)
+ -Non-shiny ARM:   0x0599 (metastable); 0x4130 (stable); 0x415E (metastable)
+
+Spanish:
+ -Shiny THUMB:     0x45DB (metastable)
+ -Shiny ARM:       0x0599 (metastable) 
+ -Non-shiny THUMB: 0x45DB (metastable)
+ -Non-shiny ARM:   0x0599 (metastable) 
+
+French:
+ -Shiny THUMB:     0x40ED (stable)
+ -Shiny ARM:       None =(
+ -Non-shiny THUMB: None =(
+ -Non-shiny ARM:   None =(
+
+Japanese:
+ -Shiny THUMB:     0x03CE (stable); 0x03FE (stable); 0x085F (stable); 0x08BB (stable); 0x0A90 (stable); 0x672D (metastable); 0xBC35 (metastable); 0xC185 (metastable); 0xC195 (metastable)
+ -Shiny ARM:       0x059D (metastable); 0x0615 (metastable); 0x079D (stable); 0x0A62 (metastable); 0x6789 (stable)
+ -Non-shiny THUMB: 0x03CE (stable); 0x085F (stable); 0x08BB (stable); 0x0A90 (stable); 0x672D (metastable); 0x69D7 (stable); 0xBC35 (metastable); 0xC185 (metastable); 0xC195 (metastable)
+ -Non-shiny ARM:   0x0615 (matastable); 0x079D (stable); 0x0A3F (metastable); 0x0A62 (stable); 0x0B5D (stable); 0x6789 (stable)
+
+
+*metasatble = main summary page is unstable, to use just open the summary of an adjacent Pokémon, move to the statistic tab and switch to the glitch Pokémon in order to skip the main page
