@@ -181,9 +181,9 @@ let tweak_mov_mvn strict instr s cond rd rs max_card =
     let mk_cmd additive i =
       match additive, strict with
       | true, false -> DataProc {instr=ADC;s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
-      | true, true -> DataProc {instr=ADD;s;cond;rd;rn=rd;op2=Immediate i}
+      | true, true -> DataProc {instr=ADD;s=false;cond;rd;rn=rd;op2=Immediate i}
       | false, false -> DataProc {instr=SBC;s=false;cond;rd;rn=rd;op2=Immediate i}
-      | false, true -> DataProc {instr=SUB;s;cond;rd;rn=rd;op2=Immediate i}
+      | false, true -> DataProc {instr=SUB;s=false;cond;rd;rn=rd;op2=Immediate i}
     in
     let i = if instr = MOV then i else lognot i in
     begin match synthesis_optimal ~constants_cat:(if strict then MovMvnStrict else MovMvn)
@@ -215,9 +215,9 @@ let tweak_arith strict instr s cond rd rn op2 max_card =
       let must_add = (additive && is_addition) || (not additive && not is_addition) in
       match must_add, strict with
       | true, false -> DataProc {instr=ADC;s=(rd=15 || rd=0);cond;rd;rn=rd;op2=Immediate i}
-      | true, true -> DataProc {instr=ADD;s;cond;rd;rn=rd;op2=Immediate i}
+      | true, true -> DataProc {instr=ADD;s=false;cond;rd;rn=rd;op2=Immediate i}
       | false, false -> DataProc {instr=SBC;s=false;cond;rd;rn=rd;op2=Immediate i}
-      | false, true -> DataProc {instr=SUB;s;cond;rd;rn=rd;op2=Immediate i}
+      | false, true -> DataProc {instr=SUB;s=false;cond;rd;rn=rd;op2=Immediate i}
     in
     begin match synthesis_optimal ~constants_cat:Arith ~incr_add:(not is_addition && not strict)
                   ~incr_sub:(is_addition && not strict) max_card i
