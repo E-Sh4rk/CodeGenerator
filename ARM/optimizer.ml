@@ -159,7 +159,7 @@ let is_command_valid arm =
     List.exists (fun i -> Name.codes_for_command i |> Name.is_code_writable)
   ) with InvalidCommand -> false
 
-let tweak_mov_mvn strict instr s cond rd rs max_card =
+let tweak_mov_mvn strict instr cond rd rs max_card =
   (*let cmd = Mov {instr;s;cond;rd;rs} in*)
   match rs with
   | Register _ -> raise TweakingFailed
@@ -174,9 +174,9 @@ let tweak_mov_mvn strict instr s cond rd rs max_card =
       in
       match is_mov, strict with
       | true, false -> Mov {instr=MOV;s=true;cond;rd;rs=Immediate fst}
-      | true, true -> Mov {instr=MOV;s;cond;rd;rs=Immediate fst}
+      | true, true -> Mov {instr=MOV;s=false;cond;rd;rs=Immediate fst}
       | false, false -> Mov {instr=MVN;s=false;cond;rd;rs=Immediate nfst}
-      | false, true -> Mov {instr=MVN;s;cond;rd;rs=Immediate nfst}
+      | false, true -> Mov {instr=MVN;s=false;cond;rd;rs=Immediate nfst}
     in
     let mk_cmd additive i =
       match additive, strict with
@@ -196,7 +196,7 @@ let tweak_mov_mvn strict instr s cond rd rs max_card =
     | _ -> assert false
     end
 
-let tweak_arith strict instr s cond rd rn op2 max_card =
+let tweak_arith strict instr cond rd rn op2 max_card =
   assert (instr = ADC || instr = SBC || instr = ADD || instr = SUB) ;
   (*let cmd = DataProc {instr;s;cond;rd;rn;op2} in*)
   match op2 with
@@ -207,7 +207,7 @@ let tweak_arith strict instr s cond rd rn op2 max_card =
     let is_addition =  instr = ADC || instr = ADD in
     let mk_cmd_first fst =
       match is_addition, strict with
-      | _, true -> DataProc {instr;s;cond;rd;rn;op2=Immediate fst}
+      | _, true -> DataProc {instr;s=false;cond;rd;rn;op2=Immediate fst}
       | true, false -> DataProc {instr=ADC;s=(rn=15 || rn=0);cond;rd;rn;op2=Immediate fst}
       | false, false -> DataProc {instr=SBC;s=false;cond;rd;rn;op2=Immediate fst}
     in
@@ -237,10 +237,10 @@ let tweak_command (arm, optimize) =
   let optimize_with_card arm n pad =
     let res =
       match arm with
-      | Mov {instr;s;cond;rd;rs} -> tweak_mov_mvn strict instr s cond rd rs n
-      | DataProc {instr;s;cond;rd;rn;op2}
+      | Mov {instr;s=_;cond;rd;rs} -> tweak_mov_mvn strict instr cond rd rs n
+      | DataProc {instr;s=_;cond;rd;rn;op2}
       when instr = ADC || instr = SBC || instr = ADD || instr = SUB ->
-        tweak_arith strict instr s cond rd rn op2 n
+        tweak_arith strict instr cond rd rn op2 n
       | _ -> raise TweakingFailed
     in
     if pad
