@@ -10,7 +10,7 @@ let hex_box_mode = ref false
 let configure language =
   tweaker_mode := Flexible ;
   hex_box_mode := false ;
-  match language with
+  match String.sub language 0 3 with
   | "eng" -> lang := ENG
   | "spa" -> lang := SPA
   | "fra" -> lang := FRA

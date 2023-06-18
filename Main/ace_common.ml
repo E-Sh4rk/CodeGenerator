@@ -40,14 +40,14 @@ let compare_and_print_commands fmt data descr exit =
     | [], _ -> ()
     | d::data, (hex, arm)::descr when Int32.equal d hex ->
       Format.fprintf fmt "%a@." Arm_printer.pp_arm arm ;
-      aux data descr false (i+4)
+      aux data descr is_exit (i+4)
     | _, [] when not is_exit && exit <> None ->
       let exit = Option.get exit in
       Format.fprintf fmt "; ======== EXIT CODE ========@." ;
       aux data (Exit.get_preferred_descr exit i |> snd) true i
     | d::data, _ ->
       Format.fprintf fmt "%a \t\t\t; (filler)@." Arm_printer.pp_arm (Arm.Custom d) ;
-      aux data descr false (i+4)
+      aux data descr is_exit (i+4)
   in
   aux data descr false 0
 
