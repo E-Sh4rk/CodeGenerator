@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Pokemon FRLG ACE generator</title>
+    <title>Pokemon Ruby/Sapphire ACE generator</title>
     <link rel="stylesheet" href="style.css">
     <script src="ace_js.bc.js"></script>
     <script src="scripts.js"></script>
   </head>
   <body>
-    <input type="hidden" id="script_workspace" value="files_frlg">
+    <input type="hidden" id="script_workspace" value="files_rs">
     <div class="row">
       <div id="mainTab" class="column tabcontent-active">
         <h2><a class="tablinks-active">Main code</a> /
@@ -17,18 +17,23 @@
         
         <div class="row">
           <select id="lang" class="left">
+            <option value="eng2">English 1.2</option>
             <option value="eng1">English 1.1</option>
             <option value="eng0">English 1.0</option>
-            <option value="spa">Spanish</option>
-            <option value="fra">French</option>
-            <option value="ita">Italian</option>
-            <option value="ger">German</option>
+            <option value="spa1">Spanish 1.1</option>
+            <option value="spa0">Spanish 1.0</option>
+            <option value="fra1">French 1.1</option>
+            <option value="fra0">French 1.0</option>
+            <option value="ita1">Italian 1.1</option>
+            <option value="ita0">Italian 1.0</option>
+            <option value="ger1">German 1.1</option>
+            <option value="ger0">German 1.0</option>
             <option value="jap1">Japanese 1.1</option>
             <option value="jap0">Japanese 1.0</option>
           </select>
           <select id="game" class="middle">
-            <option value="fr">Fire-Red</option>
-            <option value="lg">Leaf-Green</option>
+            <option value="ruby">Ruby</option>
+            <option value="sapp">Sapphire</option>
           </select>
           <select style="display:none;" id="cat" class="middle">
             <option value="">All categories</option>
@@ -55,7 +60,6 @@
       </div>
     </div>
     <p>Generator for <a href="index.html">Emerald</a> / <a href="index_frlg.html">FRLG</a> / <a href="index_rs.html">RS</a></p>
-	  <p><a href="./doc/FRLG_Short_Exit_Codes_Guide.pdf">Short exit code guide</a></p>
     <p>Save editor for glitchers (useful for learning/experimenting ACE): <a href="https://github.com/E-Sh4rk/PokeGlitzer">https://github.com/E-Sh4rk/PokeGlitzer</a></p>
   </body>
 </html>
