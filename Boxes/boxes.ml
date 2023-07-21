@@ -3,10 +3,16 @@ exception BoxFittingError of string
 
 type fillers =
   { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
-let default_fillers = {
+let default_fillers () = {
   nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *);
   nop_code_alt = [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *);
-  fillers= [|
+  fillers = if !Settings.game = Ruby || !Settings.game = Sapphire
+    then [|
+    [0xFF ; 0x00 ; 0x00 ; 0xB0](* B00000FF *) ;
+    [0x00 ; 0xFF ; 0x00 ; 0xB0](* B000FF00 *) ;
+    [0x00 ; 0x00 ; 0xFF ; 0xB0](* B0FF0000 *) ;
+    [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
+  |] else [|
     [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
     [0x00 ; 0xFF ; 0x00 ; 0x00](* 0000FF00 *) ;
     [0x00 ; 0x00 ; 0xFF ; 0x00](* 00FF0000 *) ;
@@ -140,7 +146,8 @@ let split_raw_into_boxes ?(fill_last=false) raw =
   List.map List.rev |>
   List.rev
 
-let fit_codes_into_boxes ?(fill_last=true) ?(fillers=default_fillers) ?(start=0) ?(exit=None) codes =
+let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) codes =
+  let fillers = Option.value ~default:(default_fillers ()) fillers in
   (* Main code *)
   let padding = pad_nb fillers 0 start in
   let res =

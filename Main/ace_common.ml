@@ -66,11 +66,12 @@ let main fmt env (headers,headers2) parsed exit =
     | HInt i -> Utils.uint32_to_int i
     | _ -> failwith "Invalid headers."
   in
+  let default_fillers = Boxes.default_fillers () in
   let fillers =
     Array.init 4 (fun n ->
       let header_name = Format.sprintf "filler%n" (n+1) in
       match Preprocess.get_param headers header_name with
-      | HNone -> Boxes.default_fillers.fillers.(n)
+      | HNone -> default_fillers.fillers.(n)
       | HInt i ->
         let codes = Name.codes_for_command i in
         if List.nth codes n <> Name.eof then failwith "Invalid filler." ;
@@ -80,13 +81,13 @@ let main fmt env (headers,headers2) parsed exit =
   in
   let nop_code =
     match Preprocess.get_param headers "filler0" with
-    | HNone -> Boxes.default_fillers.nop_code
+    | HNone -> default_fillers.nop_code
     | HInt i -> Name.codes_for_command i
     | _ -> failwith "Invalid headers."
   in
   let nop_code_alt =
     match Preprocess.get_param headers "filler0_alt" with
-    | HNone -> Boxes.default_fillers.nop_code_alt
+    | HNone -> default_fillers.nop_code_alt
     | HInt i -> Name.codes_for_command i
     | _ -> failwith "Invalid headers."
   in

@@ -3,7 +3,7 @@ exception BoxFittingError of string
 
 type fillers =
   { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
-val default_fillers : fillers
+val default_fillers : unit -> fillers
 
 val fit_codes_into_boxes :
   ?fill_last:bool ->

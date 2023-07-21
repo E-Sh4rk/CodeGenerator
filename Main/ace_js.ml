@@ -3,8 +3,8 @@ open Js_of_ocaml
 
 module Html = Dom_html
 
-let treat_input lang str =
-  Settings.configure lang ;
+let treat_input lang game str =
+  Settings.configure lang game ;
   let buffer = Buffer.create 1000 in
   let fmt = Format.formatter_of_buffer buffer in
   begin try (
@@ -52,6 +52,10 @@ let compute _ =
     Option.get
       (Html.getElementById_coerce "lang" Html.CoerceTo.select)
   in
+  let game =
+    Option.get
+      (Html.getElementById_coerce "game" Html.CoerceTo.select)
+  in
   let main_input = Js.to_string main_input##.value in
   let secondary_input = Js.to_string secondary_input##.value in
   let input = main_input^(
@@ -59,7 +63,8 @@ let compute _ =
     then "" else "\n=====\n"^secondary_input
   ) in
   let lang = Js.to_string lang##.value in
-  let res = treat_input lang input in
+  let game = Js.to_string game##.value in
+  let res = treat_input lang game input in
   output##.value := Js.string res;
   Js._true
 

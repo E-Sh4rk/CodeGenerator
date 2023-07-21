@@ -2,7 +2,8 @@ open Ace_common
 
 let () =
   (*Printexc.record_backtrace true ;*)
-  if Array.length Sys.argv > 1 then Settings.configure Sys.argv.(1) ;
+  if Array.length Sys.argv > 1 then Settings.configure Sys.argv.(1) ""
+  else if Array.length Sys.argv > 2 then Settings.configure Sys.argv.(1) Sys.argv.(2) ;
   let fmt = Format.std_formatter in
   let (headers, program) = Parse.from_filename ~headers:true "input.txt" in
   let env = Preprocess.env_from_headers fmt headers in
