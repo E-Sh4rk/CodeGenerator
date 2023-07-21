@@ -5,6 +5,7 @@ module Html = Dom_html
 
 let treat_input lang game str =
   Settings.configure lang game ;
+  Optimizer.init () ;
   let buffer = Buffer.create 1000 in
   let fmt = Format.formatter_of_buffer buffer in
   begin try (

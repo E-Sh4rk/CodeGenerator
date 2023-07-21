@@ -40,26 +40,30 @@ let compute_all_constants _ =
     all_rotations i [i] i
   ) |> List.flatten |> UInt32Set.of_list
 
-let constants_set = compute_all_constants ()
-let constants_set_no_carry =
-  constants_set |> UInt32Set.filter (fun i -> carry_out i |> not)
+let constants_set = ref UInt32Set.empty
+let constants_set_nc = ref UInt32Set.empty
+let constants = ref []
+let rev_constants = ref []
+let constants_mov_mvn = ref []
+let rev_constants_mov_mvn = ref []
 
-let constants = constants_set |> UInt32Set.elements
-let rev_constants = List.rev constants
+let init () =
+  constants_set := compute_all_constants () ;
+  constants_set_nc :=
+    !constants_set |> UInt32Set.filter (fun i -> carry_out i |> not) ;
+  constants := !constants_set |> UInt32Set.elements ;
+  rev_constants := List.rev !constants ;
 
-let constants_mov_mvn =
-  let nset = UInt32Set.map lognot constants_set in
-  UInt32Set.union constants_set_no_carry nset
-  |> UInt32Set.remove Int32.zero (* We try to avoid setting the zero flag *)
-  |> UInt32Set.elements
-
-let constants_mov_mvn_strict =
-  let nset = UInt32Set.map lognot constants_set in
-  UInt32Set.union constants_set nset
-  |> UInt32Set.elements
-
-let rev_constants_mov_mvn = List.rev constants_mov_mvn
-let rev_constants_mov_mvn_strict = List.rev constants_mov_mvn_strict
+  let nset = UInt32Set.map lognot !constants_set in
+  let constants_mov_mvn_set =
+    match !Settings.tweaker_mode with
+    | Settings.Flexible ->
+      UInt32Set.union !constants_set_nc nset
+      |> UInt32Set.remove Int32.zero (* We try to avoid setting the zero flag *)
+    | Settings.Strict -> UInt32Set.union !constants_set nset
+  in
+  constants_mov_mvn := constants_mov_mvn_set |> UInt32Set.elements ;
+  rev_constants_mov_mvn := List.rev !constants_mov_mvn
 
 let tries_at_depth_0 = [| 0x10000 ; 0x10000 ; 0x10000 ; 0x1000 ; 0x100 ; 0x10 ; 0x1 |]
 
@@ -69,7 +73,7 @@ let rec remove_while f lst =
   | i'::lst when f i' -> remove_while f lst
   | lst -> lst
 
-type constants_cat = Arith | MovMvn | MovMvnStrict
+type constants_cat = Arith | MovMvn
 let synthesis ~constants_cat ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = tries_at_depth_0 in
   let tad0_len = Array.length tad0 in
@@ -101,7 +105,7 @@ let synthesis ~constants_cat ~additive ~incr max_card i is_valid_fst is_valid =
     aux 0 rc
   in
 
-  let filtered_rev_constants = List.filter is_valid rev_constants in
+  let filtered_rev_constants = List.filter is_valid !rev_constants in
   let remove_init =
     if additive then remove
     else (fun i -> remove_while (fun j -> unsigned_compare i j > 0))
@@ -121,12 +125,10 @@ let synthesis ~constants_cat ~additive ~incr max_card i is_valid_fst is_valid =
 
   let init_rc =
     match additive, constants_cat with
-    | true, Arith -> rev_constants
-    | true, MovMvn -> rev_constants_mov_mvn
-    | true, MovMvnStrict -> rev_constants_mov_mvn_strict
-    | false, Arith -> constants
-    | false, MovMvn -> constants_mov_mvn
-    | false, MovMvnStrict -> constants_mov_mvn_strict
+    | true, Arith -> !rev_constants
+    | true, MovMvn -> !rev_constants_mov_mvn
+    | false, Arith -> !constants
+    | false, MovMvn -> !constants_mov_mvn
   in
   let init_rc = List.filter is_valid_fst init_rc in
   init 0 init_rc |>
@@ -167,10 +169,10 @@ let tweak_mov_mvn strict instr cond rd rs max_card =
   | Immediate i ->
     let mk_cmd_first fst =
       let nfst = lognot fst in
-      let constant_set_mov = if strict then constants_set else constants_set_no_carry in
+      let constant_set_mov = if strict then !constants_set else !constants_set_nc in
       let is_mov =
         (instr = MOV && UInt32Set.mem fst constant_set_mov)
-        || (UInt32Set.mem nfst constants_set |> not)
+        || (UInt32Set.mem nfst !constants_set |> not)
       in
       match is_mov, strict with
       | true, false -> Mov {instr=MOV;s=true;cond;rd;rs=Immediate fst}
@@ -186,7 +188,7 @@ let tweak_mov_mvn strict instr cond rd rs max_card =
       | false, true -> DataProc {instr=SUB;s=false;cond;rd;rn=rd;op2=Immediate i}
     in
     let i = if instr = MOV then i else lognot i in
-    begin match synthesis_optimal ~constants_cat:(if strict then MovMvnStrict else MovMvn)
+    begin match synthesis_optimal ~constants_cat:MovMvn
                   ~incr_add:false ~incr_sub:(not strict) max_card i
                   (fun i -> mk_cmd_first i |> is_command_valid)
                   (fun add i -> mk_cmd add i |> is_command_valid) with

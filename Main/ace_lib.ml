@@ -21,6 +21,7 @@ let build code exit_codes =
     then "" else "\n=====\n"^secondary_input
   ) in
 
+  Optimizer.init () ;
   let fmt = Utils.dummy_fmt in
   begin try (
     let fs = Fs.from_str str in

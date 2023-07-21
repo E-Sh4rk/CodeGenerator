@@ -10,6 +10,8 @@ type tweaking_settings =
   | TweakFixedLength of int
   | TweakMinLength
 
+val init : unit -> unit (* Must be called after calling Settings.configure *)
+
 val synthesis_test : int -> int32 -> (int32 list * bool) option
 
 val tweak_arm : (Arm.arm * tweaking_settings) list -> Arm.arm list
