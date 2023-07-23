@@ -38,10 +38,15 @@ window.addEventListener ("load", () => {
 
     function fileToField(url, field, callback) {
         getFile(url, (content) => {
-            let str = content.replaceAll("{LANG}", lang.value.toUpperCase());
-            str = str.replaceAll("{lang}", lang.value.toLowerCase());
-            str = str.replaceAll("{GAME}", game.value.toUpperCase());
-            str = str.replaceAll("{game}", game.value.toLowerCase());
+			let langr = lang.value;
+			let langnr = langr.substring(0,3);
+			let gamev = game.value;
+            let str = content.replaceAll("{LANG}", langr.toUpperCase());
+            str = str.replaceAll("{lang}", langr.toLowerCase());
+			str = str.replaceAll("{LANGNR}", langnr.toUpperCase());
+			str = str.replaceAll("{langnr}", langnr.toLowerCase());
+            str = str.replaceAll("{GAME}", gamev.toUpperCase());
+            str = str.replaceAll("{game}", gamev.toLowerCase());
             field.value = str;
         }, callback);
     }
