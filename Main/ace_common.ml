@@ -12,40 +12,22 @@ let treat_command fmt arm =
     Arm_printer.pp_arm arm ;
   (code, (hex, arm))
 
-let append_terminators lst =
-  let i = (Boxes.name_size+1) - (List.length lst) in
-  lst@(List.init i (fun _ -> Name.eof))
-
-let regroup_by n data =
-  let rec aux acc k data =
-    match data with
-    | [] ->
-      begin match acc with
-      | _::acc when k > 0 -> acc
-      | acc -> acc
-      end
-    | d::data ->
-      if k = 0 then aux ([d]::acc) (n-1) data
-      else begin
-        match acc with
-        | a::acc -> aux ((d::a)::acc) (k-1) data
-        | _ -> assert false
-      end
-  in
-  aux [] 0 data |> List.rev |> List.map List.rev
-
 let compare_and_print_commands fmt data descr exit =
   let rec aux data descr is_exit i =
     match data, descr with
     | [], _ -> ()
-    | d::data, (hex, arm)::descr when Int32.equal d hex ->
+    | (d, true)::data, (hex, arm)::descr when Int32.equal d hex ->
       Format.fprintf fmt "%a@." Arm_printer.pp_arm arm ;
       aux data descr is_exit (i+4)
+    | (_, true)::data, (_, arm)::descr ->
+      Format.fprintf fmt "%a \t\t\t; (altered)@." Arm_printer.pp_arm arm ;
+      aux data descr is_exit (i+4)
+    | (_, true)::_, [] -> assert false
     | _, [] when not is_exit && exit <> None ->
       let exit = Option.get exit in
       Format.fprintf fmt "; ======== EXIT CODE ========@." ;
       aux data (Exit.get_preferred_descr exit i |> snd) true i
-    | d::data, _ ->
+    | (d, false)::data, _ ->
       Format.fprintf fmt "%a \t\t\t; (filler)@." Arm_printer.pp_arm (Arm.Custom d) ;
       aux data descr is_exit (i+4)
   in
@@ -114,9 +96,9 @@ let main fmt env (headers,headers2) parsed exit =
   end else
     try
       let fillers = { Boxes.fillers; Boxes.nop_code; Boxes.nop_code_alt } in
-      let boxes_codes =
+      let (boxes_codes, unformatted) =
         if !Settings.hex_box_mode
-        then Boxes.fit_codes_into_hex_boxes ~exit res
+        then (Boxes.fit_codes_into_hex_boxes ~exit res, [])
         else Boxes.fit_codes_into_boxes ~fill_last ~fillers ~start ~exit res
       in
       Format.fprintf fmt "@.%a@." Boxes.pp_boxes_names boxes_codes ;
@@ -136,9 +118,7 @@ let main fmt env (headers,headers2) parsed exit =
       begin
         if !Settings.hex_box_mode |> not then (
           Format.fprintf fmt "All commands (with exit code and fillers):@." ;
-          let data = List.map append_terminators boxes_codes |> List.concat |>
-                    regroup_by 4 |> List.map Name.command_for_codes in
-          compare_and_print_commands fmt data descr exit ;
+          compare_and_print_commands fmt unformatted descr exit ;
           Format.fprintf fmt "@." ;
         )
       end ;

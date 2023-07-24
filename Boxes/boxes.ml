@@ -69,6 +69,8 @@ let rec pad_nb fillers pos nb =
     let m = List.length code in
     code@(pad_nb fillers (pos + m) (nb - m))
 
+let pack b = List.map (fun i -> (i, b))
+
 let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
   let pos = pos mod (name_size+1) in
   let n = List.length codes in
@@ -86,7 +88,7 @@ let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
     else raise (BoxFittingError
     "Some codes cannot be positionned due to non-consecutive 0xFF bytes.")
   in
-  if is_ok_here then codes
+  if is_ok_here then pack true codes
   else begin
     let m = List.length fillers.nop_code in
     let nop_code =
@@ -94,7 +96,7 @@ let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
       else fillers.fillers.(name_size-pos)
     in
     let m = List.length nop_code in
-    nop_code@(fit_code_at_pos ~next fillers (pos + m) codes)
+    (pack false nop_code)@(fit_code_at_pos ~next fillers (pos + m) codes)
   end
 
 let add_codes_after ?(final=false) fillers res codes =
@@ -146,10 +148,35 @@ let split_raw_into_boxes ?(fill_last=false) raw =
   List.map List.rev |>
   List.rev
 
+let regroup_by n data =
+  let rec aux acc k data =
+    match data with
+    | [] ->
+      begin match acc with
+      | _::acc when k > 0 -> acc
+      | acc -> acc
+      end
+    | d::data ->
+      if k = 0 then aux ([d]::acc) (n-1) data
+      else begin
+        match acc with
+        | a::acc -> aux ((d::a)::acc) (k-1) data
+        | _ -> assert false
+      end
+  in
+  aux [] 0 data |> List.rev |> List.map List.rev
+
+let unpack cmds =
+  cmds |> List.map (fun elts ->
+    let (cmd, bs) = List.split elts in
+    assert (List.for_all (fun b -> b) bs || List.for_all (fun b -> not b) bs) ;
+    (cmd, List.hd bs)
+  )
+
 let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) codes =
   let fillers = Option.value ~default:(default_fillers ()) fillers in
   (* Main code *)
-  let padding = pad_nb fillers 0 start in
+  let padding = pad_nb fillers 0 start |> pack false in
   let res =
     add_codes_after ~final:(exit = None) fillers padding codes in
   (* Add exit code *)
@@ -159,14 +186,16 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) co
     | Some exit ->
       let i = List.length res in
       let (j,ecode) = Exit.get_preferred_raw exit i in
-      let padding = pad_nb fillers i (j-i) in
+      let padding = pad_nb fillers i (j-i) |> pack false in
       let res = res@padding in
       add_codes_after ~final:true fillers res ecode
   in
   (* Split by box *)
+  let res, unformatted = List.map fst res, (res  |> regroup_by 4 |> unpack) in
+  let unformatted = unformatted |> List.map (fun (cmd, b) -> (Name.command_for_codes cmd, b)) in
   let res = split_raw_into_boxes ~fill_last res in
   (* If a box is full of spaces... *)
-  res |> List.mapi (fun i lst ->
+  let res = res |> List.mapi (fun i lst ->
     if Name.is_full_of_spaces lst
     then
       let m = List.length fillers.nop_code_alt in
@@ -178,7 +207,8 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) co
         let suffix = List.init suffix_len (fun _ -> Name.space) in
         List.concat [prefix ; fillers.nop_code_alt ; suffix]
     else lst
-  )
+  ) in
+  (res, unformatted)
 
 let fit_codes_into_hex_boxes ?(exit=None) codes =
   (* Add exit code *)

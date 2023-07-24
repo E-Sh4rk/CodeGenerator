@@ -10,8 +10,8 @@ val fit_codes_into_boxes :
   ?fillers:fillers ->
   ?start:int ->
   ?exit:(Exit.t option) ->
-  (int list) list ->
-  (int list) list
+  int list list ->
+  int list list * (int32 * bool) list
 
 val fit_codes_into_hex_boxes :
   ?exit:(Exit.t option) ->
