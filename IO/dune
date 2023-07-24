@@ -1,2 +1,8 @@
 (ocamllex lexer)
 (menhir (modules parser))
+
+(library
+ (name io)
+ (wrapped false)
+ (libraries utils arm)
+ (modules (:standard)))

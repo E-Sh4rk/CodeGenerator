@@ -1,8 +1,0 @@
-@@ filename = "CertificateShortJAP"
-@@ start = 92
-@@
-
-ADD r0, r14, #0x3b8000
-SUB r0, r0, #0x284000
-SUB r0, r0, #0x2900
-SUB r0, r0, #0xda

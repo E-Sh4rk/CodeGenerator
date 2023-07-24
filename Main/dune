@@ -1,11 +1,16 @@
-(include_subdirs unqualified)
 (library
   (name ace_common)
   (wrapped false)
-  (libraries num str uutf)
-  (modules ace_common settings arm_printer arm parser lexer parser_ast
-    boxes charset exit name fs parse optimizer structure constants
-    pkmn_data_common save utils encoder_common preprocess seed seed_tools_common)
+  (libraries str utils charset boxes arm io)
+  (modules ace_common)
+; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
+)
+
+(library
+  (name pkmn)
+  (wrapped false)
+  (libraries num uutf save charset)
+  (modules pkmn_data_common encoder_common seed_tools_common)
 ; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
 )
 
@@ -41,18 +46,18 @@
 
 (executable
  (name save_edit)
- (libraries ace_common)
+ (libraries pkmn)
  (modules save_edit)
 )
 
 (executable
  (name pkmn_data)
- (libraries ace_common)
+ (libraries pkmn)
  (modules pkmn_data)
 )
 (executable
   (name pkmn_data_js)
-  (libraries ace_common)
+  (libraries pkmn)
   (modules pkmn_data_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
@@ -60,12 +65,12 @@
 
 (executable
  (name encoder)
- (libraries ace_common)
+ (libraries pkmn)
  (modules encoder)
 )
 (executable
   (name encoder_js)
-  (libraries ace_common)
+  (libraries pkmn)
   (modules encoder_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
@@ -73,12 +78,12 @@
 
 (executable
  (name seed_tools)
- (libraries ace_common)
+ (libraries pkmn)
  (modules seed_tools)
 )
 (executable
   (name seed_tools_js)
-  (libraries ace_common)
+  (libraries pkmn)
   (modules seed_tools_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))

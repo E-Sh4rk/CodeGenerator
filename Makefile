@@ -2,73 +2,73 @@
 all: build run
 
 build:
-	dune build ace.exe
+	dune build Main/ace.exe
 
 run:
-	dune exec ./ace.exe
+	dune exec ./Main/ace.exe
 
 test: buildt runt
 
 buildt:
-	dune build test.exe
+	dune build Main/test.exe
 
 runt:
-	dune exec ./test.exe
+	dune exec ./Main/test.exe
 
 save: builds runs
 
 builds:
-	dune build save_edit.exe
+	dune build Main/save_edit.exe
 
 runs:
-	dune exec ./save_edit.exe
+	dune exec ./Main/save_edit.exe
 
 portable: buildp runp
 
 buildp:
-	dune build ace_p.exe
+	dune build Main/ace_p.exe
 
 runp:
-	dune exec ./ace_p.exe
+	dune exec ./Main/ace_p.exe
 
 js:
-	dune build ace_js.bc.js
+	dune build Main/ace_js.bc.js
 
 lib:
-	dune build ace_lib.bc.js
+	dune build Main/ace_lib.bc.js
 
 data: buildd rund
 
 buildd:
-	dune build pkmn_data.exe
+	dune build Main/pkmn_data.exe
 
 rund:
-	dune exec ./pkmn_data.exe
+	dune exec ./Main/pkmn_data.exe
 
 datajs:
-	dune build pkmn_data_js.bc.js
+	dune build Main/pkmn_data_js.bc.js
 
 encoder: builde rune
 
 builde:
-	dune build encoder.exe
+	dune build Main/encoder.exe
 
 rune:
-	dune exec ./encoder.exe
+	dune exec ./Main/encoder.exe
 
 encoderjs:
-	dune build encoder_js.bc.js
+	dune build Main/encoder_js.bc.js
 
 seed: buildseed runseed
 
 buildseed:
-	dune build seed_tools.exe
+	dune build Main/seed_tools.exe
 
 runseed:
-	dune exec ./seed_tools.exe
+	dune exec ./Main/seed_tools.exe
 
 seedjs:
-	dune build seed_tools_js.bc.js
+	dune build Main/seed_tools_js.bc.js
 
 clean:
 	dune clean
