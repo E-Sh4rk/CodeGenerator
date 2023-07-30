@@ -1,4 +1,4 @@
-# EmeraldACE
+# CodeGenerator
 
 The ACE code generator is available [here](https://e-sh4rk.github.io/CodeGenerator/).
 
