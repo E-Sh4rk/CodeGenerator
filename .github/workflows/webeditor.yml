@@ -1,0 +1,60 @@
+name: Build JavaScript lib
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deployment:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # - macos-latest
+          - ubuntu-latest
+          # - windows-latest
+        ocaml-compiler:
+          - 4.14.1
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # OCaml build
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+      - name: Install OCaml dependencies
+        run: |
+          opam install dune ppx_deriving num
+          opam install js_of_ocaml-compiler js_of_ocaml-ppx
+      # - run: |
+      #     cd src
+      #     opam install . --deps-only
+      - name: Build
+        run: |
+          opam exec -- dune build --profile release Main/ace_js.bc.js
+          cp _build/default/Main/ace_js.bc.js html/ace_js.bc.js
+          opam exec -- dune build --profile release Main/seed_tools_js.bc.js
+          cp _build/default/Main/seed_tools_js.bc.js html/scripts/seed/seed_tools_js.bc.js
+
+      # Upload artifact
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: html/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

@@ -32,7 +32,7 @@ runp:
 	dune exec ./Main/ace_p.exe
 
 js:
-	dune build Main/ace_js.bc.js
+	dune build --profile release Main/ace_js.bc.js
 
 data: buildd rund
 
@@ -45,17 +45,6 @@ rund:
 datajs:
 	dune build Main/pkmn_data_js.bc.js
 
-encoder: builde rune
-
-builde:
-	dune build Main/encoder.exe
-
-rune:
-	dune exec ./Main/encoder.exe
-
-encoderjs:
-	dune build Main/encoder_js.bc.js
-
 seed: buildseed runseed
 
 buildseed:
@@ -65,7 +54,7 @@ runseed:
 	dune exec ./Main/seed_tools.exe
 
 seedjs:
-	dune build Main/seed_tools_js.bc.js
+	dune build --profile release Main/seed_tools_js.bc.js
 
 clean:
 	dune clean

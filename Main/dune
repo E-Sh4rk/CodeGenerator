@@ -9,8 +9,8 @@
 (library
   (name pkmn)
   (wrapped false)
-  (libraries num uutf save charset)
-  (modules pkmn_data_common encoder_common seed_tools_common)
+  (libraries num save charset)
+  (modules pkmn_data_common seed_tools_common)
 ; (preprocess (pps ppx_deriving.show ppx_deriving.ord))
 )
 
@@ -52,19 +52,6 @@
   (name pkmn_data_js)
   (libraries pkmn)
   (modules pkmn_data_js)
-  (modes js)
-  (preprocess (pps js_of_ocaml-ppx))
-)
-
-(executable
- (name encoder)
- (libraries pkmn)
- (modules encoder)
-)
-(executable
-  (name encoder_js)
-  (libraries pkmn)
-  (modules encoder_js)
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
 )
