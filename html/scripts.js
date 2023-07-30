@@ -140,3 +140,15 @@ function openTab(_, id) {
     let target = document.getElementById(id);
     target.className = target.className.replace("tabcontent", "tabcontent-active");
 }
+
+/* ===== COMPUTE ===== */
+
+function compute() {
+    let lang = document.getElementById ("lang");
+    let game = document.getElementById ("game");
+    let main = document.getElementById ("main");
+    let secondary = document.getElementById ("secondary");
+    let [_, txt] = aceGen.build(lang.value, game.value, main.value, secondary.value);
+    let output = document.getElementById ("output");
+    output.value = txt;
+}

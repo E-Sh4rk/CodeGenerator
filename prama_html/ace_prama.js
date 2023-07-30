@@ -13,7 +13,7 @@ function translate(code){
 }
 
 function build_code(txt) {
-    let res = aceGen.build(txt, exit_codes);
+    let [res, _] = aceGen.build("eng", "", txt, exit_codes);
     return res.map(translate);
 }
 

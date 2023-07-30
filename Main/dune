@@ -36,13 +36,6 @@
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
 )
-(executable
-  (name ace_lib)
-  (libraries ace_common)
-  (modules ace_lib)
-  (modes js)
-  (preprocess (pps js_of_ocaml-ppx))
-)
 
 (executable
  (name save_edit)
