@@ -7,7 +7,7 @@
   <body>
       <h1>ACE code generator - Documentation</h1>
 
-      <a href="../index.html">Go back to the code generator</a> (<a href="../index_frlg.html">FRLG version</a>)
+      <p>Go back to the code generator: <a href="../index.html">Emerald</a> / <a href="../index_frlg.html">FRLG</a> / <a href="../index_rs.html">RS</a></p>
 
       <h2>Main code</h2>
 
@@ -51,11 +51,11 @@
 		<tr><td><code>filler0_alt</code></td><td>Integer</td><td>Optional</td><td>A command that substitutes the command <code>0x00000000</code>.
 		Used when a box name only contain spaces. Default: <code>0xB0000000</code>.</td></tr>
         <tr><td><code>filler1</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0x......FF</code>. Default: <code>0x000000FF</code>.</td></tr>
+        Should be of the form <code>0x......FF</code>. Default: <code>0x000000FF</code> (<code>0xB00000FF</code> for RS).</td></tr>
         <tr><td><code>filler2</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0x....FF..</code>. Default: <code>0x0000FF00</code>.</td></tr>
+        Should be of the form <code>0x....FF..</code>. Default: <code>0x0000FF00</code> (<code>0xB000FF00</code> for RS).</td></tr>
         <tr><td><code>filler3</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0x..FF....</code>. Default: <code>0x00FF0000</code>.</td></tr>
+        Should be of the form <code>0x..FF....</code>. Default: <code>0x00FF0000</code> (<code>0xB0FF0000</code> for RS).</td></tr>
         <tr><td><code>filler4</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
         Should be of the form <code>0xFF......</code>. Default: <code>0xFF000000</code>.</td></tr>
         <tr><td><code>fill</code></td><td>Boolean</td><td>Optional</td><td>When set to true, the remaining space of the last box will be filled with spaces.
@@ -110,8 +110,9 @@
       In order to help you to write codes and to allow automation, you can ask the code generator to automatically tweak an ADC, SBC, MOV or MVN command
       (not available for the other commands) into multiple commands that are writable (when it is possible). It will search a solution in up to 5 commands. In order to use this feature,
       just add a <code>?</code> (interrogation mark) at the end of the command that should be tweaked. You can also specify a number just after
-      (for instance <code>?4</code>) if you want to force the result to use a fixed number of commands. Note that using the register <code>r12</code> usually gives best results
-      (it makes more constants to be writable). Also note that the ARM tweaker assumes that the carry flag in CPSR is unset.</p>
+      (for instance <code>?4</code>) if you want to force the result to use a fixed number of commands. Note that the register <code>r12</code> should be preferred
+      (more constants are writable when using it), followed by register <code>r11</code>.
+	  Also note that the ARM tweaker assumes that the carry flag in CPSR is unset.</p>
 
       <h4>Japanese version</h4>
 
@@ -123,8 +124,6 @@
 
       <p>When selecting the Japanese language, the tweaker also takes advantage of the extended charset.
       In particular, it does not assume anymore that the carry flag in CPSR is unset (ADD and SUB commands are used instead of ADC and SBC).</p>
-
-      <p><strong>Please note that Japanese support is in beta (it has not been tested yet).</strong></p>
 
       <h2>Exit codes</h2>
 
