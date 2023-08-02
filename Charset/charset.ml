@@ -2,7 +2,11 @@
 type pkmn_char = Unused | Unreadable of string
                | Unavailable of string | Available of string
 
-let charset_eng =
+let charset_eng g =
+  let dots = match g with
+  | Settings.Ruby | Settings.Sapphire -> "‥"
+  | _ -> "…"
+  in
   [|
   (* 0x0. *)
   Available   "_" ; Unavailable "À" ; Unavailable "Á" ; Unavailable "Â" ;
@@ -60,7 +64,7 @@ let charset_eng =
   Available "7"    ; Available "8"   ; Available "9" ; Available "!"    ;
   Available "?"    ; Available "."   ; Available "–" ; Unavailable "・" ;
   (* 0xB. *)
-  Available "…"    ; Available "“"   ; Available "”" ; Available "‘"     ;
+  Available dots   ; Available "“"   ; Available "”" ; Available "‘"     ;
   Available "’"    ; Available "♂"   ; Available "♀" ; Unavailable "Pk$" ;
   Available ","    ; Unavailable "×" ; Available "/" ; Available "A"     ;
   Available "B"    ; Available "C"   ; Available "D" ; Available "E"     ;
@@ -86,10 +90,10 @@ let charset_eng =
   Unreadable "0xFC" ; Unreadable "0xFD" ; Unreadable "0xFE" ; Unreadable "0xFF" ;
   |]
 
-let charset_ita = Array.copy charset_eng
-let charset_spa = Array.copy charset_eng
-let charset_ger =
-  let cs = Array.copy charset_eng in
+let charset_ita g = Array.copy (charset_eng g)
+let charset_spa g = Array.copy (charset_eng g)
+let charset_ger g =
+  let cs = Array.copy (charset_eng g) in
   cs.(0xB1) <- Available "„" ;
   cs.(0xB2) <- Available "“" ;
   for i=0xF1 to 0xF6 do
@@ -98,8 +102,8 @@ let charset_ger =
       | _ -> assert false
   done ;
   cs
-let charset_fra =
-  let cs = Array.copy charset_eng in
+let charset_fra g =
+  let cs = Array.copy (charset_eng g) in
   cs.(0xB1) <- Available "«" ;
   cs.(0xB2) <- Available "»" ;
   cs
@@ -273,12 +277,13 @@ let charset_jap =
     |]
 
 let charset () =
+  let g = !Settings.game in
   match !Settings.lang with
-  | ENG -> charset_eng
-  | FRA -> charset_fra
-  | ITA -> charset_ita
-  | SPA -> charset_spa
-  | GER -> charset_ger
+  | ENG -> charset_eng g
+  | FRA -> charset_fra g
+  | ITA -> charset_ita g
+  | SPA -> charset_spa g
+  | GER -> charset_ger g
   | JAP -> charset_jap
   | ABC -> charset_full
 
