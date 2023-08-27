@@ -8,8 +8,13 @@ select {
     margin: 10px 10px 0px 10px;
 }
 
+@font-face {
+  font-family: 'Consolas';
+  src: url('./consola.ttf') format('truetype');
+}
+
 textarea {
-    font-family: 'Consolas', 'Courier New', 'monospace';
+    font-family: 'Consolas', Fallback, 'Courier New';
     margin: 10px 10px;
     height: 100%;
     min-height: 400px;
