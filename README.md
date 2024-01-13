@@ -11,7 +11,7 @@ sudo apt install opam
 opam init
 eval `opam config env`
 opam switch create 4.14.1
-opam install dune ppx_deriving num
+opam install dune ppx_deriving num.1.4
 make
 ```
 

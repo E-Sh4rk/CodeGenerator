@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # OCaml build
       - name: Use OCaml ${{ matrix.ocaml-compiler }}
@@ -36,7 +36,7 @@ jobs:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
       - name: Install OCaml dependencies
         run: |
-          opam install dune ppx_deriving num
+          opam install dune ppx_deriving num.1.4
           opam install js_of_ocaml-compiler js_of_ocaml-ppx
       # - run: |
       #     cd src
@@ -50,11 +50,11 @@ jobs:
 
       # Upload artifact
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v1
+        uses: actions/configure-pages@v4
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: html/
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
