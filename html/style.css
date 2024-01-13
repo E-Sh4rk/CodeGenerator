@@ -14,12 +14,12 @@ select {
 }
 
 @font-face {
-  font-family: 'Yu Gothic Light';
-  src: url('./yugothil.ttf') format('truetype');
+  font-family: 'Yu Gothic';
+  src: url('./YuGothic.ttf') format('truetype');
 }
 
 textarea {
-    font-family: 'Consolas', 'Yu Gothic Light', 'Courier New';
+    font-family: 'Consolas', 'Yu Gothic', 'Courier New';
     margin: 10px 10px;
     height: 100%;
     min-height: 400px;
