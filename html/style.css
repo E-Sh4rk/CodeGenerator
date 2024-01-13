@@ -13,8 +13,13 @@ select {
   src: url('./consola.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Yu Gothic Light';
+  src: url('./yugothil.ttf') format('truetype');
+}
+
 textarea {
-    font-family: 'Consolas', Fallback, 'Courier New';
+    font-family: 'Consolas', 'Yu Gothic Light', 'Courier New';
     margin: 10px 10px;
     height: 100%;
     min-height: 400px;
