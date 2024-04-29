@@ -20,7 +20,7 @@ window.addEventListener ("load", () => {
         lock = true;
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url);
-        xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+        // xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
         xhr.overrideMimeType("text/plain");
         xhr.addEventListener("readystatechange", () => {
             if (xhr.readyState == 4) {

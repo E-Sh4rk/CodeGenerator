@@ -33,6 +33,7 @@ runp:
 
 js:
 	dune build --profile release Main/ace_js.bc.js
+	cp -f _build/default/Main/ace_js.bc.js html/ace_js.bc.js
 
 data: buildd rund
 
@@ -55,6 +56,7 @@ runseed:
 
 seedjs:
 	dune build --profile release Main/seed_tools_js.bc.js
+	cp -f _build/default/Main/seed_tools_js.bc.js html/scripts/seed/seed_tools_js.bc.js
 
 clean:
 	dune clean
