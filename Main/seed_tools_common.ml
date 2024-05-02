@@ -43,7 +43,8 @@ and main_2 seed fmt str =
     Cont (main_4 seed)
   | "3" ->
     Format.fprintf fmt "For most legendaries, you should use the seed at cycle -3.@." ;
-    Format.fprintf fmt "Please refer to the instructions on the freeze PRNG ACE code for other stationnary pokemons (pokeballs, Sudowoodo, starters...).@." ;
+    Format.fprintf fmt "Please refer to the instructions on the freeze PRNG ACE code" ;
+    Format.fprintf fmt " for other stationnary pokemons (pokeballs, Sudowoodo, starters...).@." ;
     Format.fprintf fmt "You should start the battle as soon as you can" ;
     Format.fprintf fmt " (just after having executed the ACE and closed the menu).@." ;
     show_vicinity fmt false seed (-10) 0 ;
