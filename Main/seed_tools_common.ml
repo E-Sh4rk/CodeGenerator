@@ -29,7 +29,7 @@ and main_1 fmt str =
   Format.fprintf fmt "2. Yes, for method H1 (wild pokemon) using a rod.@." ;
   Format.fprintf fmt "3. Yes, for method 1 (stationnary pokemon).@." ;
   Format.fprintf fmt "4. No, but please show me the seeds in the vicinity.@." ;
-  Format.fprintf fmt "5. No (quit).@." ;
+  Format.fprintf fmt "5. No (change seed).@." ;
   Cont (main_2 seed)
 
 and show_vicinity fmt print_cycle seed start stop =
@@ -60,7 +60,7 @@ and main_2 seed fmt str =
     stationnary |> List.iteri (fun i (name,_,_) ->
       Format.fprintf fmt "%i. %s@." (i+1) name
     ) ;
-    Format.fprintf fmt "%i. Other.@." ((List.length stationnary) + 1) ;
+    Format.fprintf fmt "%i. Other@." ((List.length stationnary) + 1) ;
     Cont (main_5 seed)
   | "4" ->
     Format.fprintf fmt "Please enter the range (example: -25 5):@." ;
