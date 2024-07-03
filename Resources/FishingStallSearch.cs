@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System; // Code by Shao
 
 namespace FishingStallSearch
 {
@@ -46,6 +46,7 @@ namespace FishingStallSearch
                 advancement++;
                 if (((seed >> 16) % 100) < moreAPresses[rod])
                 {
+                    advancement++;
                     seed = Next(seed);
                 }
             }
