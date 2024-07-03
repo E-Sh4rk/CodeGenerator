@@ -1,11 +1,25 @@
 open Seed
 
+let stationnary =
+  [ "Rayquaza, Deoxys, Kyogre, Groudon, Regirock, Registeel, Regice", 3, "" ;
+    "Sudowoodo", 6, "3 + 3 for the menu navigation involved for using the Wailmer Pail" ;
+    "Beldum", 4, "" ;
+    "Electrode (both Electrode are present)", 5, "" ;
+    "Electrode (only one Electrode is present)", 4, "" ;
+    "Hoenn starter", 7, "" ;
+    "Johto starter", 8, "" ;
+  ]
+
 type result = 
   | Cont of (Format.formatter -> string -> result)
   | NoCont
 
+let iter f n x =
+  List.init n (fun _ -> 0) |> List.fold_left (fun acc _ -> f acc) x
+
 let rec main fmt =
-  Format.fprintf fmt "Please enter your seed (use 0x prefix if hexadecimal): @?" ;
+  Format.fprintf fmt "To determine your target seed, please use a recent version of PokeFinder (>= 4.1.2).@." ;
+  Format.fprintf fmt "Please enter your target seed (use 0x prefix if hexadecimal): @?" ;
   Cont main_1
 
 and main_1 fmt str =
@@ -42,13 +56,12 @@ and main_2 seed fmt str =
     Format.fprintf fmt "3. I will be fishing for feebas on a feebas tile.@." ;
     Cont (main_4 seed)
   | "3" ->
-    Format.fprintf fmt "For most legendaries, you should use the seed at cycle -3.@." ;
-    Format.fprintf fmt "Please refer to the instructions on the freeze PRNG ACE code" ;
-    Format.fprintf fmt " for other stationnary pokemons (pokeballs, Sudowoodo, starters...).@." ;
-    Format.fprintf fmt "You should start the battle as soon as you can" ;
-    Format.fprintf fmt " (just after having executed the ACE and closed the menu).@." ;
-    show_vicinity fmt false seed (-10) 0 ;
-    NoCont
+    Format.fprintf fmt "Please select the pokemon you want:@." ;
+    stationnary |> List.iteri (fun i (name,_,_) ->
+      Format.fprintf fmt "%i. %s@." (i+1) name
+    ) ;
+    Format.fprintf fmt "%i. Other.@." ((List.length stationnary) + 1) ;
+    Cont (main_5 seed)
   | "4" ->
     Format.fprintf fmt "Please enter the range (example: -25 5):@." ;
     Cont (main_vicinity seed)
@@ -60,15 +73,15 @@ and main_vicinity seed fmt str =
   NoCont
 
 and main_3 seed fmt str =
-  let (delay, seed') =
+  let delay =
     match str with
-    | "1" -> (3, prev_seed (prev_seed (prev_seed seed)))
-    | "2" -> (1, prev_seed seed)
-    | "3" -> (2, prev_seed (prev_seed seed))
+    | "1" -> 4
+    | "2" -> 2
+    | "3" -> 3
     | _ -> failwith "Unknown answer."
   in
-  Format.fprintf fmt "You should use the seed %#lx (%n cycle(s) before your target).@."
-    seed' delay ;
+  let seed' = iter prev_seed delay seed in
+  Format.fprintf fmt "You should use the seed %#lx (%n cycle(s) before your target).@." seed' delay ;
   Format.fprintf fmt "You should use sweet scent directly after triggering the ACE," ;
   Format.fprintf fmt " without closing the pokemon menu.@." ;
   NoCont
@@ -90,7 +103,7 @@ and main_4 seed fmt str =
       | _ -> assert false
     in
     Format.fprintf fmt "%s:@." rodname ;
-    match best_seed_for_rod route119 feebas seed rod with
+    match best_seed_for_rod route119 feebas (prev_seed seed) rod with
     | None -> Format.fprintf fmt "\tNo matches found@."
     | Some (false, adv, seed) ->
       Format.fprintf fmt "\tWith lead: No lead necessary@." ;
@@ -103,3 +116,20 @@ and main_4 seed fmt str =
   Format.fprintf fmt " (leave the pokemon menu and enter the bag).@." ;
   Format.fprintf fmt "Thanks to Shao for this script.@." ;
   NoCont
+
+and main_5 seed fmt str =
+  begin match int_of_string str with
+  | n ->
+    if n < 1 || n > (List.length stationnary)
+    then begin
+      Format.fprintf fmt "For most legendaries, you should use the seed at cycle -3.@." ;
+      show_vicinity fmt false seed (-10) 0
+    end else begin
+      let (_, offset, _) = List.nth stationnary (n-1) in
+      let seed' = iter prev_seed offset seed in
+      Format.fprintf fmt "You should use the seed %#lx (%n cycle(s) before your target).@." seed' offset ;
+    end ;
+    Format.fprintf fmt "You should start the battle as soon as you can" ;
+    Format.fprintf fmt " (just after having executed the ACE and closed the menu).@." ;
+  | exception (Failure _) -> failwith "Unknown answer."
+  end ; NoCont
