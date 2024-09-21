@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const startIndex = findIndexOfCurrentWord();
     
             const lineEnd = currentValue.substring(cursorPos).split(/\r?\n/g)[0];
-            const tags = lineEnd.match(/%input:\w*/g)
+            const tags = lineEnd.match(/@input:\w*/g)
             if (tags === null) {
                 suggestionsEle.style.display = 'none';
                 return;
