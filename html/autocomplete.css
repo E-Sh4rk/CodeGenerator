@@ -1,0 +1,39 @@
+.container {
+    position: relative;
+}
+.container > #main {
+    background: transparent;
+    position: relative;
+}
+.container__mirror {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    color: transparent;
+}
+.container__suggestions {
+    border: 1px solid rgb(203 213 225);
+    background: #fff;
+    border-radius: 0.5rem;
+    display: none;
+    position: fixed;
+    width: 12rem;
+    overflow: auto;
+    max-height: 50%;
+}
+.container__suggestion {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 2rem;
+    padding: 0 0.5rem;
+}
+.container__suggestion:not(:first-child) {
+    border-top: 1px solid rgb(203 213 225);
+}
+.container__suggestion--focused {
+    background: rgb(226 232 240);
+}

@@ -4,13 +4,16 @@
     <meta charset="utf-8">
     <title>Pokemon Ruby/Sapphire ACE generator</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autocomplete.css">
     <script src="ace_js.bc.js?2"></script>
     <script src="scripts.js"></script>
+    <script src="ids.js"></script>
+    <script src="autocomplete.js"></script>
   </head>
   <body>
     <input type="hidden" id="script_workspace" value="https://e-sh4rk.github.io/EmeraldACE_web/files_rs">
     <div class="row">
-      <div id="mainTab" class="column tabcontent-active">
+      <div id="mainTab" class="column grow tabcontent-active">
         <h2><a class="tablinks-active">Main code</a> /
             <a class="tablinks" onclick="openTab(event,'secondaryTab');">Exit codes</a>
             (<a href="doc/index.html">documentation</a>)</h2>
@@ -38,25 +41,27 @@
           <select style="display:none;" id="cat" class="middle">
             <option value="">All categories</option>
           </select>
-          <select id="select" class="right">
+          <select id="select" class="right grow">
             <option value='' selected>----------</option>
           </select>
         </div>
-        <textarea id="main" spellcheck="false"></textarea>
+        <div class="container grow" id="container">
+          <textarea id="main" spellcheck="false"></textarea>
+        </div>
         <button id="compute" onclick="compute()" type="button">Compute</button>
       </div>
 
-      <div id="secondaryTab" class="column tabcontent">
+      <div id="secondaryTab" class="column grow tabcontent">
         <h2><a class="tablinks" onclick="openTab(event,'mainTab');">Main code</a> /
             <a class="tablinks-active">Exit codes</a>
             (<a href="doc/index.html">documentation</a>)</h2>
 
-        <textarea id="secondary" spellcheck="false"></textarea>
+        <textarea id="secondary" class="grow" spellcheck="false"></textarea>
       </div>
       
-      <div class="column">
+      <div class="column grow">
         <h2>Result</h2>
-        <textarea id="output" spellcheck="false" readonly></textarea>
+        <textarea id="output" class="grow" spellcheck="false" readonly></textarea>
       </div>
     </div>
     <p>Generator for <a href="index.html">Emerald</a> / <a href="index_frlg.html">FRLG</a> / <a href="index_rs.html">RS</a></p>

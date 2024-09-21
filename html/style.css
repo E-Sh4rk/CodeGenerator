@@ -5,7 +5,7 @@ h2 {
 }
 
 select {
-    margin: 10px 10px 0px 10px;
+    height: 20px;
 }
 
 @font-face {
@@ -20,15 +20,12 @@ select {
 
 textarea {
     font-family: 'Consolas', 'Yu Gothic', 'Courier New';
-    margin: 10px 10px;
     height: 100%;
+    width: 100%;
+    box-sizing: border-box;
     min-height: 400px;
 	tab-size: 4;
 	letter-spacing: 0.02em;
-}
-
-button {
-    margin: 10px 10px;
 }
 
 #output {
@@ -46,13 +43,17 @@ button {
     min-width: 350px;
 }
 
+.grow {
+    flex-grow: 1;
+}
+
 .row {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: stretch;
-    flex-grow: 1;
     flex-wrap: wrap;
+    gap: 5px;
 }
 
 .column {
@@ -61,26 +62,21 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    flex-grow: 1;
+    gap: 5px;
 }
 
 .left {
     flex-basis: 0;
-    margin-right:0px;
-    flex-grow: 0;
     flex-shrink: 1;
 }
 
 .middle {
     flex-basis: 0;
-    margin-right:0px;
-    flex-grow: 0;
     flex-shrink: 1;
 }
 
 .right {
     flex-basis: 0;
-    flex-grow: 1;
     flex-shrink: 1;
 }
 
@@ -107,10 +103,4 @@ button {
 #enter {
     min-width: 75px;
     padding: 10px 0px;
-    margin: 0px 10px;
-}
-
-input {
-    flex-grow: 1;
-    margin: 0px 10px;
 }
