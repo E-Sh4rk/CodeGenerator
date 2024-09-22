@@ -106,7 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
     
-            const matches = suggestions.filter((suggestion) => /*suggestion.indexOf(currentWord) > -1*/ suggestion.toLowerCase().startsWith(currentWord.toLowerCase()));
+            const matches = suggestions.filter((suggestion) =>
+                suggestion.toLowerCase().startsWith(currentWord.toLowerCase()) || parseInt(currentWord) === pkmn_data_map[suggestion]);
             if (matches.length === 0) {
                 suggestionsEle.style.display = 'none';
                 return;
