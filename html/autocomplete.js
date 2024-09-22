@@ -74,9 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const newValue = currentValue.substring(0, startIndex) +
                         newWord +
                         currentValue.substring(endIndex);
+        const scroll = textarea.scrollTop;
         textarea.value = newValue;
         textarea.focus();
         textarea.selectionStart = textarea.selectionEnd = startIndex + newWord.length;
+        textarea.scrollTop = scroll;
     };
 
     ['input', 'selectionchange'].forEach(e =>
