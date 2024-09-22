@@ -114,15 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     
             const textBeforeWord = currentValue.substring(0, startIndex);
-            const textAfterWord = currentValue.substring(startIndex);
+            const textAfterWord = currentValue.substring(endIndex);
     
             const pre = document.createTextNode(textBeforeWord);
-            const post = document.createTextNode(textAfterWord);
+            const post = document.createTextNode(textAfterWord + (textAfterWord.endsWith("\n") ? " " : ""));
             const caretEle = document.createElement('span');
-            caretEle.innerHTML = '&nbsp;';
+            caretEle.innerHTML = '';
+            caretEle.append(document.createTextNode(currentWord));
     
             mirroredEle.innerHTML = '';
             mirroredEle.append(pre, caretEle, post);
+            mirroredEle.scrollTop = textarea.scrollTop;
     
             const rect = caretEle.getBoundingClientRect();
             suggestionsEle.style.top = `${rect.top + rect.height}px`;
