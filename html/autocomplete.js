@@ -47,40 +47,50 @@ document.addEventListener('DOMContentLoaded', () => {
         mirroredEle.scrollTop = textarea.scrollTop;
     });
 
-    const findIndexOfCurrentWord = () => {
+    const findIndexesOfCurrentWord = () => {
         // Get current value and cursor position
         const currentValue = textarea.value;
         const cursorPos = textarea.selectionStart;
 
         // Iterate backwards through characters until we find a space or newline character
-        let startIndex = cursorPos - 1;
+        let startIndex = cursorPos-1;
         while (startIndex >= 0 && !/\s/.test(currentValue[startIndex])) {
             startIndex--;
         }
-        return startIndex;
+        // Iterate forward through characters until we find a space or newline character
+        let endIndex = cursorPos;
+        while (endIndex < currentValue.length && !/\s/.test(currentValue[endIndex])) {
+            endIndex++;
+        }
+        
+        return [startIndex+1, endIndex];
     };
 
     // Replace current word with selected suggestion
     const replaceCurrentWord = (newWord) => {
         const currentValue = textarea.value;
-        const cursorPos = textarea.selectionStart;
-        const startIndex = findIndexOfCurrentWord();
+        const [startIndex, endIndex] = findIndexesOfCurrentWord();
 
-        const newValue = currentValue.substring(0, startIndex + 1) +
+        const newValue = currentValue.substring(0, startIndex) +
                         newWord +
-                        currentValue.substring(cursorPos);
+                        currentValue.substring(endIndex);
         textarea.value = newValue;
         textarea.focus();
-        textarea.selectionStart = textarea.selectionEnd = startIndex + 1 + newWord.length;
+        textarea.selectionStart = textarea.selectionEnd = startIndex + newWord.length;
     };
 
     ['input', 'selectionchange'].forEach(e =>
         textarea.addEventListener(e, () => {
             const currentValue = textarea.value;
-            const cursorPos = textarea.selectionStart;
-            const startIndex = findIndexOfCurrentWord();
+            const [startIndex, endIndex] = findIndexesOfCurrentWord();
+            if (endIndex <= startIndex) {
+                suggestionsEle.style.display = 'none';
+                return;
+            }
     
-            const lineEnd = currentValue.substring(cursorPos).split(/\r?\n/g)[0];
+            const remaining = currentValue.substring(endIndex);
+            const lineBreak = remaining.indexOf("\n");
+            const lineEnd = lineBreak >= 0 ? remaining.substring(0, lineBreak) : remaining;
             const tags = lineEnd.match(/@input:\w*/g)
             if (tags === null) {
                 suggestionsEle.style.display = 'none';
@@ -90,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const suggestions = groups.map((x) => pkmn_data[x]).filter((x) => x !== undefined).flat(1);
     
             // Extract just the current word
-            const currentWord = currentValue.substring(startIndex + 1, cursorPos);
+            const currentWord = currentValue.substring(startIndex, endIndex);
             if (currentWord === '') {
                 suggestionsEle.style.display = 'none';
                 return;
@@ -102,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
     
-            const textBeforeCursor = currentValue.substring(0, cursorPos);
-            const textAfterCursor = currentValue.substring(cursorPos);
+            const textBeforeWord = currentValue.substring(0, startIndex);
+            const textAfterWord = currentValue.substring(startIndex);
     
-            const pre = document.createTextNode(textBeforeCursor);
-            const post = document.createTextNode(textAfterCursor);
+            const pre = document.createTextNode(textBeforeWord);
+            const post = document.createTextNode(textAfterWord);
             const caretEle = document.createElement('span');
             caretEle.innerHTML = '&nbsp;';
     
