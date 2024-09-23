@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSuggestionIndex = -1;
     textarea.addEventListener('keydown', (e) => {
-        if (!['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'].includes(e.key)) {
+        if (!['Enter', 'Escape', 'Tab'].includes(e.key)) {
             return;
         }
 
@@ -163,19 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         e.preventDefault();
         switch (e.key) {
-            case 'ArrowDown':
             case 'Tab':
                 suggestions[
                     clamp(0, currentSuggestionIndex, numSuggestions - 1)
                 ].classList.remove('container__suggestion--focused');
-                currentSuggestionIndex = clamp(0, currentSuggestionIndex + 1, numSuggestions - 1);
-                suggestions[currentSuggestionIndex].classList.add('container__suggestion--focused');
-                break;
-            case 'ArrowUp':
-                suggestions[
-                    clamp(0, currentSuggestionIndex, numSuggestions - 1)
-                ].classList.remove('container__suggestion--focused');
-                currentSuggestionIndex = clamp(0, currentSuggestionIndex - 1, numSuggestions - 1);
+                currentSuggestionIndex = clamp(0, currentSuggestionIndex + 1, numSuggestions) % numSuggestions;
                 suggestions[currentSuggestionIndex].classList.add('container__suggestion--focused');
                 break;
             case 'Enter':
