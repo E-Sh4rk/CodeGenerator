@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'fontSize',
         'fontWeight',
         'letterSpacing',
+        'textSizeAdjust',
         'lineHeight',
         'padding',
         'textDecoration',

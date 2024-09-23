@@ -23,24 +23,24 @@ textarea {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    min-height: 400px;
-	tab-size: 4;
-	letter-spacing: 0.02em;
+    tab-size: 4;
+    letter-spacing: 0.02em;
+    text-size-adjust: none;
 }
 
 #output {
-    min-height: 500px;
-    min-width: 350px;
+    min-height: 400px;
+    min-width: 400px;
 }
 
 #main {
     min-height: 400px;
-    min-width: 350px;
+    min-width: 400px;
 }
 
 #secondary {
-    min-height: 450px;
-    min-width: 350px;
+    min-height: 400px;
+    min-width: 400px;
 }
 
 .grow {
