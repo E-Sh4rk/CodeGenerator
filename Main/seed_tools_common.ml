@@ -1,9 +1,11 @@
 open Seed
 
 let stationnary =
-  [ "Rayquaza, Deoxys, Kyogre, Groudon, Regirock, Registeel, Regice", 3, "" ;
+  [ "Deoxys, Mew, Rayquaza, Kyogre, Groudon, Regirock, Registeel, Regice, Lati@s, Lugia, Ho-Oh", 3, "" ;
+    "Fossils", 3, "" ;
     "Sudowoodo", 6, "3 + 3 for the menu navigation involved for using the Wailmer Pail" ;
     "Beldum", 4, "" ;
+    "Kecleon", 4, "" ;
     "Electrode (both Electrode are present)", 5, "" ;
     "Electrode (only one Electrode is present)", 4, "" ;
     "Hoenn starter", 7, "" ;
@@ -24,12 +26,12 @@ let rec main fmt =
 
 and main_1 fmt str =
   let seed = Utils.uint32_of_str str in
-  Format.fprintf fmt "Do you want to obtain this seed using the freeze PRNG ACE code ?@." ;
-  Format.fprintf fmt "1. Yes, for method H1 (wild pokemon) using sweet scent.@." ;
-  Format.fprintf fmt "2. Yes, for method H1 (wild pokemon) using a rod.@." ;
-  Format.fprintf fmt "3. Yes, for method 1 (stationnary pokemon).@." ;
-  Format.fprintf fmt "4. No, but please show me the seeds in the vicinity.@." ;
-  Format.fprintf fmt "5. No (change seed).@." ;
+  Format.fprintf fmt "To determine the seed to use with the PRNG stall ACE code, please enter your method:@." ;
+  Format.fprintf fmt "1. Method H1 (wild pokemon) using sweet scent.@." ;
+  Format.fprintf fmt "2. Method H1 (wild pokemon) using a rod.@." ;
+  Format.fprintf fmt "3. Method 1 (stationnary pokemon).@." ;
+  Format.fprintf fmt "4. Other (show all the seeds in the vicinity).@." ;
+  Format.fprintf fmt "5. Choose another target seed.@." ;
   Cont (main_2 seed)
 
 and show_vicinity fmt print_cycle seed start stop =
