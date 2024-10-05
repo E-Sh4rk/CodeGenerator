@@ -29,9 +29,10 @@ and main_1 fmt str =
   Format.fprintf fmt "To determine the seed to use with the PRNG stall ACE code, please enter your method:@." ;
   Format.fprintf fmt "1. Method H1 (wild pokemon) using sweet scent.@." ;
   Format.fprintf fmt "2. Method H1 (wild pokemon) using a rod.@." ;
-  Format.fprintf fmt "3. Method 1 (stationnary pokemon).@." ;
-  Format.fprintf fmt "4. Other (show all the seeds in the vicinity).@." ;
-  Format.fprintf fmt "5. Choose another target seed.@." ;
+  Format.fprintf fmt "3. Method H1 (wild pokemon) using rock smash.@." ;
+  Format.fprintf fmt "4. Method 1 (stationnary pokemon).@." ;
+  Format.fprintf fmt "5. Other (show all the seeds in the vicinity).@." ;
+  Format.fprintf fmt "6. Choose another target seed.@." ;
   Cont (main_2 seed)
 
 and show_vicinity fmt print_cycle seed start stop =
@@ -58,13 +59,20 @@ and main_2 seed fmt str =
     Format.fprintf fmt "3. I will be fishing for feebas on a feebas tile.@." ;
     Cont (main_4 seed)
   | "3" ->
+    let delay = 3 in
+    let seed' = iter prev_seed delay seed in
+    Format.fprintf fmt "You should use the seed %#lx (%n cycle(s) before your target).@." seed' delay ;
+    Format.fprintf fmt "You should use rock smash directly after triggering the ACE," ;
+    Format.fprintf fmt " without closing the pokemon menu.@." ;
+    NoCont  
+  | "4" ->
     Format.fprintf fmt "Please select the pokemon you want:@." ;
     stationnary |> List.iteri (fun i (name,_,_) ->
       Format.fprintf fmt "%i. %s@." (i+1) name
     ) ;
     Format.fprintf fmt "%i. Other@." ((List.length stationnary) + 1) ;
     Cont (main_5 seed)
-  | "4" ->
+  | "5" ->
     Format.fprintf fmt "Please enter the range (example: -25 5):@." ;
     Cont (main_vicinity seed)
   | _ -> NoCont
@@ -77,7 +85,7 @@ and main_vicinity seed fmt str =
 and main_3 seed fmt str =
   let delay =
     match str with
-    | "1" -> 4
+    | "1" -> 3 (* Also reported as 4 ? *)
     | "2" -> 2
     | "3" -> 3
     | _ -> failwith "Unknown answer."
