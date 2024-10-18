@@ -47,6 +47,12 @@ jobs:
           cp _build/default/Main/ace_js.bc.js html/ace_js.bc.js
           opam exec -- dune build --profile release Main/seed_tools_js.bc.js
           cp _build/default/Main/seed_tools_js.bc.js html/scripts/seed/seed_tools_js.bc.js
+     
+      - name: Zip offline version
+        run: |
+          cd html
+          zip -r ../app.zip ./*
+          mv ../app.zip ./app.zip
 
       # Upload artifact
       - name: Configure GitHub Pages

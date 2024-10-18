@@ -1,6 +1,6 @@
 window.addEventListener ("load", () => {
     const url = new URL(window.location.href);
-    let workspace = document.getElementById ("script_workspace").value;
+    let workspace = repository + document.getElementById ("script_workspace").value;
     let prefix_for_examples = workspace + "/";
     let list_path = prefix_for_examples+"list.json";
     let empty_path = prefix_for_examples+"empty.txt";
