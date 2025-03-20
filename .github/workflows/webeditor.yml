@@ -31,7 +31,7 @@ jobs:
 
       # OCaml build
       - name: Use OCaml ${{ matrix.ocaml-compiler }}
-        uses: ocaml/setup-ocaml@v2
+        uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
       - name: Install OCaml dependencies
