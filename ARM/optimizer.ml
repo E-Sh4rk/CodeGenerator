@@ -20,7 +20,7 @@ module UInt32Set = Set.Make(UInt32)
 
 let padding_code = Custom zero
 
-let carry_out i = compare i zero < 0
+(* let carry_out i = compare i zero < 0 *)
 
 let compute_all_constants _ =
   let rec all_immed8 max acc i =
@@ -41,7 +41,6 @@ let compute_all_constants _ =
   ) |> List.flatten |> UInt32Set.of_list
 
 let constants_set = ref UInt32Set.empty
-let constants_set_nc = ref UInt32Set.empty
 let constants = ref []
 let rev_constants = ref []
 let constants_mov_mvn = ref []
@@ -49,19 +48,11 @@ let rev_constants_mov_mvn = ref []
 
 let init () =
   constants_set := compute_all_constants () ;
-  constants_set_nc :=
-    !constants_set |> UInt32Set.filter (fun i -> carry_out i |> not) ;
   constants := !constants_set |> UInt32Set.elements ;
   rev_constants := List.rev !constants ;
 
   let nset = UInt32Set.map lognot !constants_set in
-  let constants_mov_mvn_set =
-    match !Settings.tweaker_mode with
-    | Settings.Flexible ->
-      UInt32Set.union !constants_set_nc nset
-      |> UInt32Set.remove Int32.zero (* We try to avoid setting the zero flag *)
-    | Settings.Strict -> UInt32Set.union !constants_set nset
-  in
+  let constants_mov_mvn_set = UInt32Set.union !constants_set nset in
   constants_mov_mvn := constants_mov_mvn_set |> UInt32Set.elements ;
   rev_constants_mov_mvn := List.rev !constants_mov_mvn
 
@@ -169,16 +160,13 @@ let tweak_mov_mvn strict instr cond rd rs max_card =
   | Immediate i ->
     let mk_cmd_first fst =
       let nfst = lognot fst in
-      let constant_set_mov = if strict then !constants_set else !constants_set_nc in
       let is_mov =
-        (instr = MOV && UInt32Set.mem fst constant_set_mov)
+        (instr = MOV && UInt32Set.mem fst (!constants_set))
         || (UInt32Set.mem nfst !constants_set |> not)
       in
-      match is_mov, strict with
-      | true, false -> Mov {instr=MOV;s=true;cond;rd;rs=Immediate fst}
-      | true, true -> Mov {instr=MOV;s=false;cond;rd;rs=Immediate fst}
-      | false, false -> Mov {instr=MVN;s=false;cond;rd;rs=Immediate nfst}
-      | false, true -> Mov {instr=MVN;s=false;cond;rd;rs=Immediate nfst}
+      match is_mov with
+      | true -> Mov {instr=MOV;s=false;cond;rd;rs=Immediate fst}
+      | false -> Mov {instr=MVN;s=false;cond;rd;rs=Immediate nfst}
     in
     let mk_cmd additive i =
       match additive, strict with

@@ -220,17 +220,24 @@ let ldr_str_to_binary instr typ cond rd (rn, addr_typ) =
   [logor v addr_mode]
 
 let mov_mvn_to_binary instr s cond rd rs =
-  let opcode = match instr with
-  | MOV -> 0b0001_1010_0000_0000_0000_0000_0000
-  | MVN -> 0b0001_1110_0000_0000_0000_0000_0000 in
+  let opcodes = match instr with
+  | MOV -> [
+      0b0000_0001_1010_0000_0000_0000_0000_0000 ;
+      0b0000_0001_1010_0001_0000_0000_0000_0000 (* SBZ does not really need to be 0 *)
+    ]
+  | MVN -> [ 0b0001_1110_0000_0000_0000_0000_0000 ] in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in
-  let v = of_int opcode |>
+  let vs = opcodes |>
+    List.map (fun opcode ->
+    of_int opcode |>
     add_condition_code cond |>
     add_rd_code rd |>
-    logor scode in
-  addr_mode_1 rs |>
-  List.map (fun addr_mode -> logor v addr_mode)
+    logor scode) in
+  let addr_modes = addr_mode_1 rs in
+  vs |> List.map (fun v ->
+    addr_modes |> List.map (fun addr_mode -> logor v addr_mode)
+  ) |> List.flatten
 
 let calculation_to_binary instr s cond rd rn op2 =
   let opcode = match instr with
