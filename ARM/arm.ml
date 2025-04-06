@@ -117,6 +117,34 @@ let decompose_immediate imm =
   let res = aux 0 imm in
   if res = [] then raise InvalidCommand else res
 
+let shift_code st =
+  match st with
+  | LSL _ -> of_int 0b00
+  | LSR _ -> of_int 0b01
+  | ASR _ -> of_int 0b10
+  | ROR _ | RRX -> of_int 0b11
+
+let shift_imm st =
+  match st with
+  | LSL i | LSR i | ASR i | ROR i -> i
+  | RRX -> of_int 0
+
+let shift st =
+  let (reg, rs, shift_imm) =
+    match st with
+    | LSL i | LSR i | ASR i | ROR i ->
+      begin match i with
+      | Reg r -> (1, of_int r, of_int 0)
+      | Imm i -> (0, of_int 0, i)
+      end
+    | RRX -> (0, of_int 0, of_int 0)
+  in
+  let r = shift_left (of_int reg) 4 in
+  let sc = shift_left (shift_code st) 5 in
+  let si = shift_left shift_imm 7 in
+  let rs = shift_left rs 8 in
+  logor r sc |> logor si |> logor rs
+
 let addr_mode_1 rs =
   let possibilities =
     match rs with
@@ -125,9 +153,10 @@ let addr_mode_1 rs =
       |> List.map (fun (rr, imm8) ->
         (1, logor imm8 (shift_left (of_int rr) 8))
       )
-    | Register (rm) ->
+    | Register rm ->
       [(0, of_int rm)]
-    | ScaledRegister _ -> failwith "Not implemented"
+    | ScaledRegister (rm,st) ->
+      [(0, logor (of_int rm) (shift st))]
   in
   possibilities |>
   List.map (fun (imm, v) ->
@@ -142,21 +171,24 @@ let p_and_w addr_typ =
   | PostIndexed -> (0,0)
 
 let addr_mode_2 ro addr_typ = (* Load and store of word and ubyte *)
-  let (sign, reg, v) =
+  let (sign, reg, v, shift_imm, shift) =
     match ro with
     | OImmediate (_, sign, v) ->
       if unsigned_compare v mask12 > 0 then raise InvalidCommand ;
-      (sign, 0, v)
+      (sign, 0, v, of_int 0, of_int 0)
     | ORegister (_, sign, rm) ->
-      (sign, 1, of_int rm)
-    | OScaledRegister _ -> failwith "Not implemented"
+      (sign, 1, of_int rm, of_int 0, of_int 0)
+    | OScaledRegister (_, sign, rm, st) ->
+      (sign, 1, of_int rm, shift_imm st, shift_code st)
   in
   let (p, w) = p_and_w addr_typ in
   let i = shift_left (of_int reg) 25 in
   let u = shift_left (of_int sign) 23 in
   let p = shift_left (of_int p) 24 in
   let w = shift_left (of_int w) 21 in
-  logor v u |> logor p |> logor w |> logor i
+  let si = shift_left shift_imm 7 in
+  let sc = shift_left shift 5 in
+  logor v u |> logor p |> logor w |> logor i |> logor si |> logor sc
 
 let addr_mode_3 ro addr_typ = (* Other load and store *)
   let (sign, imm, v) =
