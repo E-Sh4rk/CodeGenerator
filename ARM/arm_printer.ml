@@ -31,11 +31,29 @@ let print_register fmt r =
 let print_immediate fmt i =
   Format.fprintf fmt "#%#lx" i
 
+let print_imm_reg fmt i =
+  match i with
+  | Imm i -> print_immediate fmt i
+  | Reg r -> print_register fmt r
+
+let st_to_string st =
+  match st with
+  | LSL _ -> "LSL" | LSR _ -> "LSR" | ASR _ -> "ASR" | ROR _ -> "ROR"
+  | RRX -> "RRX"
+
+let print_st f fmt st =
+  let str = st_to_string st in
+  match st with
+  | LSL i | LSR i | ASR i | ROR i ->
+    Format.fprintf fmt "%s %a" str f i
+  | RRX -> Format.fprintf fmt "%s" str  
+
 let print_operand fmt op =
   match op with
   | Immediate i -> print_immediate fmt i
   | Register r -> Format.fprintf fmt "%a" print_register r
-  | ScaledRegister _ -> failwith "Not implemented"
+  | ScaledRegister (r, st) ->
+    Format.fprintf fmt "%a, %a" print_register r (print_st print_imm_reg) st
 
 let print_immediate_offset fmt (s, i) =
   Format.fprintf fmt "#%s%#lx" (sign_to_str s) i
@@ -47,11 +65,14 @@ let print_register_offset fmt (ro, addr_typ) =
     print_register r print_immediate_offset (s, i)
   | ORegister (r,s,ro), PostIndexed -> Format.fprintf fmt "[%a], %s%a"
     print_register r (sign_to_str s) print_register ro
+  | OScaledRegister (r,s,ro,st), PostIndexed -> Format.fprintf fmt "[%a], %s%a, %a"
+    print_register r (sign_to_str s) print_register ro (print_st print_immediate) st
   | OImmediate (r,s,i), _ -> Format.fprintf fmt "[%a, %a]%s"
     print_register r print_immediate_offset (s, i) str
   | ORegister (r,s,ro), _ -> Format.fprintf fmt "[%a, %s%a]%s"
     print_register r (sign_to_str s) print_register ro str
-  | OScaledRegister _, _ -> failwith "Not implemented"
+  | OScaledRegister (r,s,ro,st), _ -> Format.fprintf fmt "[%a, %s%a, %a]%s"
+    print_register r (sign_to_str s) print_register ro (print_st print_immediate) st str
 
 let mem_instr_to_str instr =
   match instr with
