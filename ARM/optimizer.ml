@@ -156,7 +156,7 @@ let tweak_mov_mvn strict instr cond rd rs max_card =
   (*let cmd = Mov {instr;s;cond;rd;rs} in*)
   match rs with
   | Register _ -> raise TweakingFailed
-  | ScaledRegister _ -> failwith "Not implemented"
+  | ScaledRegister _ -> failwith "Tweaker does not support shifted registers."
   | Immediate i ->
     let mk_cmd_first fst =
       let nfst = lognot fst in
@@ -191,7 +191,7 @@ let tweak_arith strict instr cond rd rn op2 max_card =
   (*let cmd = DataProc {instr;s;cond;rd;rn;op2} in*)
   match op2 with
   | Register _ -> raise TweakingFailed
-  | ScaledRegister _ -> failwith "Not implemented"
+  | ScaledRegister _ -> failwith "Tweaker does not support shifted registers."
   | Immediate i ->
     let i = if not strict && instr = SUB then pred i else i in (* Because the SUB will be replaced by SBC *)
     let is_addition =  instr = ADC || instr = ADD in

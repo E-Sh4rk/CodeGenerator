@@ -1,23 +1,24 @@
 open Arm
 
 type unprocessed_int32 = ConstInt32 of int32 | MetaExpr of Preprocess.meta_expr
+type imm_or_reg = Reg of string | Imm of unprocessed_int32
 
-type shift_type =
-  | LSL of unprocessed_int32
-  | LSR of unprocessed_int32
-  | ASR of unprocessed_int32
-  | ROR of unprocessed_int32
+type 'a shift_type =
+  | LSL of 'a
+  | LSR of 'a
+  | ASR of 'a
+  | ROR of 'a
   | RRX
 
 type offset =
   | OImmediate of Arm.sign * unprocessed_int32
   | ORegister of Arm.sign * string
-  | OShift of Arm.sign * string * shift_type
+  | OShift of Arm.sign * string * unprocessed_int32 shift_type
 
 type args =
   | Register of string
   | Immediate of unprocessed_int32
-  | Shift of shift_type
+  | Shift of imm_or_reg shift_type
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
@@ -137,7 +138,12 @@ let register_of_str str =
   | "r15" -> 15 | "sb" -> sb  | "sl" -> sl  | "fp" -> fp  | "ip" -> ip
   | "sp" -> sp  | "lr" -> lr  | "pc" -> pc  | _ -> raise StructError
 
-let convert_shift_type env st =
+let preprocess_imm_or_reg env ior =
+  match ior with
+  | Imm i -> Arm.Imm (preprocess env i)
+  | Reg str -> Arm.Reg (register_of_str str)
+
+let convert_imm_shift_type env st =
   begin match st with
   | LSL i -> Arm.LSL (preprocess env i)
   | LSR i -> Arm.LSR (preprocess env i)
@@ -166,7 +172,14 @@ let get_immediate env arg =
 
 let get_shift env arg =
   match arg with
-  | Shift st -> convert_shift_type env st
+  | Shift st ->
+    begin match st with
+    | LSL i -> Arm.LSL (preprocess_imm_or_reg env i)
+    | LSR i -> Arm.LSR (preprocess_imm_or_reg env i)
+    | ASR i -> Arm.ASR (preprocess_imm_or_reg env i)
+    | ROR i -> Arm.ROR (preprocess_imm_or_reg env i)
+    | RRX -> Arm.RRX
+    end
   | _ -> raise StructError
 
 let get_op2 env args =
@@ -194,7 +207,7 @@ let get_ro env args =
     | OImmediate (sign, i) -> Arm.OImmediate (r, sign, preprocess env i)
     | ORegister (sign, str) -> Arm.ORegister (r, sign, register_of_str str)
     | OShift (sign, str, st) ->
-      Arm.OScaledRegister (r, sign, register_of_str str, convert_shift_type env st)
+      Arm.OScaledRegister (r, sign, register_of_str str, convert_imm_shift_type env st)
     in
     (ro, addr_typ)
     end

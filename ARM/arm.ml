@@ -8,10 +8,11 @@ type conditional = EQ | NE | CS | HS | CC | LO | MI | PL
 type ldr_str_type = B | SB | H | SH | W | T | BT
 type addressing_type = Offset | PreIndexed | PostIndexed
 
-type scale_type = LSL of int32 | LSR of int32 | ASR of int32 | ROR of int32 | RRX
-type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
-type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
+type 'a scale_type = LSL of 'a | LSR of 'a | ASR of 'a | ROR of 'a | RRX
+type reg_or_imm = Reg of register | Imm of int32
 
+type operand = Immediate of int32 | Register of register | ScaledRegister of register * reg_or_imm scale_type
+type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * int32 scale_type
 type data_proc_instr = ADC | SBC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR
 type mov_instr = MOV | MVN
 type mem_instr = LDR | STR

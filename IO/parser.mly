@@ -119,9 +119,18 @@ command:
   | maybe_hash ; i = number { i }
   ;
 
-%inline shift:
+%inline imm_or_reg:
+  | i=imm { Imm i } | id=ID { Reg id }
+  ;
+
+%inline oshift:
   | LSL ; i = imm { LSL i } | LSR ; i = imm { LSR i } | ASR ; i = imm { ASR i }
   | ROR ; i = imm { ROR i } | RRX { RRX }
+  ;
+
+%inline shift:
+  | LSL ; i = imm_or_reg { LSL i } | LSR ; i = imm_or_reg { LSR i } | ASR ; i = imm_or_reg { ASR i }
+  | ROR ; i = imm_or_reg { ROR i } | RRX { RRX }
   ;
 
 %inline offset_arg:
@@ -149,8 +158,8 @@ offset:
   | maybe_hash ; MINUS ; i = number { OImmediate (Arm.sign_minus, i) }
   | PLUS? ; id = ID %prec ARG { ORegister (Arm.sign_plus, id) }
   | MINUS ; id = ID %prec ARG { ORegister (Arm.sign_minus, id) }
-  | PLUS? ; id = ID ; COMMA ; s=shift { OShift (Arm.sign_plus, id, s) }
-  | MINUS ; id = ID ; COMMA ; s=shift { OShift (Arm.sign_minus, id, s) }
+  | PLUS? ; id = ID ; COMMA ; s=oshift { OShift (Arm.sign_plus, id, s) }
+  | MINUS ; id = ID ; COMMA ; s=oshift { OShift (Arm.sign_minus, id, s) }
   ;
 
 number:
