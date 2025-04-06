@@ -34,6 +34,7 @@
 %token NEQ
 %token BOR
 %token BAND
+%token LSL LSR ASR ROR RRX
 %token EOL
 %token EOF
 
@@ -109,24 +110,47 @@ command:
   | nb = number { BIN ($startpos, nb) }
   ;
 
+%inline maybe_hash:
+  | {}
+  | HASH {}
+  ;
+
+%inline imm:
+  | maybe_hash ; i = number { i }
+  ;
+
+%inline shift:
+  | LSL ; i = imm { LSL i } | LSR ; i = imm { LSR i } | ASR ; i = imm { ASR i }
+  | ROR ; i = imm { ROR i } | RRX { RRX }
+  ;
+
+%inline offset_arg:
+  | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK
+  { (id, o, Arm.Offset) }
+  | LEFT_BRACK ; id = ID ; RIGHT_BRACK %prec ARG
+  { (id, OImmediate (Arm.sign_plus, ConstInt32 Int32.zero), Arm.Offset) }
+  | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK
+  { (id, o, Arm.PreIndexed) }
+  | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; EXCLAM_MARK
+  { (id, OImmediate (Arm.sign_plus, ConstInt32 Int32.zero), Arm.PreIndexed) }
+  | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; COMMA ; o = offset
+  { (id, o, Arm.PostIndexed) }
+  ;
+
 arg:
   | id = ID { Register id }
-  | HASH ; i = number | i = number { Immediate i }
-  | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK { Offset (id, o, Arm.Offset) }
-  | LEFT_BRACK ; id = ID ; RIGHT_BRACK %prec ARG
-  { Offset (id, OImmediate (Arm.sign_plus, ConstInt32 Int32.zero), Arm.Offset) }
-  | LEFT_BRACK ; id = ID ; COMMA ; o = offset ; RIGHT_BRACK ; EXCLAM_MARK { Offset (id, o, Arm.PreIndexed) }
-  | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; EXCLAM_MARK
-  { Offset (id, OImmediate (Arm.sign_plus, ConstInt32 Int32.zero), Arm.PreIndexed) }
-  | LEFT_BRACK ; id = ID ; RIGHT_BRACK ; COMMA ; o = offset { Offset (id, o, Arm.PostIndexed) }
+  | i = imm { Immediate i }
+  | s = shift { Shift s }
+  | o = offset_arg { let (str,o,at) = o in Offset (str,o,at) }
   ;
 
 offset:
-  | HASH ; i = number | HASH ; PLUS ; i = number | i = number | PLUS ; i = number
-  { OImmediate (Arm.sign_plus, i) }
-  | HASH ; MINUS ; i = number | MINUS ; i = number { OImmediate (Arm.sign_minus, i) }
-  | id = ID | PLUS ; id = ID { ORegister (Arm.sign_plus, id) }
-  | MINUS ; id = ID { ORegister (Arm.sign_minus, id) }
+  | maybe_hash ; PLUS? ; i = number { OImmediate (Arm.sign_plus, i) }
+  | maybe_hash ; MINUS ; i = number { OImmediate (Arm.sign_minus, i) }
+  | PLUS? ; id = ID %prec ARG { ORegister (Arm.sign_plus, id) }
+  | MINUS ; id = ID %prec ARG { ORegister (Arm.sign_minus, id) }
+  | PLUS? ; id = ID ; COMMA ; s=shift { OShift (Arm.sign_plus, id, s) }
+  | MINUS ; id = ID ; COMMA ; s=shift { OShift (Arm.sign_minus, id, s) }
   ;
 
 number:

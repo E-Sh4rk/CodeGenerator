@@ -8,7 +8,7 @@ type conditional = EQ | NE | CS | HS | CC | LO | MI | PL
 type ldr_str_type = B | SB | H | SH | W | T | BT
 type addressing_type = Offset | PreIndexed | PostIndexed
 
-type scale_type = LSL of int | LSR of int | ASR of int | ROR of int | RRX
+type scale_type = LSL of int32 | LSR of int32 | ASR of int32 | ROR of int32 | RRX
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * scale_type
 

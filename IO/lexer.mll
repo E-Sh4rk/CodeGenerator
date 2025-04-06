@@ -52,6 +52,11 @@ rule read = parse
   | "!="      { NEQ }
   | "||"      { BOR }
   | "&&"      { BAND }
+  | "LSL"     { LSL }
+  | "LSR"     { LSR }
+  | "ASR"     { ASR }
+  | "ROR"     { ROR }
+  | "RRX"     { RRX }
   | comment   { read_comment lexbuf }
   | white     { read lexbuf }
   | '\\' newline { next_line lexbuf ; read lexbuf }

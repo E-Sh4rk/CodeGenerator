@@ -2,13 +2,22 @@ open Arm
 
 type unprocessed_int32 = ConstInt32 of int32 | MetaExpr of Preprocess.meta_expr
 
+type shift_type =
+  | LSL of unprocessed_int32
+  | LSR of unprocessed_int32
+  | ASR of unprocessed_int32
+  | ROR of unprocessed_int32
+  | RRX
+
 type offset =
   | OImmediate of Arm.sign * unprocessed_int32
   | ORegister of Arm.sign * string
+  | OShift of Arm.sign * string * shift_type
 
 type args =
   | Register of string
   | Immediate of unprocessed_int32
+  | Shift of shift_type
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
@@ -128,6 +137,15 @@ let register_of_str str =
   | "r15" -> 15 | "sb" -> sb  | "sl" -> sl  | "fp" -> fp  | "ip" -> ip
   | "sp" -> sp  | "lr" -> lr  | "pc" -> pc  | _ -> raise StructError
 
+let convert_shift_type env st =
+  begin match st with
+  | LSL i -> Arm.LSL (preprocess env i)
+  | LSR i -> Arm.LSR (preprocess env i)
+  | ASR i -> Arm.ASR (preprocess env i)
+  | ROR i -> Arm.ROR (preprocess env i)
+  | RRX -> Arm.RRX
+  end
+
 let get_register arg =
   match arg with
   | Register str -> register_of_str str
@@ -146,15 +164,24 @@ let get_immediate env arg =
   | Immediate i -> preprocess env i
   | _ -> raise StructError
 
-let get_operand env arg =
+let get_shift env arg =
   match arg with
-  | Immediate i -> Arm.Immediate (preprocess env i)
-  | Register str -> Arm.Register (register_of_str str)
+  | Shift st -> convert_shift_type env st
   | _ -> raise StructError
 
 let get_op2 env args =
   let n = List.length args in
-  get_operand env (List.nth args (n-1))
+  try begin
+    if n < 2 then raise StructError ;
+    let shift = get_shift env (List.nth args (n-1)) in
+    let r = get_register (List.nth args (n-2)) in
+    ScaledRegister (r, shift)
+  end with StructError -> begin
+    match List.nth args (n-1) with
+    | Immediate i -> Arm.Immediate (preprocess env i)
+    | Register str -> Arm.Register (register_of_str str)
+    | _ -> raise StructError  
+  end
 
 let get_rs = get_op2
 
@@ -166,10 +193,12 @@ let get_ro env args =
     let ro = match offset with
     | OImmediate (sign, i) -> Arm.OImmediate (r, sign, preprocess env i)
     | ORegister (sign, str) -> Arm.ORegister (r, sign, register_of_str str)
+    | OShift (sign, str, st) ->
+      Arm.OScaledRegister (r, sign, register_of_str str, convert_shift_type env st)
     in
     (ro, addr_typ)
     end
-  | _ -> raise StructError
+  | _ -> raise StructError  
 
 let get_target env args =
   get_immediate env (List.hd args)
