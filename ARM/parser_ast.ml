@@ -157,11 +157,9 @@ let get_register arg =
   | Register str -> register_of_str str
   | _ -> raise StructError
 
-let get_rd args = get_register (List.hd args)
+let get_rd args = get_register (List.nth args 0)
 
-let get_rn args =
-  let n = List.length args in
-  get_register (List.nth args (n-2))
+let get_rn args = get_register (List.nth args 1)
 
 let get_rm = get_rd
 
@@ -213,8 +211,7 @@ let get_ro env args =
     end
   | _ -> raise StructError  
 
-let get_target env args =
-  get_immediate env (List.hd args)
+let get_target env args = get_immediate env (List.nth args 0)
 
 let asm_cmd3_to_arm env cmd args =
   if String.length cmd < 3 then raise StructError ;
