@@ -159,7 +159,9 @@ let get_register arg =
 
 let get_rd args = get_register (List.nth args 0)
 
-let get_rn args = get_register (List.nth args 1)
+let get_rn args =
+  try get_register (List.nth args 1)
+  with StructError -> get_register (List.nth args 0)
 
 let get_rm = get_rd
 
