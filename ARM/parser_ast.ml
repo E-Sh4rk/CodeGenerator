@@ -160,8 +160,12 @@ let get_register arg =
 let get_rd args = get_register (List.nth args 0)
 
 let get_rn args =
-  try get_register (List.nth args 1)
-  with StructError -> get_register (List.nth args 0)
+  let n = List.length args in
+  let nshifts =
+    match List.nth args (n-1) with
+    | Shift _ -> 1 | _ -> 0
+  in
+  get_register (List.nth args (n-nshifts-2))
 
 let get_rm = get_rd
 
