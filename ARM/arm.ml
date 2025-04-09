@@ -119,6 +119,10 @@ let decompose_immediate imm =
   let res = aux 0 imm in
   if res = [] then raise InvalidCommand else res
 
+let shift_immed i =
+  if equal (logand i mask5) i |> not then raise InvalidCommand ;
+  i
+
 let shift_code st =
   match st with
   | LSL _ -> of_int 0b00
@@ -128,7 +132,7 @@ let shift_code st =
 
 let shift_imm st =
   match st with
-  | LSL i | LSR i | ASR i | ROR i -> i
+  | LSL i | LSR i | ASR i | ROR i -> shift_immed i
   | RRX -> of_int 0
 
 let shift st =
@@ -137,9 +141,7 @@ let shift st =
     | LSL i | LSR i | ASR i | ROR i ->
       begin match i with
       | Reg r -> (1, of_int r, of_int 0)
-      | Imm i ->
-        if equal (logand i mask5) i |> not then raise InvalidCommand ;
-        (0, of_int 0, i)
+      | Imm i -> (0, of_int 0, shift_immed i)
       end
     | RRX -> (0, of_int 0, of_int 0)
   in
