@@ -59,6 +59,8 @@ let int2 = 0b11
 let mask2 = int2 |> of_int
 let int4 = 0b1111
 let mask4 = int4 |> of_int
+let int5 = 0b11111
+let mask5 = int5 |> of_int
 let int8 = 0b11111111
 let mask8 = int8 |> of_int
 let int9 = 0b111111111
@@ -135,7 +137,9 @@ let shift st =
     | LSL i | LSR i | ASR i | ROR i ->
       begin match i with
       | Reg r -> (1, of_int r, of_int 0)
-      | Imm i -> (0, of_int 0, i)
+      | Imm i ->
+        if equal (logand i mask5) i |> not then raise InvalidCommand ;
+        (0, of_int 0, i)
       end
     | RRX -> (0, of_int 0, of_int 0)
   in
@@ -174,7 +178,7 @@ let addr_mode_2 ro addr_typ = (* Load and store of word and ubyte *)
   let (sign, reg, v, shift_imm, shift) =
     match ro with
     | OImmediate (_, sign, v) ->
-      if unsigned_compare v mask12 > 0 then raise InvalidCommand ;
+      if equal (logand v mask12) v |> not then raise InvalidCommand ;
       (sign, 0, v, of_int 0, of_int 0)
     | ORegister (_, sign, rm) ->
       (sign, 1, of_int rm, of_int 0, of_int 0)
@@ -194,7 +198,7 @@ let addr_mode_3 ro addr_typ = (* Other load and store *)
   let (sign, imm, v) =
     match ro with
     | OImmediate (_, sign, v) ->
-      if unsigned_compare v mask8 > 0 then raise InvalidCommand ;
+      if equal (logand v mask8) v |> not then raise InvalidCommand ;
       let immedL = logand mask4 v in
       let immedH = logand mask4 (shift_right_logical v 4) in
       (sign, 1, logor immedL (shift_left immedH 8))
@@ -258,7 +262,7 @@ let mov_mvn_to_binary instr s cond rd rs =
       0b0000_0001_1010_0000_0000_0000_0000_0000 ;
       0b0000_0001_1010_0001_0000_0000_0000_0000 (* SBZ does not really need to be 0 *)
     ]
-  | MVN -> [ 0b0001_1110_0000_0000_0000_0000_0000 ] in
+  | MVN -> [ 0b0000_0001_1110_0000_0000_0000_0000_0000 ] in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in
   let vs = opcodes |>
