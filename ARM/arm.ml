@@ -262,7 +262,7 @@ let mov_mvn_to_binary instr s cond rd rs =
   let opcodes = match instr with
   | MOV -> [
       0b0000_0001_1010_0000_0000_0000_0000_0000 ;
-      0b0000_0001_1010_0001_0000_0000_0000_0000 (* SBZ does not really need to be 0 *)
+      0b0000_0001_1010_1101_0000_0000_0000_0000 (* SBZ does not really need to be 0 *)
     ]
   | MVN -> [ 0b0000_0001_1110_0000_0000_0000_0000_0000 ] in
   let scode = if s then 1 else 0 in
