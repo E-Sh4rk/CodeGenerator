@@ -53,26 +53,35 @@ let pp_chars_raw fmt lst =
 let is_code_writable codes =
   List.for_all is_code_available codes
 
-let rec first_code f codes =
-  match codes with
-  | [] -> raise Not_found
-  | code::codes ->
-    if f code then code
-    else first_code f codes
+let score codes =
+  let unwritable = codes |> List.mapi (fun i c -> (i,c))
+    |> List.filter (fun (_,c) -> is_code_available c |> not)
+  in
+  if unwritable |> List.exists (fun (_,c) -> c <> eof)
+  then Int.max_int
+  else
+    let eof_indexes = unwritable |> List.map fst in
+    let aux (score,last_i) i =
+      match last_i with
+      | None -> (score+1, Some i)
+      | Some j when i=j+1 -> (score+1, Some i)
+      | Some _ -> (score+5, Some i)
+    in
+    List.fold_left aux (0,None) eof_indexes |> fst
 
-let first_writable_code codes =
-  first_code is_code_writable codes
+let min f lst =
+  let aux acc e =
+    let score = f e in
+    match acc with
+    | None -> Some (score, e)
+    | Some (min,_) when score < min -> Some (score, e)
+    | Some (min,min_e) -> Some (min, min_e)
+  in
+  match List.fold_left aux None lst with
+  | None -> raise Not_found
+  | Some (_,e) -> e
 
-let is_code_writable_or_one_eof code =
-  (List.filter (fun c -> c <> eof) code |> is_code_writable) &&
-  (List.fold_left (fun nb c -> if c = eof then nb+1 else nb) 0 code) <= 1
-
-let preferred_code codes =
-  try first_writable_code codes
-  with Not_found -> begin
-    try first_code is_code_writable_or_one_eof codes
-    with Not_found -> List.hd codes
-  end
+let preferred_code codes = min score codes
 
 let is_full_of_spaces codes =
   List.for_all (fun c -> c = space) codes
