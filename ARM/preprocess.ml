@@ -3,6 +3,7 @@ type unop = OId | ONeg | ONot | OBNot
 type binop = OAdd | OSub | OMul | ODiv | OMod
            | OAnd | OXor | OOr | OLShift | ORShift
            | OEq | ONeq | OBOr | OBAnd
+           | OGeq | OGt | OLeq | OLt
 
 type meta_expr =
   | MConst of int32
@@ -56,6 +57,10 @@ let eval_binary op i1 i2 =
   | OBAnd ->
     if Int32.equal i1 Int32.zero || Int32.equal i2 Int32.zero
     then Int32.zero else Int32.one
+  | OGeq -> if Int32.unsigned_compare i1 i2 >= 0 then Int32.one else Int32.zero
+  | OGt -> if Int32.unsigned_compare i1 i2 > 0 then Int32.one else Int32.zero
+  | OLeq -> if Int32.unsigned_compare i1 i2 <= 0 then Int32.one else Int32.zero
+  | OLt -> if Int32.unsigned_compare i1 i2 < 0 then Int32.one else Int32.zero
 
 let eval_meta_expr env e =
   let rec aux e =

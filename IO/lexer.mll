@@ -50,6 +50,10 @@ rule read = parse
   | ">>"      { RSHIFT }
   | "=="      { EQ }
   | "!="      { NEQ }
+  | "<="      { LEQ }
+  | ">="      { GEQ }
+  | "<"       { LT }
+  | ">"       { GT }
   | "||"      { BOR }
   | "&&"      { BAND }
   | "LSL" | "lsl" { LSL }

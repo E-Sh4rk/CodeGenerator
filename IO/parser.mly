@@ -35,6 +35,7 @@
 %token BOR
 %token BAND
 %token LSL LSR ASR ROR RRX
+%token LEQ GEQ LT GT
 %token EOL
 %token EOF
 
@@ -47,7 +48,7 @@
 %left OR
 %left XOR
 %left AND
-%left EQ NEQ
+%left EQ NEQ LEQ GEQ LT GT
 %left LSHIFT RSHIFT
 %left PLUS MINUS
 %left TIMES DIV MOD
@@ -57,24 +58,18 @@
 %start <Preprocess.headers> headers
 %%
 
+%inline binop:
+| MOD { OMod } | DIV { ODiv } | TIMES { OMul } | MINUS { OSub } | PLUS { OAdd }
+| BAND { OBAnd } | BOR { OBOr } | OR { OOr } | XOR { OXor } | AND { OAnd }
+| EQ { OEq } | NEQ { ONeq }
+| LT { OLt } | GT { OGt } | LEQ { OLeq } | GEQ { OGeq }
+| LSHIFT { OLShift } | RSHIFT { ORShift }
+
 meta_expr:
   | i = NUMBER { MConst i }
   | v = ID { MVar v }
   | LPAREN e = meta_expr RPAREN { e }
-  | e1 = meta_expr PLUS e2 = meta_expr { MBinary (OAdd, e1, e2) }
-  | e1 = meta_expr MINUS e2 = meta_expr { MBinary (OSub, e1, e2) }
-  | e1 = meta_expr TIMES e2 = meta_expr { MBinary (OMul, e1, e2) }
-  | e1 = meta_expr DIV e2 = meta_expr { MBinary (ODiv, e1, e2) }
-  | e1 = meta_expr MOD e2 = meta_expr { MBinary (OMod, e1, e2) }
-  | e1 = meta_expr AND e2 = meta_expr { MBinary (OAnd, e1, e2) }
-  | e1 = meta_expr XOR e2 = meta_expr { MBinary (OXor, e1, e2) }
-  | e1 = meta_expr OR e2 = meta_expr { MBinary (OOr, e1, e2) }
-  | e1 = meta_expr BOR e2 = meta_expr { MBinary (OBOr, e1, e2) }
-  | e1 = meta_expr BAND e2 = meta_expr { MBinary (OBAnd, e1, e2) }
-  | e1 = meta_expr EQ e2 = meta_expr { MBinary (OEq, e1, e2) }
-  | e1 = meta_expr NEQ e2 = meta_expr { MBinary (ONeq, e1, e2) }
-  | e1 = meta_expr LSHIFT e2 = meta_expr { MBinary (OLShift, e1, e2) }
-  | e1 = meta_expr RSHIFT e2 = meta_expr { MBinary (ORShift, e1, e2) }
+  | e1 = meta_expr bop = binop e2 = meta_expr { MBinary (bop, e1, e2) }
   | PLUS e = meta_expr %prec UPLUS { MUnary (OId, e) }
   | MINUS e = meta_expr %prec UMINUS { MUnary (ONeg, e) }
   | NOT e = meta_expr { MUnary (ONot, e) }

@@ -3,6 +3,7 @@ type unop = OId | ONeg | ONot | OBNot
 type binop = OAdd | OSub | OMul | ODiv | OMod
            | OAnd | OXor | OOr | OLShift | ORShift
            | OEq | ONeq | OBOr | OBAnd
+           | OGeq | OGt | OLeq | OLt
 
 type meta_expr =
   | MConst of int32
