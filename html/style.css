@@ -4,6 +4,10 @@ h2 {
     margin: 5px;
 }
 
+a {
+  display: inline-block;
+}
+
 select {
     height: 20px;
 }
