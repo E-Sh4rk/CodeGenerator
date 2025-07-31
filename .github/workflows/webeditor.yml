@@ -36,7 +36,7 @@ jobs:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
       - name: Install OCaml dependencies
         run: |
-          opam install dune ppx_deriving num.1.4
+          opam install dune ppx_deriving num
           opam install js_of_ocaml-compiler js_of_ocaml-ppx
       # - run: |
       #     cd src
