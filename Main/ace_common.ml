@@ -22,11 +22,11 @@ let compare_and_print_commands fmt data descr exit =
     | (_, true)::data, (_, arm)::descr ->
       Format.fprintf fmt "%a \t\t\t; (altered)@." Arm_printer.pp_arm arm ;
       aux data descr is_exit (i+4)
-    | (_, true)::_, [] -> assert false
     | _, [] when not is_exit && exit <> None ->
       let exit = Option.get exit in
       Format.fprintf fmt "; ======== EXIT CODE ========@." ;
       aux data (Exit.get_preferred_descr exit i |> snd) true i
+    | (_, true)::_, [] -> assert false
     | (d, false)::data, _ ->
       Format.fprintf fmt "%a \t\t\t; (filler)@." Arm_printer.pp_arm (Arm.Custom d) ;
       aux data descr is_exit (i+4)
