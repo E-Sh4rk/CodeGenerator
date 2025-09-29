@@ -13,7 +13,7 @@ type reg_or_imm = Reg of register | Imm of int32
 
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * reg_or_imm scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * int32 scale_type
-type data_proc_instr = ADC | SBC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR
+type data_proc_instr = ADC | SBC | RSC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR | RSB
 type mov_instr = MOV | MVN
 type mem_instr = LDR | STR
 

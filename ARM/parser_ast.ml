@@ -230,15 +230,17 @@ let asm_cmd3_to_arm env cmd args =
   | "LDR" -> Mem { instr=LDR ; typ ; cond ; rd=get_rd args ; ro=get_ro env args }
   | "STR" -> Mem { instr=STR ; typ ; cond ; rd=get_rd args ; ro=get_ro env args }
   | "MOV" -> Mov { instr=MOV ; s ; cond ; rd=get_rd args ; rs=get_rs env args }
-  | "MVN" -> Mov { instr=MVN; s ; cond ; rd=get_rd args ; rs=get_rs env args }
+  | "MVN" -> Mov { instr=MVN ; s ; cond ; rd=get_rd args ; rs=get_rs env args }
   | "ADC" -> DataProc { instr=ADC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "SBC" -> DataProc { instr=SBC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "RSC" -> DataProc { instr=RSC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "BIC" -> DataProc { instr=BIC ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "AND" -> DataProc { instr=AND ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "ADD" -> DataProc { instr=ADD ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "SUB" -> DataProc { instr=SUB ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "ORR" -> DataProc { instr=ORR ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | "EOR" -> DataProc { instr=EOR ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
+  | "RSB" -> DataProc { instr=RSB ; s ; cond ; rd=get_rd args ; rn=get_rn args ; op2=get_op2 env args }
   | _ -> raise StructError
   with Failure _ | Invalid_argument _ -> raise StructError
 
