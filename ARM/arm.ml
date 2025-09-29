@@ -13,7 +13,7 @@ type reg_or_imm = Reg of register | Imm of int32
 
 type operand = Immediate of int32 | Register of register | ScaledRegister of register * reg_or_imm scale_type
 type register_offset = OImmediate of register * sign * int32 | ORegister of register * sign * register | OScaledRegister of register * sign * register * int32 scale_type
-type data_proc_instr = ADC | SBC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR
+type data_proc_instr = ADC | SBC | RSC | BIC | AND (* for JP: *) | ADD | SUB | ORR | EOR | RSB
 type mov_instr = MOV | MVN
 type mem_instr = LDR | STR
 
@@ -282,12 +282,14 @@ let calculation_to_binary instr s cond rd rn op2 =
   let opcode = match instr with
   | ADC -> 0b0000_1010_0000_0000_0000_0000_0000
   | SBC -> 0b0000_1100_0000_0000_0000_0000_0000
+  | RSC -> 0b0000_1110_0000_0000_0000_0000_0000
   | BIC -> 0b0001_1100_0000_0000_0000_0000_0000
   | AND -> 0b0000_0000_0000_0000_0000_0000_0000
   | ADD -> 0b0000_1000_0000_0000_0000_0000_0000
   | SUB -> 0b0000_0100_0000_0000_0000_0000_0000
   | ORR -> 0b0001_1000_0000_0000_0000_0000_0000
   | EOR -> 0b0000_0010_0000_0000_0000_0000_0000
+  | RSB -> 0b0000_0110_0000_0000_0000_0000_0000
   in
   let scode = if s then 1 else 0 in
   let scode = shift_left (of_int scode) 20 in

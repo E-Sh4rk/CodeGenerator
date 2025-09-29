@@ -86,6 +86,7 @@ let data_proc_instr_to_str instr =
   match instr with
   | ADC -> "ADC" | SBC -> "SBC" | AND -> "AND" | BIC -> "BIC"
   | ADD -> "ADD" | SUB -> "SUB" | ORR -> "ORR" | EOR -> "EOR"
+  | RSC -> "RSC" | RSB -> "RSB"
 
 let pp_arm fmt arm =
   match arm with
