@@ -4,20 +4,42 @@ exception BoxFittingError of string
 type fillers =
   { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
 let default_fillers () = {
-  nop_code = [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *);
-  nop_code_alt = [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *);
+  nop_code =
+    if !Settings.game = Ruby || !Settings.game = Sapphire then
+      [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
+    else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen then
+      [0xBB ; 0xBB ; 0xBB ; 0xBB] (* BBBBBBBB *)
+    else
+      [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
+    ;
+  nop_code_alt =
+    if !Settings.game = Ruby || !Settings.game = Sapphire then
+      [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
+    else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen then
+      [0xBB ; 0xBB ; 0xBB ; 0xBB] (* BBBBBBBB *)
+    else
+      [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
+    ;
   fillers = if !Settings.game = Ruby || !Settings.game = Sapphire
     then [|
-    [0xFF ; 0x00 ; 0x00 ; 0xB0](* B00000FF *) ;
-    [0x00 ; 0xFF ; 0x00 ; 0xB0](* B000FF00 *) ;
-    [0x00 ; 0x00 ; 0xFF ; 0xB0](* B0FF0000 *) ;
-    [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
-  |] else [|
-    [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
-    [0x00 ; 0xFF ; 0x00 ; 0x00](* 0000FF00 *) ;
-    [0x00 ; 0x00 ; 0xFF ; 0x00](* 00FF0000 *) ;
-    [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
-  |]
+      [0xFF ; 0x00 ; 0x00 ; 0xB0](* B00000FF *) ;
+      [0x00 ; 0xFF ; 0x00 ; 0xB0](* B000FF00 *) ;
+      [0x00 ; 0x00 ; 0xFF ; 0xB0](* B0FF0000 *) ;
+      [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
+    |]
+    else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen
+    then [|
+      [0xFF ; 0xBB ; 0xBB ; 0xBB](* BBBBBBFF *) ;
+      [0xFF ; 0xFF ; 0xBB ; 0xBB](* BBBBFFFF *) ;
+      [0xFF ; 0xFF ; 0xFF ; 0xBB](* BBFFFFFF *) ;
+      [0xFF ; 0xFF ; 0xFF ; 0xFF](* FFFFFFFF *) ;
+    |]
+    else [|
+      [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
+      [0x00 ; 0xFF ; 0x00 ; 0x00](* 0000FF00 *) ;
+      [0x00 ; 0x00 ; 0xFF ; 0x00](* 00FF0000 *) ;
+      [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
+    |]
   }
 
 let name_size = 8

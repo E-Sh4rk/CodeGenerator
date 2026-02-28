@@ -48,18 +48,18 @@
         It should be a multiple of 4. If not specified (or if <code>null</code> is specified), then the code will start immediately.</td></tr>
         <tr><td><code>exit</code></td><td>String</td><td>Optional</td><td>Specify the name of the exit code to include at the end of the code.
         If not specified (or if <code>null</code> is specified), no exit code will be inserted.</td></tr>
-		<tr><td><code>filler0</code></td><td>Integer</td><td>Optional</td><td>A no-op command to use when filling the space inside a box name.
-		Default: <code>0x00000000</code>.</td></tr>
-		<tr><td><code>filler0_alt</code></td><td>Integer</td><td>Optional</td><td>A command that substitutes the command <code>0x00000000</code>.
-		Used when a box name only contain spaces. Default: <code>0xB0000000</code>.</td></tr>
+        <tr><td><code>filler0</code></td><td>Integer</td><td>Optional</td><td>A no-op command to use when filling the space inside a box name.
+        Default: <code>0x00000000</code>/<code>0xBBBBBBBB</code>/<code>0x00000000</code> (E/FRLG/RS).</td></tr>
+        <tr><td><code>filler0_alt</code></td><td>Integer</td><td>Optional</td><td>A command that substitutes the command <code>0x00000000</code>.
+        Used when a box name contains only spaces. Default: <code>0xB0000000</code>/<code>0xBBBBBBBB</code>/<code>0xB0000000</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>filler1</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0x......FF</code>. Default: <code>0x000000FF</code> (<code>0xB00000FF</code> for RS).</td></tr>
+        Should be of the form <code>0x......FF</code>. Default: <code>0x000000FF</code>/<code>0xBBBBBBFF</code>/<code>0xB00000FF</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>filler2</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0x....FF..</code>. Default: <code>0x0000FF00</code> (<code>0xB000FF00</code> for RS).</td></tr>
+        Should be of the form <code>0x....FF..</code>. Default: <code>0x0000FF00</code>/<code>0xBBBBFFFF</code>/<code>0xB000FF00</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>filler3</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0x..FF....</code>. Default: <code>0x00FF0000</code> (<code>0xB0FF0000</code> for RS).</td></tr>
+        Should be of the form <code>0x..FF....</code>. Default: <code>0x00FF0000</code>/<code>0xBBFFFFFF</code>/<code>0xB0FF0000</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>filler4</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
-        Should be of the form <code>0xFF......</code>. Default: <code>0xFF000000</code>.</td></tr>
+        Should be of the form <code>0xFF......</code>. Default: <code>0xFF000000</code>/<code>0xFFFFFFFF</code>/<code>0xFF000000</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>fill</code></td><td>Boolean</td><td>Optional</td><td>When set to true, the remaining space of the last box will be filled with spaces.
         If specified in both the main code headers and the exit code headers, the value must be the same. Default: true.</td></tr>
         <tr><td><code>onlyraw</code></td><td>Boolean</td><td>Optional</td><td>For dev only. When set to <code>true</code>, the generator will not try to fit the commands
