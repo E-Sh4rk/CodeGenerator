@@ -8,7 +8,7 @@ let default_fillers () = {
     if !Settings.game = Ruby || !Settings.game = Sapphire then
       [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
     else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen then
-      [0xBB ; 0xBB ; 0xBB ; 0xBB] (* BBBBBBBB *)
+      [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
     else
       [0x00 ; 0x00 ; 0x00 ; 0x00] (* 00000000 : andeq r0, r0, r0 *)
     ;
@@ -16,7 +16,7 @@ let default_fillers () = {
     if !Settings.game = Ruby || !Settings.game = Sapphire then
       [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
     else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen then
-      [0xBB ; 0xBB ; 0xBB ; 0xBB] (* BBBBBBBB *)
+      [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
     else
       [0x00 ; 0x00 ; 0x00 ; 0xB0] (* B0000000 : andlt r0, r0, r0 *)
     ;
@@ -29,9 +29,9 @@ let default_fillers () = {
     |]
     else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen
     then [|
-      [0xFF ; 0xBB ; 0xBB ; 0xBB](* BBBBBBFF *) ;
-      [0xFF ; 0xFF ; 0xBB ; 0xBB](* BBBBFFFF *) ;
-      [0xFF ; 0xFF ; 0xFF ; 0xBB](* BBFFFFFF *) ;
+      [0xFF ; 0x00 ; 0x00 ; 0x00](* 000000FF *) ;
+      [0x00 ; 0xFF ; 0x00 ; 0x00](* 0000FF00 *) ;
+      [0x00 ; 0x00 ; 0xFF ; 0x00](* 00FF0000 *) ;
       [0xFF ; 0xFF ; 0xFF ; 0xFF](* FFFFFFFF *) ;
     |]
     else [|
