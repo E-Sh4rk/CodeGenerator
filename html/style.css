@@ -9,7 +9,11 @@ a {
 }
 
 select {
-    height: 20px;
+    background-color: #fff;
+    border: 1px solid #d0d0d0;
+    border-radius: 3px;
+    padding: 1px 6px;
+    height: unset;
 }
 
 @font-face {
@@ -101,6 +105,27 @@ textarea {
   .tabcontent {
     display: none;
   }
+
+/* Tom Select */
+
+.ts-wrapper {
+    align-self: center;
+}
+
+.ts-control {
+    min-height: unset !important;
+    padding: 1px 6px !important;
+    font-size: inherit;
+    flex-wrap: nowrap !important;
+}
+
+.ts-dropdown {
+    font-size: inherit;
+}
+
+.ts-dropdown .ts-dropdown-content {
+    max-height: 400px;
+}
 
 /* Other scripts */
 
