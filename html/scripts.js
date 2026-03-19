@@ -12,6 +12,14 @@ window.addEventListener ("load", () => {
     let cat = document.getElementById ("cat");
     let game = document.getElementById ("game");
 
+    let ts = new TomSelect(select, {
+        create: false,
+        maxOptions: null,
+        placeholder: '----------',
+        wrapperClass: 'ts-wrapper right grow',
+        sortField: { field: '$order', direction: 'asc' },
+    });
+
     let lock = false;
     let examples = null;
     let last_selected_example = "";
@@ -71,24 +79,22 @@ window.addEventListener ("load", () => {
         let language = lang.value;
         let gam = game.value;
         let category = cat.value;
-        //last_selected_example = select.value;
-        let newSelectedIndex = 0;
-        
-        let arrOptions = ["<option value='' selected>----------</option>"];
-        let i = 1;
+        let options = [];
+        let newSelectedValue = '';
         examples.forEach((element,index) => {
             if (language in element
                 && (category == "" || ("cat" in element && element["cat"].includes(category)))
                 && (gam == "" || ("game" in element && element["game"].includes(gam)))) {
                 let val = index.toString();
-                if (val == last_selected_example) newSelectedIndex = i;
-                arrOptions.push("<option value='"+val+"'>"+element["name"]+"</option>");
-                i += 1;
+                if (val == last_selected_example) newSelectedValue = val;
+                options.push({ value: val, text: element["name"] });
             }
         });
 
-        select.innerHTML = arrOptions.join("\n");
-        select.selectedIndex = newSelectedIndex;
+        ts.clear(true);
+        ts.clearOptions();
+        options.forEach(o => ts.addOption(o));
+        ts.setValue(newSelectedValue, true);
 
         updateCode();
     }
@@ -119,8 +125,8 @@ window.addEventListener ("load", () => {
     if (gameval)
         game.value = gameval;
 
-    select.addEventListener ("change", () => {
-        last_selected_example = select.value;
+    ts.on('change', (value) => {
+        last_selected_example = value;
         updateCode();
     });
 

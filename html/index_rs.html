@@ -6,6 +6,8 @@
     <title>Pokemon Ruby/Sapphire ACE generator</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="autocomplete.css">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
     <script src="ace_js.bc.js?2"></script>
     <script src="config.js"></script>
     <script src="scripts.js"></script>
@@ -43,9 +45,7 @@
           <select style="display:none;" id="cat" class="middle">
             <option value="">All categories</option>
           </select>
-          <select id="select" class="right grow">
-            <option value='' selected>----------</option>
-          </select>
+          <select id="select" class="right grow"></select>
         </div>
         <div class="container grow" id="container">
           <textarea id="main" spellcheck="false"></textarea>
