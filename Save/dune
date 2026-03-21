@@ -1,5 +1,5 @@
 (library
  (name save)
  (wrapped false)
- (libraries utils boxes)
+ (libraries zarith utils boxes)
  (modules (:standard)))

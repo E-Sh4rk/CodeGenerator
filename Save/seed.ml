@@ -1,78 +1,77 @@
 open Utils
-open Big_int
 
 let mult_mod x y m =
-  mod_big_int (mult_big_int x y) m
+  Z.rem (Z.mul x y) m
 
-let pred = pred_big_int
-let succ = succ_big_int
-let int_mul = mult_int_big_int
-let logand = and_big_int
-let shift_left = shift_left_big_int
-let shift_right = shift_right_big_int
-let two_big_int = big_int_of_int 2
-let three_big_int = big_int_of_int 3
-let four_big_int = big_int_of_int 4
+let pred = Z.pred
+let succ = Z.succ
+let int_mul i bi = Z.mul (Z.of_int i) bi
+let logand = Z.logand
+let shift_left = Z.shift_left
+let shift_right = Z.shift_right
+let two = Z.of_int 2
+let three = Z.of_int 3
+let four = Z.of_int 4
 
-let a = 0x41c64e6dL |> big_int_of_int64
-let b = 0x6073L |> big_int_of_int64
-let a_inv = 0xEEB9EB65L |> big_int_of_int64
-let b_inv = 0x0A3561A1L |> big_int_of_int64
-let m = 0x1_00_00_00_00L |> big_int_of_int64
-let b_1 = 0x341b944bbL |> big_int_of_int64 (* Inverse of b mod 2**34 *)
+let a = 0x41c64e6dL |> Z.of_int64
+let b = 0x6073L |> Z.of_int64
+let a_inv = 0xEEB9EB65L |> Z.of_int64
+let b_inv = 0x0A3561A1L |> Z.of_int64
+let m = 0x1_00_00_00_00L |> Z.of_int64
+let b_1 = 0x341b944bbL |> Z.of_int64 (* Inverse of b mod 2**34 *)
 let cycle_part_product =
   mult_mod (pred a) b_1 (int_mul 4 m)
 
-let mask32 = big_int_of_int64 0xFFFFFFFFL
+let mask32 = Z.of_int64 0xFFFFFFFFL
 
-let even n = logand n unit_big_int |> eq_big_int zero_big_int
+let even n = logand n Z.one |> Z.equal Z.zero
 let odd n = even n |> not
 
 let rec mpow base exp n =
-  let base = mod_big_int base n in
-  if eq_big_int exp zero_big_int
-  then unit_big_int
-  else if eq_big_int exp unit_big_int
+  let base = Z.rem base n in
+  if Z.equal exp Z.zero
+  then Z.one
+  else if Z.equal exp Z.one
   then base
   else if even exp
-  then mpow (mult_big_int base base) (div_big_int exp two_big_int) n
+  then mpow (Z.mul base base) (Z.div exp two) n
   else mult_mod base (mpow base (pred exp) n) n
 
 let rec pow base exp =
-  if eq_big_int exp zero_big_int
-  then unit_big_int
-  else if eq_big_int exp unit_big_int
+  if Z.equal exp Z.zero
+  then Z.one
+  else if Z.equal exp Z.one
   then base
   else if even exp
-  then pow (mult_big_int base base) (div_big_int exp two_big_int)
-  else mult_big_int base (pow base (pred exp))
+  then pow (Z.mul base base) (Z.div exp two)
+  else Z.mul base (pow base (pred exp))
 
 let add_if_negative x y =
-  if ge_big_int x zero_big_int then x else add_big_int x y
+  if Z.geq x Z.zero then x else Z.add x y
 let sub_if_geq x y =
-  if ge_big_int x y then sub_big_int x y else x
+  if Z.geq x y then Z.sub x y else x
 
 let seed_at cycle =
-  let res = mult_big_int (pred a) m in
+  let res = Z.mul (pred a) m in
   let op1 = add_if_negative (mpow a cycle res |> pred) res in
-  let aux = div_big_int op1 (pred a) in
+  let aux = Z.div op1 (pred a) in
   mult_mod aux b m
 
 exception DoesNotExist
 
 let discrete_log base power n check_exists =
-  let (a,c,m) = (base, power, pow two_big_int (big_int_of_int n)) in
+  let (a,c,m) = (base, power, pow two (Z.of_int n)) in
   assert (n >= 3) ;
   assert (odd a && odd c) ;
   if check_exists
   then begin
-    let mod_switch = eq_big_int (mod_big_int a four_big_int) three_big_int in
+    let mod_switch = Z.equal (Z.rem a four) three in
     let rec aux k m1 =
       if k >= 2 then begin
-        let x = if mod_switch then mult_mod a a m1 else mod_big_int a m1 in
-        if eq_big_int x unit_big_int then begin
-          let x = mod_big_int c m1 in
-          if ((eq_big_int x unit_big_int) || (mod_switch && eq_big_int x a)) |> not
+        let x = if mod_switch then mult_mod a a m1 else Z.rem a m1 in
+        if Z.equal x Z.one then begin
+          let x = Z.rem c m1 in
+          if ((Z.equal x Z.one) || (mod_switch && Z.equal x a)) |> not
           then raise DoesNotExist
         end else aux (k-1) (shift_right m1 1)
       end
@@ -80,7 +79,7 @@ let discrete_log base power n check_exists =
     aux (n-1) (shift_right m 1)
   end ;
   let k = n-2 in
-  let bitmask = pow two_big_int (k-1 |> big_int_of_int) |> pred in
+  let bitmask = pow two (k-1 |> Z.of_int) |> pred in
   let ls = Array.make k c in
   let rec aux i l =
     if i < k
@@ -94,14 +93,14 @@ let discrete_log base power n check_exists =
     if i >= 0
     then begin
       let b =
-        if eq_big_int ls.(i) (mpow a (shift_left b i |> logand bitmask) m) |> not
-        then add_big_int b bit
+        if Z.equal ls.(i) (mpow a (shift_left b i |> logand bitmask) m) |> not
+        then Z.add b bit
         else b
       in
       aux (i-1) b (shift_left bit 1)
     end else b
   in
-  aux (k-1) zero_big_int unit_big_int
+  aux (k-1) Z.zero Z.one
 
 let cycle_to seed =
   let modulo = int_mul 4 m in
@@ -109,28 +108,28 @@ let cycle_to seed =
   discrete_log a power (32+2) false
 
 let next_seed seed =
-  mult_big_int seed a |> add_big_int b |> logand mask32
+  Z.mul seed a |> Z.add b |> logand mask32
 
 let prev_seed seed =
-  mult_big_int seed a_inv |> add_big_int b_inv |> logand mask32
+  Z.mul seed a_inv |> Z.add b_inv |> logand mask32
 
 let big_int_of_uint32 i32 =
   int64_of_uint32 i32
-  |> big_int_of_int64
+  |> Z.of_int64
 
 let uint32_of_bigint bi =
-  let maxint32 = Int32.max_int |> big_int_of_int32 in
-  let minint32 = Int32.min_int |> big_int_of_int32 in
-  let total = sub_big_int maxint32 minint32 |> succ_big_int in
-  let bi = if gt_big_int bi maxint32
-    then sub_big_int bi total
+  let maxint32 = Int32.max_int |> Z.of_int32 in
+  let minint32 = Int32.min_int |> Z.of_int32 in
+  let total = Z.sub maxint32 minint32 |> Z.succ in
+  let bi = if Z.gt bi maxint32
+    then Z.sub bi total
     else bi
   in
-  int32_of_big_int bi
+  Z.to_int32 bi
 
 (* Fishing (from Shao) *)
 
-let rng_of seed = shift_right seed 16 |> int_of_big_int
+let rng_of seed = shift_right seed 16 |> Z.to_int
 
 let old_rod = 0
 let good_rod = 1
