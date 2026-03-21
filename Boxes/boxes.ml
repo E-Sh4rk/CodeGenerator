@@ -57,27 +57,20 @@ let rec only_consecutive_eof codes =
   | _::codes -> no_eof codes
 
 let last_eof_index codes =
-  let n = List.length codes in
-  let codes = List.rev codes in
-  let rec aux acc codes =
-    match codes with
-    | [] -> assert false
-    | c::_ when c = eof -> acc
-    | _::codes -> aux (acc+1) codes
-  in
-  n - 1 - (aux 0 codes)
+  let i = List.rev codes |>
+    List.find_index (Int.equal eof) |> Option.get in
+  (List.length codes) - 1 - i
 
 let first_non_eof_index codes =
-  let rec aux acc codes =
-    match codes with
-    | c::codes when c = eof -> aux (acc+1) codes
-    | _ -> acc
-  in
-  aux 0 codes
+  List.find_index (fun c -> Int.equal eof c |> not) codes
+  |> Option.value ~default:(List.length codes)
 
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
   let n = List.length fillers.nop_code in
+  (* TODO: the filler to use when a second command can fit after in the box name
+     may be different from when it is not the case. Maybe filler0 should
+     be inserted at the end. *)
   if pos + n <= name_size
   then fillers.nop_code
   else fillers.fillers.(name_size-pos)
@@ -223,11 +216,10 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) co
       let m = List.length fillers.nop_code_alt in
       let pos = modulo (-i*(name_size+1)) m in
       let prefix = List.init pos (fun _ -> Name.space) in
-      let suffix_len = (List.length lst)-pos-m in
-      if suffix_len < 0 then lst
-      else
-        let suffix = List.init suffix_len (fun _ -> Name.space) in
-        List.concat [prefix ; fillers.nop_code_alt ; suffix]
+      let suffix_len = max 0 ((List.length lst)-pos-m) in
+      let suffix = List.init suffix_len (fun _ -> Name.space) in
+      List.concat [prefix ; fillers.nop_code_alt ; suffix]
+      |> List.take_while (fun c -> Int.equal eof c |> not)
     else lst
   ) in
   (res, unformatted)

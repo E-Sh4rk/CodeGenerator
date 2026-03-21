@@ -10,7 +10,8 @@ If you want to contribute by adding an ACE code to the generator, please make a 
 sudo apt install opam
 opam init
 eval `opam config env`
-opam switch create 4.14.1
+opam switch create 5.3.0
+eval `opam config env`
 opam install dune ppx_deriving num
 make
 ```
