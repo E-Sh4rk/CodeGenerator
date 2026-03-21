@@ -50,8 +50,8 @@
         If not specified (or if <code>null</code> is specified), no exit code will be inserted.</td></tr>
         <tr><td><code>filler0</code></td><td>Integer</td><td>Optional</td><td>A no-op command to use when filling the space inside a box name.
         Default: <code>0x00000000</code>/<code>0x00000000</code>/<code>0x00000000</code> (E/FRLG/RS).</td></tr>
-        <tr><td><code>filler0_alt</code></td><td>Integer</td><td>Optional</td><td>A command that substitutes the command <code>0x00000000</code>.
-        Used when a box name contains only spaces. Default: <code>0xB0000000</code>/<code>0xB0000000</code>/<code>0xB0000000</code> (E/FRLG/RS).</td></tr>
+        <tr><td><code>filler0_alt</code></td><td>Integer</td><td>Optional</td><td>An alternative no-op command to use when filling the space inside a box name.
+        Used when <code>filler0</code> cannot be used. Default: <code>0xB0000000</code>/<code>0xB0000000</code>/<code>0xB0000000</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>filler1</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.
         Should be of the form <code>0x......FF</code>. Default: <code>0x000000FF</code>/<code>0x000000FF</code>/<code>0xB00000FF</code> (E/FRLG/RS).</td></tr>
         <tr><td><code>filler2</code></td><td>Integer</td><td>Optional</td><td>One of the 4-bytes commands to use when filling the space between two box names.

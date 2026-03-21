@@ -18,7 +18,7 @@ end
 
 module UInt32Set = Set.Make(UInt32)
 
-let padding_code = Custom zero (* TODO: agree with filler0 *)
+let padding_code = Custom zero
 
 (* let carry_out i = compare i zero < 0 *)
 

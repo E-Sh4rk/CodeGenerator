@@ -42,6 +42,8 @@ let default_fillers () = {
     |]
   }
 
+let padding = [0x00 ; 0x00 ; 0x00 ; 0x00]
+let m = List.length padding
 let name_size = 8
 let nb_boxes = 14
 let eof = Name.eof
@@ -67,12 +69,8 @@ let first_non_eof_index codes =
 
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
-  let n = List.length fillers.nop_code in
-  (* TODO: the filler to use when a second command can fit after in the box name
-     may be different from when it is not the case. Maybe filler0 should
-     be inserted at the end. *)
-  if pos + n <= name_size
-  then fillers.nop_code
+  if pos + m <= name_size
+  then padding
   else fillers.fillers.(name_size-pos)
 
 let rec pad_nb fillers pos nb =
@@ -81,7 +79,6 @@ let rec pad_nb fillers pos nb =
   else if nb = 0 then []
   else
     let code = pad fillers pos in
-    let m = List.length code in
     code@(pad_nb fillers (pos + m) (nb - m))
 
 let pack b = List.map (fun i -> (i, b))
@@ -105,12 +102,10 @@ let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
   in
   if is_ok_here then pack true codes
   else begin
-    let m = List.length fillers.nop_code in
     let nop_code =
-      if pos + m <= name_size then fillers.nop_code
+      if pos + m <= name_size then padding
       else fillers.fillers.(name_size-pos)
     in
-    let m = List.length nop_code in
     (pack false nop_code)@(fit_code_at_pos ~next fillers (pos + m) codes)
   end
 
@@ -191,9 +186,9 @@ let unpack cmds =
 let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) codes =
   let fillers = Option.value ~default:(default_fillers ()) fillers in
   (* Main code *)
-  let padding = pad_nb fillers 0 start |> pack false in
+  let paddings = pad_nb fillers 0 start |> pack false in
   let res =
-    add_codes_after ~final:(exit = None) fillers padding codes in
+    add_codes_after ~final:(exit = None) fillers paddings codes in
   (* Add exit code *)
   let res =
     match exit with
@@ -201,26 +196,38 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) co
     | Some exit ->
       let i = List.length res in
       let (j,ecode) = Exit.get_preferred_raw exit i in
-      let padding = pad_nb fillers i (j-i) |> pack false in
-      let res = res@padding in
+      let paddings = pad_nb fillers i (j-i) |> pack false in
+      let res = res@paddings in
       add_codes_after ~final:true fillers res ecode
   in
   (* Split by box *)
   let res, unformatted = List.map fst res, (res  |> regroup_by 4 |> unpack) in
   let unformatted = unformatted |> List.map (fun (cmd, b) -> (Name.command_for_codes cmd, b)) in
   let res = split_raw_into_boxes ~fill_last res in
-  (* If a box is full of spaces... *)
+  (* If a box has a padding... *)
   let res = res |> List.mapi (fun i lst ->
-    if Name.is_full_of_spaces lst
-    then
-      let m = List.length fillers.nop_code_alt in
-      let pos = modulo (-i*(name_size+1)) m in
-      let prefix = List.init pos (fun _ -> Name.space) in
-      let suffix_len = max 0 ((List.length lst)-pos-m) in
-      let suffix = List.init suffix_len (fun _ -> Name.space) in
-      List.concat [prefix ; fillers.nop_code_alt ; suffix]
-      |> List.take_while (fun c -> Int.equal eof c |> not)
-    else lst
+    let pos = modulo (-i*(name_size+1)) m in
+    let rec replace_if_padding first pos lst =
+      if (pos+m) > name_size then lst else
+      let lst = replace_if_padding false (pos+m) lst in
+      if List.drop pos lst |> List.take m |> List.equal Int.equal padding then
+        let rec try_replacements lst codes =
+          match codes with
+          | [] -> lst
+          | code::codes ->
+            let lst' = List.concat [
+                List.take pos lst ;
+                code ;
+                List.drop (pos + m) lst
+              ] |> List.rev |> List.drop_while (Int.equal eof) |> List.rev in
+            if not (no_eof lst') then try_replacements lst codes
+            else if first && Name.is_full_of_spaces lst' then try_replacements lst codes
+            else lst'
+        in
+        try_replacements lst [fillers.nop_code ; fillers.nop_code_alt]
+      else lst
+    in
+    replace_if_padding true pos lst
   ) in
   (res, unformatted)
 
