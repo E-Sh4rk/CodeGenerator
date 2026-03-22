@@ -94,7 +94,7 @@ let fit_code_at_pos ?(next=Some []) fillers pos codes =
       else begin
         let i = usable_eof_index codes in
         (pos+i = name_size) || (* Already covers the EOF *)
-        i=n && (pos+n <= name_size) && (
+        i=(n-1) && (pos+n <= name_size) && (
           pos+n+(pos+n |> nop_code_at_pos fillers |> first_non_eof_index)-1 = name_size
           || (* Can be followed by filler code *)
           match next with
@@ -131,6 +131,9 @@ let modulo x y =
   else result + y
 
 let split_raw_into_boxes ?(fill_last=false) raw =
+  Format.printf "Data:@." ;
+  raw |> List.iter (fun x -> Format.printf "%02X " x) ;
+  Format.printf "@." ;
   let rec split finished current codes i =
     match codes with
     | [] when i = 0 -> finished
