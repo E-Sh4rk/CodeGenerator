@@ -61,7 +61,7 @@ let usable_eof_index codes =
 
 let first_non_eof_index codes =
   List.find_index (fun c -> Int.equal eof c |> not) codes
-  |> Option.get
+  |> Option.value ~default:(List.length codes)
 
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
@@ -79,6 +79,10 @@ let rec pad_nb fillers pos nb =
 
 let pack b = List.map (fun i -> (i, b))
 
+let nop_code_at_pos fillers pos =
+  if pos + m <= name_size then padding
+  else fillers.fillers.(name_size-pos)
+
 let fit_code_at_pos ?(next=Some []) fillers pos codes =
   let next = match next with Some next when only_eof next -> None | _ -> next in
   let rec aux rem_tries pos =
@@ -89,8 +93,9 @@ let fit_code_at_pos ?(next=Some []) fillers pos codes =
       then pos + n <= name_size
       else
         (pos+(usable_eof_index codes) = name_size) || (* Already covers the EOF *)
-        (pos+n = name_size) || (* Can be followed by filler code *)
         (pos+n <= name_size) && (
+          pos+n+(pos+n |> nop_code_at_pos fillers |> first_non_eof_index)-1 = name_size
+          || (* Can be followed by filler code *)
           match next with
           | Some next -> (* Can be followed by next code *)
             pos+n+(first_non_eof_index next)-1 = name_size
@@ -99,10 +104,7 @@ let fit_code_at_pos ?(next=Some []) fillers pos codes =
     in
     if is_ok_here then pack true codes
     else begin
-      let nop_code =
-        if pos + m <= name_size then padding
-        else fillers.fillers.(name_size-pos)
-      in
+      let nop_code = nop_code_at_pos fillers pos in
       (pack false nop_code)@(aux (rem_tries-1) (pos + m))
     end
   in
