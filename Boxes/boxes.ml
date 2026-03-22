@@ -91,9 +91,10 @@ let fit_code_at_pos ?(next=Some []) fillers pos codes =
     let is_ok_here =
       if no_eof codes
       then pos + n <= name_size
-      else
-        (pos+(usable_eof_index codes) = name_size) || (* Already covers the EOF *)
-        (pos+n <= name_size) && (
+      else begin
+        let i = usable_eof_index codes in
+        (pos+i = name_size) || (* Already covers the EOF *)
+        i=n && (pos+n <= name_size) && (
           pos+n+(pos+n |> nop_code_at_pos fillers |> first_non_eof_index)-1 = name_size
           || (* Can be followed by filler code *)
           match next with
@@ -101,6 +102,7 @@ let fit_code_at_pos ?(next=Some []) fillers pos codes =
             pos+n+(first_non_eof_index next)-1 = name_size
           | None -> true (* EOF will be covered because no more data *)
         )
+      end
     in
     if is_ok_here then pack true codes
     else begin
