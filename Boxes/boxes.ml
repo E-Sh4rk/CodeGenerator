@@ -131,9 +131,9 @@ let modulo x y =
   else result + y
 
 let split_raw_into_boxes ?(fill_last=false) raw =
-  Format.printf "Data:@." ;
+  (* Format.printf "Data:@." ;
   raw |> List.iter (fun x -> Format.printf "%02X " x) ;
-  Format.printf "@." ;
+  Format.printf "@." ; *)
   let rec split finished current codes i =
     match codes with
     | [] when i = 0 -> finished
