@@ -51,21 +51,17 @@ let eof = Name.eof
 let no_eof codes =
   List.for_all (fun c -> c <> eof) codes
 
-let rec only_consecutive_eof codes =
-  match codes with
-  | [] -> true
-  | c::codes when c <> eof -> only_consecutive_eof codes
-  | _::c'::codes when c' = eof -> only_consecutive_eof (c'::codes)
-  | _::codes -> no_eof codes
+let only_eof codes =
+  List.for_all (fun c -> c = eof) codes
 
-let last_eof_index codes =
-  let i = List.rev codes |>
-    List.find_index (Int.equal eof) |> Option.get in
-  (List.length codes) - 1 - i
+let usable_eof_index codes =
+  let next_box_content = codes |> List.drop_while (fun c -> Int.equal eof c |> not)
+    |> List.drop_while (fun c -> Int.equal eof c) in
+  (List.length codes) - 1 - (List.length next_box_content)
 
 let first_non_eof_index codes =
   List.find_index (fun c -> Int.equal eof c |> not) codes
-  |> Option.value ~default:(List.length codes)
+  |> Option.get
 
 let pad fillers pos =
   let pos = pos mod (name_size+1) in
@@ -83,38 +79,41 @@ let rec pad_nb fillers pos nb =
 
 let pack b = List.map (fun i -> (i, b))
 
-let rec fit_code_at_pos ?(next=Some []) fillers pos codes =
-  let pos = pos mod (name_size+1) in
-  let n = List.length codes in
-  let is_ok_here =
-    if no_eof codes
-    then pos + n <= name_size
-    else if only_consecutive_eof codes
-    then
-      let i = last_eof_index codes in
-      let j = match next with Some next -> first_non_eof_index next | None -> 0 in
-      (pos+i = name_size) ||
-      (i = n-1 && pos+i+1 = name_size) || (* Followed by filler code *)
-      (i = n-1 && pos+i+j = name_size) || (* Followed by next code *)
-      (next = None && i = n-1 && pos+i <= name_size) (* Nothing after *)
-    else raise (BoxFittingError
-    "Some codes cannot be positionned due to non-consecutive 0xFF bytes.")
-  in
-  if is_ok_here then pack true codes
-  else begin
-    let nop_code =
-      if pos + m <= name_size then padding
-      else fillers.fillers.(name_size-pos)
+let fit_code_at_pos ?(next=Some []) fillers pos codes =
+  let next = match next with Some next when only_eof next -> None | _ -> next in
+  let rec aux rem_tries pos =
+    if rem_tries <= 0 then raise (BoxFittingError "Box fitting algorithm failed.") ;
+    let pos, n = pos mod (name_size+1), List.length codes in
+    let is_ok_here =
+      if no_eof codes
+      then pos + n <= name_size
+      else
+        (pos+(usable_eof_index codes) = name_size) || (* Already covers the EOF *)
+        (pos+n = name_size) || (* Can be followed by filler code *)
+        (pos+n <= name_size) && (
+          match next with
+          | Some next -> (* Can be followed by next code *)
+            pos+n+(first_non_eof_index next)-1 = name_size
+          | None -> true (* EOF will be covered because no more data *)
+        )
     in
-    (pack false nop_code)@(fit_code_at_pos ~next fillers (pos + m) codes)
-  end
+    if is_ok_here then pack true codes
+    else begin
+      let nop_code =
+        if pos + m <= name_size then padding
+        else fillers.fillers.(name_size-pos)
+      in
+      (pack false nop_code)@(aux (rem_tries-1) (pos + m))
+    end
+  in
+  aux (name_size+1) pos
 
 let add_codes_after ?(final=false) fillers res codes =
   let rec aux acc codes =
     match codes with
     | [] -> acc
     | [codes] ->
-      let next = if final then None else Some [] in
+      let next = if final then None else Some padding in
       acc@(fit_code_at_pos ~next fillers (List.length acc) codes)
     | c1::c2::codes ->
       let nc = fit_code_at_pos ~next:(Some c2) fillers (List.length acc) c1 in
@@ -130,28 +129,22 @@ let modulo x y =
 let split_raw_into_boxes ?(fill_last=false) raw =
   let rec split finished current codes i =
     match codes with
-    | [] ->
-      if i <> 0
-      then begin
-        let current =
-          let n = List.length current in
-          if fill_last && n = i (* If current box does not end by 0xFF *)
-          then (List.init (name_size-n) (fun _ -> Name.space))@current
-          else current
-        in
-        current::finished
-      end else finished
-    | c::codes when i = name_size ->
-      if c <> eof
-      then raise (BoxFittingError
-      "Result is inconsistent. Please check the fillers.") ;
-      split (current::finished) [] codes 0
-    | c::codes when c = eof ->
-      split finished current codes (i+1)
-    | c::codes ->
-      if List.length current <> i
-      then raise (BoxFittingError
-      "Result is inconsistent. Please check the fillers.") ;
+    | [] when i = 0 -> finished
+    | []            ->
+      let current =
+        let n = List.length current in
+        if fill_last && n = i (* If current box does not end by 0xFF *)
+        then (List.init (name_size-n) (fun _ -> Name.space))@current
+        else current
+      in
+      current::finished
+    | c::codes when i = name_size && c = eof -> split (current::finished) [] codes 0
+    | _::_     when i = name_size            -> raise (BoxFittingError
+      "EOF expected, non-EOF character found. Please check the fillers.") ;
+    | c::codes when c = eof -> split finished current codes (i+1)
+    | c::codes              ->
+      if List.length current <> i then raise (BoxFittingError
+        "Non-EOF character found after an EOF in a box name. Please check the fillers.") ;
       split finished (c::current) codes (i+1)
   in
   split [] [] raw 0 |>
