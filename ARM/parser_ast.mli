@@ -21,10 +21,12 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
+  | DUMMY
+  | ITE of Preprocess.meta_expr * ast * ast
   | ASM of Lexing.position * string * args list * Optimizer.tweaking_settings
   | BIN of Lexing.position * unprocessed_int32
 
-type ast = command list
+and ast = command list
 
 exception CommandError of Lexing.position
 

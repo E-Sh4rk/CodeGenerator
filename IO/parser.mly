@@ -1,5 +1,11 @@
 %{ open Parser_ast %}
 %{ open Preprocess %}
+%{
+  let encode_cases lst default =
+    List.fold_right (fun (cond, ast) acc ->
+      [ITE (cond, ast, acc)]
+    ) lst default |> List.hd
+%}
 
 %token HEADER
 %token NULL
@@ -36,8 +42,8 @@
 %token BAND
 %token LSL LSR ASR ROR RRX
 %token LEQ GEQ LT GT
-%token EOL
-%token EOF
+%token IF ELSEIF ELSE ENDIF
+%token EOL EOF
 
 %nonassoc ARG
 %nonassoc COMMA
@@ -59,11 +65,12 @@
 %%
 
 %inline binop:
-| MOD { OMod } | DIV { ODiv } | TIMES { OMul } | MINUS { OSub } | PLUS { OAdd }
-| BAND { OBAnd } | BOR { OBOr } | OR { OOr } | XOR { OXor } | AND { OAnd }
-| EQ { OEq } | NEQ { ONeq }
-| LT { OLt } | GT { OGt } | LEQ { OLeq } | GEQ { OGeq }
-| LSHIFT { OLShift } | RSHIFT { ORShift }
+  | MOD { OMod } | DIV { ODiv } | TIMES { OMul } | MINUS { OSub } | PLUS { OAdd }
+  | BAND { OBAnd } | BOR { OBOr } | OR { OOr } | XOR { OXor } | AND { OAnd }
+  | EQ { OEq } | NEQ { ONeq }
+  | LT { OLt } | GT { OGt } | LEQ { OLeq } | GEQ { OGeq }
+  | LSHIFT { OLShift } | RSHIFT { ORShift }
+  ;
 
 meta_expr:
   | i = NUMBER { MConst i }
@@ -74,8 +81,8 @@ meta_expr:
   | MINUS e = meta_expr %prec UMINUS { MUnary (ONeg, e) }
   | NOT e = meta_expr { MUnary (ONot, e) }
   | EXCLAM_MARK e = meta_expr { MUnary (OBNot, e) }
-  | e0 = meta_expr INTERROG_MARK e1 = meta_expr COLON e2 = meta_expr
-  { MCond (e0, e1, e2) }
+  | e0 = meta_expr INTERROG_MARK e1 = meta_expr COLON e2 = meta_expr { MCond (e0, e1, e2) }
+  ;
 
 definition:
   | HEADER ; id = ID ; EQUAL ; str = STRING { Param (id, HString str) }
@@ -87,23 +94,36 @@ definition:
   ;
 
 headers:
-  | list (EOL) ; HEADER ; EOL | list (EOL) ; HEADER ; EOF { [] }
-  | list (EOL) ; d = definition ; EOL ; ds = headers { d::ds }
+  | EOL* ; HEADER ; EOL | EOL* ; HEADER ; EOF { [] }
+  | EOL* ; d = definition ; EOL ; ds = headers { d::ds }
   ;
 
 ast:
-  | list (EOL) ; EOF { [] }
-  | list (EOL) ; cmd = command ; EOL ; cmds = ast { cmd::cmds }
-  | list (EOL) ; cmd = command ; EOF { [cmd] }
+  | cmds = commands ; EOF { cmds }
   ;
 
 command:
+  | { DUMMY }
   | id = ID ; args = separated_list(COMMA, arg) { ASM ($startpos, id, args, Optimizer.NoTweaking) }
   | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK { ASM ($startpos, id, args, Optimizer.TweakMinLength) }
   | id = ID ; args = separated_list(COMMA, arg) ; INTERROG_MARK ; i = NUMBER
   { ASM ($startpos, id, args, Optimizer.TweakFixedLength (Utils.uint32_to_int i)) }
   | nb = number { BIN ($startpos, nb) }
+  | e = if_statement ; es = elseif* ; d = default { encode_cases (e::es) d }
   ;
+
+if_statement:
+  | IF ; e=meta_expr ; EOL ; cmds = commands { (e, cmds) }
+  ;
+elseif:
+  | ELSEIF ; e=meta_expr ; EOL ; cmds = commands { (e, cmds) }
+  ;
+default:
+  | ELSE ; EOL ; cmds = commands ; ENDIF { cmds }
+  | ENDIF { [] }
+  ;
+
+%inline commands: cmds=separated_nonempty_list(EOL, command) { cmds } ;
 
 %inline maybe_hash:
   | {}

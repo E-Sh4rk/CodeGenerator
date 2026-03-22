@@ -22,10 +22,12 @@ type args =
   | Offset of string (* register *) * offset * Arm.addressing_type
 
 type command =
+  | DUMMY
+  | ITE of Preprocess.meta_expr * ast * ast
   | ASM of Lexing.position * string * args list * Optimizer.tweaking_settings
   | BIN of Lexing.position * unprocessed_int32
 
-type ast = command list
+and ast = command list
 
 exception CommandError of Lexing.position
 
@@ -260,11 +262,15 @@ let asm_cmd_to_arm env cmd args =
   try (asm_cmd3_to_arm env cmd args)
   with StructError -> (asm_cmd1_to_arm env cmd args)
 
-let cmd_to_arm env cmd =
+let rec cmd_to_arm env cmd =
   match cmd with
+  | DUMMY -> []
+  | ITE (e, a1, a2) ->
+    let i32 = Preprocess.eval_meta_expr env e in
+    if Preprocess.to_bool i32 then to_arm env a1 else to_arm env a2
   | ASM (pos, cmd, args, optimize) ->
-    begin try (asm_cmd_to_arm env cmd args, optimize)
+    begin try [asm_cmd_to_arm env cmd args, optimize]
     with StructError -> raise (CommandError pos) end
-  | BIN (_, i) -> (Custom (preprocess env i), Optimizer.NoTweaking)
+  | BIN (_, i) -> [Custom (preprocess env i), Optimizer.NoTweaking]
 
-let to_arm env ast = List.map (cmd_to_arm env) ast
+and to_arm env ast = List.concat_map (cmd_to_arm env) ast

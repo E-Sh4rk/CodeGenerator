@@ -89,6 +89,10 @@ rule read = parse
   | '|'       { OR }
   | '^'       { XOR }
   | '~'       { NOT }
+  | ".if"     { IF }
+  | ".elseif" { ELSEIF }
+  | ".else"   { ELSE }
+  | ".endif"  { ENDIF }
   | eof       { eof_reached lexbuf ; EOF }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 

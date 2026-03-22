@@ -20,6 +20,8 @@ module StrMap = Map.Make(String)
 type env = int32 StrMap.t
 exception VarNotFound of string
 
+let to_bool i = Int32.equal i Int32.zero |> not
+
 let get_param headers name =
   let rec aux lst =
     match lst with
@@ -35,7 +37,7 @@ let eval_unary op i =
   | OId -> i
   | ONeg -> Int32.neg i
   | ONot -> Int32.lognot i
-  | OBNot -> if Int32.equal i Int32.zero then Int32.one else Int32.zero
+  | OBNot -> if to_bool i then Int32.zero else Int32.one
 
 let eval_binary op i1 i2 =
   match op with
@@ -52,11 +54,9 @@ let eval_binary op i1 i2 =
   | OEq -> if Int32.equal i1 i2 then Int32.one else Int32.zero
   | ONeq -> if Int32.equal i1 i2 then Int32.zero else Int32.one
   | OBOr ->
-    if Int32.equal i1 Int32.zero && Int32.equal i2 Int32.zero
-    then Int32.zero else Int32.one
+    if to_bool i1 || to_bool i2 then Int32.one else Int32.zero
   | OBAnd ->
-    if Int32.equal i1 Int32.zero || Int32.equal i2 Int32.zero
-    then Int32.zero else Int32.one
+    if to_bool i1 && to_bool i2 then Int32.one else Int32.zero
   | OGeq -> if Int32.unsigned_compare i1 i2 >= 0 then Int32.one else Int32.zero
   | OGt -> if Int32.unsigned_compare i1 i2 > 0 then Int32.one else Int32.zero
   | OLeq -> if Int32.unsigned_compare i1 i2 <= 0 then Int32.one else Int32.zero
@@ -78,7 +78,7 @@ let eval_meta_expr env e =
       eval_binary op i1 i2
     | MCond (e0, e1, e2) ->
       let i0 = aux e0 in
-      if Int32.equal i0 Int32.zero then aux e2 else aux e1
+      if to_bool i0 then aux e1 else aux e2
   in
   aux e
 
