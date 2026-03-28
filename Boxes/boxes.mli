@@ -2,7 +2,7 @@
 exception BoxFittingError of string
 
 type fillers =
-  { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
+  { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:(int list * int list) list }
 val default_fillers : unit -> fillers
 
 val fit_codes_into_boxes :

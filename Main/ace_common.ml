@@ -33,6 +33,19 @@ let compare_and_print_commands fmt data descr exit =
   in
   aux data descr false 0
 
+let parse_rewrite str =
+  let parse_code s =
+    let n = String.length s in
+    if n mod 8 <> 0 then failwith "Invalid byte sequence length" ;
+    List.init (n / 2) (fun i -> int_of_string ("0x" ^ String.sub s (i * 2) 2))
+  in
+  let parse_rule s =
+    match String.split_on_char ':' s with
+    | [pre; post] -> (parse_code pre, parse_code post)
+    | _ -> failwith "Invalid rule format"
+  in
+  List.map parse_rule (String.split_on_char ';' str)
+
 let main fmt env (headers,headers2) parsed exit =
   let onlyraw =
     match Preprocess.get_param headers "onlyraw" with
@@ -73,6 +86,12 @@ let main fmt env (headers,headers2) parsed exit =
     | HInt i -> Name.codes_for_command i
     | _ -> failwith "Invalid headers."
   in
+  let rewriting =
+    match Preprocess.get_param headers "rewrite" with
+    | HNone -> default_fillers.rewriting
+    | HString str -> parse_rewrite str
+    | _ -> failwith "Invalid headers."
+  in
   let fill_last =
     match Preprocess.get_param headers "fill",
           Preprocess.get_param headers2 "fill" with
@@ -95,7 +114,7 @@ let main fmt env (headers,headers2) parsed exit =
     Format.fprintf fmt "@." ; None
   end else
     try
-      let fillers = { Boxes.fillers; Boxes.nop_code; Boxes.nop_code_alt } in
+      let fillers = { Boxes.fillers; Boxes.nop_code; Boxes.nop_code_alt; Boxes.rewriting } in
       let (boxes_codes, unformatted) =
         if !Settings.hex_box_mode
         then (Boxes.fit_codes_into_hex_boxes ~exit res, [])

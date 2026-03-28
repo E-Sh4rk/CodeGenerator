@@ -2,7 +2,7 @@
 exception BoxFittingError of string
 
 type fillers =
-  { nop_code:int list ; nop_code_alt:int list; fillers:int list array }
+  { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:(int list * int list) list }
 let default_fillers () = {
   nop_code =
     if !Settings.game = Ruby || !Settings.game = Sapphire then
@@ -40,6 +40,8 @@ let default_fillers () = {
       [0x00 ; 0x00 ; 0xFF ; 0x00](* 00FF0000 *) ;
       [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
     |]
+    ;
+    rewriting = []
   }
 
 let padding = [0x00 ; 0x00 ; 0x00 ; 0x00]
@@ -200,11 +202,32 @@ let fit_codes_into_boxes ?(fill_last=true) ?(fillers) ?(start=0) ?(exit=None) co
       let res = res@paddings in
       add_codes_after ~final:true fillers res ecode
   in
-  (* Split by box *)
   let res, unformatted = List.map fst res, (res  |> regroup_by 4 |> unpack) in
   let unformatted = unformatted |> List.map (fun (cmd, b) -> (Name.command_for_codes cmd, b)) in
+  (* Apply rewriting rules *)
+  let replace pos lst =
+    let matches (pre,post) =
+      let k = List.length pre in
+      k = List.length post && k mod m = 0 &&
+      let lst = List.drop pos lst |> List.take k in
+      List.equal Int.equal lst pre
+    in
+    match List.find_opt matches fillers.rewriting with
+    | None -> lst
+    | Some (_,post) ->
+      let k = List.length post in
+      List.concat [List.take pos lst ; post ; List.drop (pos+k) lst]
+  in
+  let rec rewrite pos lst =
+    if pos + m > List.length lst then lst
+    else
+      let lst = replace pos lst in
+      rewrite (pos+m) lst
+  in
+  let res = rewrite 0 res in
+  (* Split by box *)
   let res = split_raw_into_boxes ~fill_last res in
-  (* If a box has a padding... *)
+  (* If a box has a padding... replace with nop_code or nop_code_alt *)
   let res = res |> List.mapi (fun i lst ->
     let pos = modulo (-i*(name_size+1)) m in
     let rec replace_if_padding first pos lst =
