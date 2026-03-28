@@ -1,8 +1,20 @@
 
 exception BoxFittingError of string
 
+type rewrite_rules = (int list * int list) list
+let parse_code s =
+  let n = String.length s in
+  if n mod 8 <> 0 then failwith "Invalid byte sequence length" ;
+  List.init (n / 2) (fun i -> int_of_string ("0x" ^ String.sub s (i * 2) 2))
+let parse_rewrite_rule s =
+  match String.split_on_char ':' s with
+  | [pre; post] -> (parse_code pre, parse_code post)
+  | _ -> failwith "Invalid rule format"
+let parse_rewrite_rules str =
+  List.map parse_rewrite_rule (String.split_on_char ';' str)
+
 type fillers =
-  { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:(int list * int list) list }
+  { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:rewrite_rules }
 let default_fillers () = {
   nop_code =
     if !Settings.game = Ruby || !Settings.game = Sapphire then
@@ -41,7 +53,10 @@ let default_fillers () = {
       [0x00 ; 0x00 ; 0x00 ; 0xFF](* FF000000 *) ;
     |]
     ;
-    rewriting = []
+    rewriting = [
+      parse_rewrite_rule "FFBBBBBB00000000FFFFBBBB:FFBBFFFFFFFFFFFFFFFFBBBB" ;
+      parse_rewrite_rule "FFFFBBBB00000000FFFFFFBB:FFFFBBFFFFFFFFFFFFFFFFBB"
+    ]
   }
 
 let padding = [0x00 ; 0x00 ; 0x00 ; 0x00]

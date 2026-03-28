@@ -1,8 +1,10 @@
 
 exception BoxFittingError of string
 
+type rewrite_rules = (int list * int list) list
+val parse_rewrite_rules : string -> rewrite_rules
 type fillers =
-  { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:(int list * int list) list }
+  { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:rewrite_rules }
 val default_fillers : unit -> fillers
 
 val fit_codes_into_boxes :
