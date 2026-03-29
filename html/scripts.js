@@ -1,4 +1,29 @@
+(function () {
+    const saved = localStorage.getItem('theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = current === 'dark' || (current === null && prefersDark);
+    const next = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeButton();
+}
+
+function updateThemeButton() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    const current = document.documentElement.getAttribute('data-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = current === 'dark' || (current === null && prefersDark);
+    btn.textContent = isDark ? 'Light mode' : 'Dark mode';
+}
+
 window.addEventListener ("load", () => {
+    updateThemeButton();
     const url = new URL(window.location.href);
     let workspace = repository + document.getElementById ("script_workspace").value;
     let prefix_for_examples = workspace + "/";
