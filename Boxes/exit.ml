@@ -32,7 +32,7 @@ let load_from_dir env dirname =
 
 let load_from_parsed_file fmt env (h, arm) =
   let codes = (h, arm) |>
-    Parse.parsed_content_to_arm fmt ~optimize:true env |>
+    Parse.parsed_content_to_arm fmt ~optimize:false env |>
     List.map assemble_arm
   in
   match Preprocess.get_param h "start" with

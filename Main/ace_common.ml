@@ -33,7 +33,7 @@ let compare_and_print_commands fmt data descr exit =
   in
   aux data descr false 0
 
-let main fmt env (headers,headers2) parsed exit =
+let main_next fmt env (headers,headers2) parsed exit =
   let onlyraw =
     match Preprocess.get_param headers "onlyraw" with
     | HNone -> false
@@ -134,3 +134,7 @@ let main fmt env (headers,headers2) parsed exit =
       Some (List.map (fun c -> Name.codes_to_chars c |> Utils.concat_strings) boxes_codes)
     with Exit.NoExitCode ->
       failwith "The exit code overlaps this code (too long?).@."
+
+let main fmt env (headers,headers2) parsed exit =
+  Optimizer.clear_cache () ;
+  main_next fmt env (headers,headers2) parsed exit

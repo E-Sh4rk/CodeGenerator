@@ -68,3 +68,13 @@
   (modes js)
   (preprocess (pps js_of_ocaml-ppx))
 )
+
+(env
+ (_
+  (js_of_ocaml
+   (flags
+    (:standard --effects=cps))
+   (compilation_mode whole_program)
+   (build_runtime_flags
+    (:standard --effects=cps)))
+  ))

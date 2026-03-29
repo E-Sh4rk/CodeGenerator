@@ -58,6 +58,11 @@ let init () =
 
 let tries_at_depth_0 = [| 0x10000 ; 0x10000 ; 0x10000 ; 0x1000 ; 0x100 ; 0x10 ; 0x1 |]
 
+(* Computation *)
+type _ Effect.t += Yield: t list -> unit Effect.t
+type _ Effect.t += Yield': t list * bool -> unit Effect.t
+type _ Effect.t += Yield'': arm list -> unit Effect.t
+
 let rec remove_while f lst =
   match lst with
   | [] -> []
@@ -71,27 +76,24 @@ let synthesis ~constants_cat ~additive ~incr max_card i is_valid_fst is_valid =
   let tad0 = if tad0_len < max_card then tad0.(tad0_len-1) else tad0.(max_card-1) in
 
   let remove = (fun i -> remove_while (fun j -> unsigned_compare i j < 0)) in
-  let rec next acc rc i =
+  let rec next acc rc i : unit =
     let rec aux try_nb rc =
-      if equal i zero then Some acc
+      if equal i zero then Effect.perform (Yield acc)
       else
         let depth = List.length acc in
-        if depth >= max_card then None
+        if depth >= max_card then ()
         else
           let rem_depth = max_card - depth |> Int64.of_int in
           let i64 = int64_of_uint32 i in
           let ii = if incr then pred i else i in
           match remove ii rc with
-          | [] -> None
+          | [] -> ()
           | fst::_ when Int64.unsigned_compare (* Optimisation *)
                           (Int64.mul ((if incr then succ fst else fst)
-                          |> int64_of_uint32) rem_depth) i64 < 0 -> None
+                          |> int64_of_uint32) rem_depth) i64 < 0 -> ()
           | fst::rc ->
             let remainder = sub ii fst in
-            begin match next (fst::acc) (fst::rc) remainder with
-            | None -> aux (try_nb+1) rc
-            | Some res -> Some res
-            end
+            next (fst::acc) (fst::rc) remainder ; aux (try_nb+1) rc
     in
     aux 0 rc
   in
@@ -102,16 +104,13 @@ let synthesis ~constants_cat ~additive ~incr max_card i is_valid_fst is_valid =
     else (fun i -> remove_while (fun j -> unsigned_compare i j > 0))
   in
   let op_init = if additive then sub else (fun x y -> sub y x) in
-  let rec init try_nb rc =
-    if try_nb >= tad0 then None
+  let rec init try_nb rc : unit =
+    if try_nb >= tad0 then ()
     else match remove_init i rc with
-    | [] -> None
+    | [] -> ()
     | fst::rc ->
       let remainder = op_init i fst in
-      begin match next [fst] filtered_rev_constants remainder with
-      | None -> init (try_nb+1) rc
-      | Some res -> Some res
-      end
+      next [fst] filtered_rev_constants remainder ; init (try_nb+1) rc
   in
 
   let init_rc =
@@ -122,40 +121,46 @@ let synthesis ~constants_cat ~additive ~incr max_card i is_valid_fst is_valid =
     | false, MovMvn -> !constants_mov_mvn
   in
   let init_rc = List.filter is_valid_fst init_rc in
-  init 0 init_rc |>
-  (function None -> None | Some lst -> Some (List.rev lst))
+  try init 0 init_rc
+  with effect (Yield lst), k ->
+    Effect.perform (Yield (List.rev lst)) ; Effect.Deep.continue k ()
 
 let synthesis_optimal ~constants_cat ~incr_add ~incr_sub max_card i is_valid_fst is_valid =
   let rec aux card =
     (*Format.printf "Trying with card=%i@." card ;*)
-    if card > max_card then None
-    else
-      match synthesis ~constants_cat ~additive:true ~incr:incr_add
-                  card i is_valid_fst (is_valid true) with
-      | Some lst -> Some (lst, true)
-      | None ->
-        begin match synthesis ~constants_cat ~additive:false ~incr:incr_sub
-                        card i is_valid_fst (is_valid false) with
-        | Some lst -> Some (lst, false)
-        | None -> aux (card+1)
-        end
+    if card > max_card then ()
+    else begin
+      begin try synthesis ~constants_cat ~additive:true ~incr:incr_add
+                  card i is_valid_fst (is_valid true)
+      with effect (Yield lst), k ->
+        Effect.perform (Yield' (lst, true)) ; Effect.Deep.continue k ()
+      end ;
+      begin try synthesis ~constants_cat ~additive:false ~incr:incr_sub
+                  card i is_valid_fst (is_valid false)
+      with effect (Yield lst), k ->
+        Effect.perform (Yield' (lst, false)) ; Effect.Deep.continue k ()
+      end ;
+      aux (card+1)
+    end
   in
   aux 1
 
 let synthesis_test max_card i =
-  synthesis_optimal ~constants_cat:MovMvn ~incr_add:false ~incr_sub:true
-    max_card i (fun _ -> true) (fun _ _ -> true)
+  try synthesis_optimal ~constants_cat:MovMvn ~incr_add:false ~incr_sub:true
+    max_card i (fun _ -> true) (fun _ _ -> true) ; None
+  with effect (Yield' (lst,b)), k ->
+    begin try Effect.Deep.discontinue k Exit with Exit -> Some (lst,b) end
 
 let is_command_valid arm =
-  try (
+  try
     arm_to_binary arm |>
     List.exists (fun i -> Name.codes_for_command i |> Name.is_code_writable)
-  ) with InvalidCommand -> false
+  with InvalidCommand -> false
 
 let tweak_mov_mvn strict instr cond rd rs max_card =
   (*let cmd = Mov {instr;s;cond;rd;rs} in*)
   match rs with
-  | Register _ -> raise TweakingFailed
+  | Register _ -> ()
   | ScaledRegister _ -> failwith "Tweaker does not support shifted registers."
   | Immediate i ->
     let mk_cmd_first fst =
@@ -176,21 +181,20 @@ let tweak_mov_mvn strict instr cond rd rs max_card =
       | false, true -> DataProc {instr=SUB;s=false;cond;rd;rn=rd;op2=Immediate i}
     in
     let i = if instr = MOV then i else lognot i in
-    begin match synthesis_optimal ~constants_cat:MovMvn
+    begin try synthesis_optimal ~constants_cat:MovMvn
                   ~incr_add:false ~incr_sub:(not strict) max_card i
                   (fun i -> mk_cmd_first i |> is_command_valid)
-                  (fun add i -> mk_cmd add i |> is_command_valid) with
-    | None -> raise TweakingFailed
-    | Some (fst::lst, additive) ->
-      (mk_cmd_first fst)::(List.map (mk_cmd additive) lst)
-    | _ -> assert false
+                  (fun add i -> mk_cmd add i |> is_command_valid)
+    with effect (Yield' (fst::lst, additive)), k ->
+      Effect.perform (Yield'' ((mk_cmd_first fst)::(List.map (mk_cmd additive) lst))) ;
+      Effect.Deep.continue k ()
     end
 
 let tweak_arith strict instr cond rd rn op2 max_card =
   assert (instr = ADC || instr = SBC || instr = ADD || instr = SUB) ;
   (*let cmd = DataProc {instr;s;cond;rd;rn;op2} in*)
   match op2 with
-  | Register _ -> raise TweakingFailed
+  | Register _ -> ()
   | ScaledRegister _ -> failwith "Tweaker does not support shifted registers."
   | Immediate i ->
     let i = if not strict && instr = SUB then pred i else i in (* Because the SUB will be replaced by SBC *)
@@ -209,43 +213,63 @@ let tweak_arith strict instr cond rd rn op2 max_card =
       | false, false -> DataProc {instr=SBC;s=false;cond;rd;rn=rd;op2=Immediate i}
       | false, true -> DataProc {instr=SUB;s=false;cond;rd;rn=rd;op2=Immediate i}
     in
-    begin match synthesis_optimal ~constants_cat:Arith ~incr_add:(not is_addition && not strict)
+    begin try synthesis_optimal ~constants_cat:Arith
+                  ~incr_add:(not is_addition && not strict)
                   ~incr_sub:(is_addition && not strict) max_card i
                   (fun i -> mk_cmd_first i |> is_command_valid)
-                  (fun add i -> mk_cmd add i |> is_command_valid) with
-    | None -> raise TweakingFailed
-    | Some (fst::lst, additive) ->
-      (mk_cmd_first fst)::(List.map (mk_cmd additive) lst)
-    | _ -> assert false
+                  (fun add i -> mk_cmd add i |> is_command_valid)
+    with effect (Yield' (fst::lst, additive)), k ->
+      Effect.perform (Yield'' ((mk_cmd_first fst)::(List.map (mk_cmd additive) lst))) ;
+      Effect.Deep.continue k ()
     end
 
-let tweak_command (arm, optimize) =
+let optimize_with_card arm n strict =
+  match arm with
+  | Mov {instr;s=_;cond;rd;rs} -> tweak_mov_mvn strict instr cond rd rs n
+  | DataProc {instr;s=_;cond;rd;rn;op2}
+    when instr = ADC || instr = SBC || instr = ADD || instr = SUB ->
+      tweak_arith strict instr cond rd rn op2 n
+  | _ -> ()
+
+let cache = Hashtbl.create 10
+let optimize_with_card id arm n strict =
+  match Hashtbl.find_opt cache (id, arm, n, strict) with
+  | None ->
+    begin try optimize_with_card arm n strict ; raise TweakingFailed
+    with effect (Yield'' res), k ->
+      Hashtbl.replace cache (id, arm, n, strict) (
+        res,
+        (fun () -> try Effect.Deep.discontinue k Exit |> ignore with Exit -> ()),
+        (fun () -> Effect.Deep.continue k ())) ;
+      res
+    end
+  | Some (old_res, _, cont) -> begin try cont () with TweakingFailed -> old_res end
+
+let clear_cache () =
+  Hashtbl.to_seq cache |> Seq.iter (fun (_, (_, dis, _)) -> dis ()) ;
+  Hashtbl.clear cache
+
+let optimize_with_card id arm n pad =
   let strict =
     match !Settings.tweaker_mode with
     | Settings.Flexible -> false | Settings.Strict -> true
   in
-  let optimize_with_card arm n pad =
-    let res =
-      match arm with
-      | Mov {instr;s=_;cond;rd;rs} -> tweak_mov_mvn strict instr cond rd rs n
-      | DataProc {instr;s=_;cond;rd;rn;op2}
-      when instr = ADC || instr = SBC || instr = ADD || instr = SUB ->
-        tweak_arith strict instr cond rd rn op2 n
-      | _ -> raise TweakingFailed
-    in
-    if pad
-    then
-      let padding = List.init (n - (List.length res)) (fun _ -> padding_code) in
-      res@padding
-    else res
-  in
-  match optimize with
+  let res = optimize_with_card id arm n strict in
+  if pad
+  then
+    let padding = List.init (n - (List.length res)) (fun _ -> padding_code) in
+    res@padding
+  else res
+
+let tweak_command id (arm, optimize) =
+  begin match optimize with
   | NoTweaking -> [arm]
-  | TweakMinLength -> optimize_with_card arm 5 false
-  | TweakFixedLength card -> optimize_with_card arm card true
+  | TweakMinLength -> optimize_with_card id arm 5 false
+  | TweakFixedLength card -> optimize_with_card id arm card true
+  end
 
 let tweak_arm lst =
-  lst |> List.map tweak_command |> List.flatten
+  lst |> List.mapi tweak_command |> List.flatten
 
 let do_not_tweak_arm lst =
   lst |> List.map (fun (arm, optimize) ->
