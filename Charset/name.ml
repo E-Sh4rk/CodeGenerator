@@ -39,7 +39,8 @@ let codes_to_chars c =
 let chars_for_command v =
   codes_for_command v |> codes_to_chars
 
-let pp_chars fmt lst =
+let pp_chars ~pad fmt lst =
+  let lst = lst@(List.init (pad - (List.length lst) |> Int.max 0) (fun _ -> " ")) in
   lst |> List.iteri (fun i str ->
     Format.fprintf fmt "%s%s" (if i = 0 then "" else " ") str
   )

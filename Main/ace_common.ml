@@ -6,9 +6,9 @@ let treat_command fmt arm =
   let code = Name.preferred_code codes in
   let hex = Name.command_for_codes code in
   let chars = Name.codes_to_chars code in
-  Format.fprintf fmt "%a \t%a\t%a@."
-    Name.pp_chars chars
+  Format.fprintf fmt "0x%a   ;   %a   %a@."
     Arm_printer.pp_hex hex
+    (Name.pp_chars ~pad:4) chars
     Arm_printer.pp_arm arm ;
   (code, (hex, arm))
 
@@ -20,7 +20,7 @@ let compare_and_print_commands fmt data descr exit =
       Format.fprintf fmt "%a@." Arm_printer.pp_arm arm ;
       aux data descr is_exit (i+4)
     | (_, true)::data, (_, arm)::descr ->
-      Format.fprintf fmt "%a \t\t\t; (altered)@." Arm_printer.pp_arm arm ;
+      Format.fprintf fmt "%a\t\t\t; (altered)@." Arm_printer.pp_arm arm ;
       aux data descr is_exit (i+4)
     | _, [] when not is_exit && exit <> None ->
       let exit = Option.get exit in
@@ -28,7 +28,7 @@ let compare_and_print_commands fmt data descr exit =
       aux data (Exit.get_preferred_descr exit i |> snd) true i
     | (_, true)::_, [] -> assert false
     | (d, false)::data, _ ->
-      Format.fprintf fmt "%a \t\t\t; (filler)@." Arm_printer.pp_arm (Arm.Custom d) ;
+      Format.fprintf fmt "%a\t\t\t; (filler)@." Arm_printer.pp_arm (Arm.Custom d) ;
       aux data descr is_exit (i+4)
   in
   aux data descr false 0
