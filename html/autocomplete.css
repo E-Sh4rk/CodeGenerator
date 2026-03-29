@@ -2,7 +2,6 @@
     position: relative;
 }
 .container > #main {
-    background: transparent;
     position: relative;
 }
 .container__mirror {
@@ -36,4 +35,28 @@
 }
 .container__suggestion--focused {
     background: rgb(226 232 240);
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) .container__suggestions {
+        background: #2a2a2a;
+        border-color: #555;
+    }
+    html:not([data-theme="light"]) .container__suggestion:not(:first-child) {
+        border-color: #555;
+    }
+    html:not([data-theme="light"]) .container__suggestion--focused {
+        background: #3a3a3a;
+    }
+}
+
+html[data-theme="dark"] .container__suggestions {
+    background: #2a2a2a;
+    border-color: #555;
+}
+html[data-theme="dark"] .container__suggestion:not(:first-child) {
+    border-color: #555;
+}
+html[data-theme="dark"] .container__suggestion--focused {
+    background: #3a3a3a;
 }

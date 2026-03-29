@@ -180,6 +180,7 @@ textarea {
     html:not([data-theme="light"]) .ts-dropdown .option:hover,
     html:not([data-theme="light"]) .ts-dropdown .option.active {
         background-color: #3a3a3a;
+        color: #ffffff;
     }
 }
 
@@ -218,4 +219,5 @@ html[data-theme="dark"] button:hover {
 html[data-theme="dark"] .ts-dropdown .option:hover,
 html[data-theme="dark"] .ts-dropdown .option.active {
     background-color: #3a3a3a;
+    color: #ffffff;
 }
