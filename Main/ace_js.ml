@@ -13,7 +13,7 @@ let is_blank_str s =
   in
   empty ((String.length s)-1)
 
-let build lang game code exit_codes =
+let build main lang game code exit_codes =
   let main_input = Js.to_string code in
   let secondary_input = Js.to_string exit_codes in
   let lang = Js.to_string lang in
@@ -50,8 +50,12 @@ let build lang game code exit_codes =
   let txt = Js.string (Buffer.contents buffer) in
   [| Js.Unsafe.inject res ; Js.Unsafe.inject txt |] |> Js.array
 
+let build_next = build main_next
+let build = build main
+
 let _ =
   Js.export "aceGen"
     (object%js
        method build lang game code exit_codes = build lang game code exit_codes
+       method buildNext lang game code exit_codes = build_next lang game code exit_codes
      end)

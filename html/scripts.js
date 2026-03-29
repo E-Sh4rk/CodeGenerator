@@ -159,3 +159,13 @@ function compute() {
     let output = document.getElementById ("output");
     output.value = txt;
 }
+
+function computeNext() {
+    let lang = document.getElementById ("lang");
+    let game = document.getElementById ("game");
+    let main = document.getElementById ("main");
+    let secondary = document.getElementById ("secondary");
+    let [_, txt] = aceGen.buildNext(lang.value, game.value, main.value, secondary.value);
+    let output = document.getElementById ("output");
+    output.value = txt;
+}

@@ -16,6 +16,10 @@ select {
     height: unset;
 }
 
+button {
+    min-width: 200px;
+}
+
 @font-face {
   font-family: 'Consolas';
   src: url('./consola.ttf') format('truetype');

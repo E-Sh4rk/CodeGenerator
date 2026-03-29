@@ -51,7 +51,10 @@
         <div class="container grow" id="container">
           <textarea id="main" spellcheck="false"></textarea>
         </div>
-        <button id="compute" onclick="compute()" type="button">Compute</button>
+        <div class="row">
+          <button id="compute" class="left grow" onclick="compute()" type="button">Compute</button>
+          <button id="computeNext" class="right" onclick="computeNext()" type="button">Compute another</button>
+        </div>
       </div>
 
       <div id="secondaryTab" class="column grow tabcontent">
