@@ -223,7 +223,7 @@ let tweak_arith strict instr cond rd rn op2 max_card =
       Effect.Deep.continue k ()
     end
 
-let optimize_with_card arm n strict =
+let tweak arm n strict =
   match arm with
   | Mov {instr;s=_;cond;rd;rs} -> tweak_mov_mvn strict instr cond rd rs n
   | DataProc {instr;s=_;cond;rd;rn;op2}
@@ -232,10 +232,10 @@ let optimize_with_card arm n strict =
   | _ -> ()
 
 let cache = Hashtbl.create 10
-let rec optimize_with_cache id arm n strict =
+let rec tweak_with_cache id arm n strict =
   match Hashtbl.find_opt cache (id, arm, n, strict) with
   | None ->
-    begin try optimize_with_card arm n strict ; raise TweakingFailed
+    begin try tweak arm n strict ; raise TweakingFailed
     with effect (Yield'' res), k ->
       Hashtbl.replace cache (id, arm, n, strict) (
         res,
@@ -245,7 +245,7 @@ let rec optimize_with_cache id arm n strict =
     end
   | Some (old_res, _, cont) ->
       begin match cont () with
-      | res when List.equal Stdlib.(=) res old_res -> optimize_with_cache id arm n strict
+      | res when List.equal Stdlib.(=) res old_res -> tweak_with_cache id arm n strict
       | res -> res
       | exception TweakingFailed -> old_res
       end
@@ -254,23 +254,23 @@ let clear_cache () =
   Hashtbl.to_seq cache |> Seq.iter (fun (_, (_, dis, _)) -> dis ()) ;
   Hashtbl.clear cache
 
-let optimize_with_card id arm n pad =
+let optimize id arm n pad =
   let strict =
     match !Settings.tweaker_mode with
     | Settings.Flexible -> false | Settings.Strict -> true
   in
-  let res = optimize_with_cache id arm n strict in
+  let res = tweak_with_cache id arm n strict in
   if pad
   then
     let padding = List.init (n - (List.length res)) (fun _ -> padding_code) in
     res@padding
   else res
 
-let tweak_command id (arm, optimize) =
-  begin match optimize with
+let tweak_command id (arm, opt_mode) =
+  begin match opt_mode with
   | NoTweaking -> [arm]
-  | TweakMinLength -> optimize_with_card id arm 5 false
-  | TweakFixedLength card -> optimize_with_card id arm card true
+  | TweakMinLength -> optimize id arm 5 false
+  | TweakFixedLength card -> optimize id arm card true
   end
 
 let tweak_arm lst =
