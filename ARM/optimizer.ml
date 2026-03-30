@@ -232,7 +232,7 @@ let optimize_with_card arm n strict =
   | _ -> ()
 
 let cache = Hashtbl.create 10
-let optimize_with_card id arm n strict =
+let rec optimize_with_cache id arm n strict =
   match Hashtbl.find_opt cache (id, arm, n, strict) with
   | None ->
     begin try optimize_with_card arm n strict ; raise TweakingFailed
@@ -244,12 +244,11 @@ let optimize_with_card id arm n strict =
       res
     end
   | Some (old_res, _, cont) ->
-    let rec cont_new () =
-      match cont () with
-      | res when List.equal Stdlib.(=) res old_res -> cont_new ()
+      begin match cont () with
+      | res when List.equal Stdlib.(=) res old_res -> optimize_with_cache id arm n strict
       | res -> res
-    in
-    (try cont_new () with TweakingFailed -> old_res)
+      | exception TweakingFailed -> old_res
+      end
 
 let clear_cache () =
   Hashtbl.to_seq cache |> Seq.iter (fun (_, (_, dis, _)) -> dis ()) ;
@@ -260,7 +259,7 @@ let optimize_with_card id arm n pad =
     match !Settings.tweaker_mode with
     | Settings.Flexible -> false | Settings.Strict -> true
   in
-  let res = optimize_with_card id arm n strict in
+  let res = optimize_with_cache id arm n strict in
   if pad
   then
     let padding = List.init (n - (List.length res)) (fun _ -> padding_code) in
