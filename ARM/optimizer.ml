@@ -233,11 +233,22 @@ let tweak arm n strict =
 
 let cache = Hashtbl.create 10
 let rec tweak_with_cache id arm n strict =
-  match Hashtbl.find_opt cache (id, arm, n, strict) with
+  let key = (id, arm, n, strict) in
+  match Hashtbl.find_opt cache key with
   | None ->
-    begin try tweak arm n strict ; raise TweakingFailed
+    begin try
+      tweak arm n strict ;
+      begin match Hashtbl.find_opt cache key with
+      | None -> ()
+      | Some (old_res, _, _) ->
+        Hashtbl.replace cache key (
+          old_res,
+          (fun () -> ()),
+          (fun () -> raise TweakingFailed))
+      end ;
+      raise TweakingFailed
     with effect (Yield'' res), k ->
-      Hashtbl.replace cache (id, arm, n, strict) (
+      Hashtbl.replace cache key (
         res,
         (fun () -> try Effect.Deep.discontinue k Exit |> ignore with Exit -> ()),
         (fun () -> Effect.Deep.continue k ())) ;
