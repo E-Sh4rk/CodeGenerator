@@ -243,7 +243,13 @@ let optimize_with_card id arm n strict =
         (fun () -> Effect.Deep.continue k ())) ;
       res
     end
-  | Some (old_res, _, cont) -> begin try cont () with TweakingFailed -> old_res end
+  | Some (old_res, _, cont) ->
+    let rec cont_new () =
+      match cont () with
+      | res when List.equal Stdlib.(=) res old_res -> cont_new ()
+      | res -> res
+    in
+    (try cont_new () with TweakingFailed -> old_res)
 
 let clear_cache () =
   Hashtbl.to_seq cache |> Seq.iter (fun (_, (_, dis, _)) -> dis ()) ;
