@@ -1,0 +1,234 @@
+:root {
+  --modal-bg: #fff;
+  --modal-border: #d0d0d0;
+  --modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --section-border: #e0e0e0;
+  --modal-backdrop: rgba(0, 0, 0, 0.45);
+  --color-input-border: #d0d0d0;
+}
+
+html[data-theme="light"] {
+  --modal-bg: #fff;
+  --modal-border: #d0d0d0;
+  --modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --section-border: #e0e0e0;
+  --modal-backdrop: rgba(0, 0, 0, 0.45);
+  --color-input-border: #d0d0d0;
+}
+
+html[data-theme="dark"] {
+  --modal-bg: #2a2a2a;
+  --modal-border: #555;
+  --modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --section-border: #444;
+  --modal-backdrop: rgba(0, 0, 0, 0.55);
+  --color-input-border: #555;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --modal-bg: #2a2a2a;
+    --modal-border: #555;
+    --modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --section-border: #444;
+    --modal-backdrop: rgba(0, 0, 0, 0.55);
+    --color-input-border: #555;
+  }
+}
+
+#options-button {
+  min-width: unset;
+  padding: 2px 14px;
+}
+
+.options-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.options-modal--open {
+  display: block;
+}
+
+.options-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--modal-backdrop);
+}
+
+.options-modal__panel {
+  position: relative;
+  margin: 2rem auto;
+  max-width: 640px;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: var(--modal-bg);
+  border: 1px solid var(--modal-border);
+  border-radius: var(--control-border-radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--modal-shadow);
+  color: var(--body-text);
+}
+
+.options-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.options-modal__header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.options-modal__close {
+  min-width: unset;
+  padding: 2px 10px;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.options-section {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--section-border);
+}
+
+.options-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.options-section h4 {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.95rem;
+}
+
+.options-palette-grid {
+  --options-palette-label-width: minmax(7.5rem, 1fr);
+  --options-palette-color-width: 2.5rem;
+  display: grid;
+  grid-template-columns:
+    var(--options-palette-label-width)
+    var(--options-palette-color-width)
+    var(--options-palette-color-width);
+  column-gap: 0.75rem;
+  row-gap: 0.4rem;
+  align-items: center;
+}
+
+.options-palette-grid__headings {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  margin-bottom: 0.15rem;
+}
+
+.options-palette-grid__headings span {
+  font-size: 0.85rem;
+  font-weight: bold;
+  opacity: 0.85;
+}
+
+.options-palette-grid__headings .options-palette-grid__label-spacer {
+  grid-column: 1;
+}
+
+.options-palette-grid__headings span:nth-child(2) {
+  grid-column: 2;
+  text-align: center;
+}
+
+.options-palette-grid__headings span:nth-child(3) {
+  grid-column: 3;
+  text-align: center;
+}
+
+.options-palette-grid__row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+.options-palette-grid__name {
+  grid-column: 1;
+  font-size: 0.85rem;
+  min-width: 0;
+}
+
+.options-palette-grid__row > input:nth-child(2) {
+  grid-column: 2;
+}
+
+.options-palette-grid__row > input:nth-child(3) {
+  grid-column: 3;
+}
+
+.options-palette-grid input[type="color"] {
+  width: var(--options-palette-color-width);
+  height: 1.6rem;
+  padding: 0;
+  border: 1px solid var(--color-input-border);
+  cursor: pointer;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.options-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.options-row label {
+  min-width: 7rem;
+  font-size: 0.9rem;
+}
+
+.options-row input[type="color"] {
+  width: 2.5rem;
+  height: 1.6rem;
+  padding: 0;
+  border: 1px solid var(--color-input-border);
+  cursor: pointer;
+  background: transparent;
+}
+
+.options-row select {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.options-radio-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.options-radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  min-width: unset;
+}
+
+.options-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.options-actions button {
+  min-width: unset;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}

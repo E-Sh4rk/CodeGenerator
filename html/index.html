@@ -1,27 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokemon Emerald 0x611 ACE generator</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="autocomplete.css">
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="options.css" />
+    <link rel="stylesheet" href="autocomplete.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
     <script src="ace_js.bc.js?2"></script>
     <script src="config.js"></script>
+    <script src="fuzzysearch.js"></script>
+    <script src="options.js"></script>
     <script src="scripts.js"></script>
+    <script src="highlight.js"></script>
     <script src="ids.js"></script>
     <script src="autocomplete.js"></script>
   </head>
   <body>
-    <input type="hidden" id="script_workspace" value="files">
+    <input type="hidden" id="script_workspace" value="files" />
     <div class="row">
       <div id="mainTab" class="column grow tabcontent-active">
-        <h2><a class="tablinks-active">Main code</a> /
-            <a class="tablinks" onclick="openTab(event,'secondaryTab');">Exit codes</a>
-            (<a href="doc/index.html">documentation</a>)</h2>
-        
+        <h2>
+          <a class="tablinks-active">Main code</a> /
+          <a class="tablinks" onclick="openTab(event, 'secondaryTab')">Exit codes</a>
+          (<a href="doc/index.html">documentation</a>)
+        </h2>
+
         <div class="row">
           <select id="lang" class="left">
             <option value="eng">English</option>
@@ -32,7 +38,7 @@
             <option value="jap">Japanese</option>
             <option value="abc">Hexadecimal</option>
           </select>
-          <select style="display:none;" id="game" class="middle">
+          <select style="display: none" id="game" class="middle">
             <option value="">All games</option>
           </select>
           <select id="cat" class="middle">
@@ -44,7 +50,7 @@
           </select>
           <select id="select" class="right grow"></select>
         </div>
-        <div class="container grow" id="container">
+        <div class="container grow editor-wrap" id="container">
           <textarea id="main" spellcheck="false"></textarea>
         </div>
         <div class="row">
@@ -54,21 +60,91 @@
       </div>
 
       <div id="secondaryTab" class="column grow tabcontent">
-        <h2><a class="tablinks" onclick="openTab(event,'mainTab');">Main code</a> /
-            <a class="tablinks-active">Exit codes</a>
-            (<a href="doc/index.html">documentation</a>)</h2>
+        <h2>
+          <a class="tablinks" onclick="openTab(event, 'mainTab')">Main code</a> /
+          <a class="tablinks-active">Exit codes</a>
+          (<a href="doc/index.html">documentation</a>)
+        </h2>
 
-        <textarea id="secondary" class="grow" spellcheck="false"></textarea>
+        <div class="editor-wrap grow">
+          <textarea id="secondary" spellcheck="false"></textarea>
+        </div>
       </div>
-      
+
       <div class="column grow">
         <h2>Result</h2>
-        <textarea id="output" class="grow" spellcheck="false" readonly></textarea>
+        <div class="editor-wrap grow">
+          <textarea id="output" spellcheck="false" readonly></textarea>
+        </div>
       </div>
     </div>
-    <p><button id="theme-toggle" onclick="toggleTheme()" type="button">Dark mode</button></p>
-    <p>Generator for <a href="index.html">Emerald</a> / <a href="index_frlg.html">FRLG</a> / <a href="index_rs.html">RS</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="https://github.com/E-Sh4rk/CodeGeneratorOffline">Offline version</a></p>
-    <p>Emerald ACE tutorials: <a href="https://e-sh4rk.github.io/ACE3/emerald/getting-started/introduction/">Articles by E-Sh4rk</a> - <a href="https://youtu.be/45kwOEhKbUg">Video by Papa Jefé</a></p>
-    <p>Useful links: <a href="https://pastebin.com/u/Sleipnir17">Sleipnir's Pastebin</a> (plenty of ACE codes) - <a href="https://www.youtube.com/@PapaJefeYT/videos">Papa Jefé's Youtube</a> (ACE tutorials) - <a href="https://github.com/E-Sh4rk/PokeGlitzer">PokeGlitzer</a> (save editor for glitchers)</p>
+    <p><button id="options-button" type="button">Options</button></p>
+    <p>
+      Generator for <a href="index.html">Emerald</a> / <a href="index_frlg.html">FRLG</a> /
+      <a href="index_rs.html">RS</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="https://github.com/E-Sh4rk/CodeGeneratorOffline"
+        >Offline version</a
+      >
+    </p>
+    <p>
+      Emerald ACE tutorials:
+      <a href="https://e-sh4rk.github.io/ACE3/emerald/getting-started/introduction/">Articles by E-Sh4rk</a> -
+      <a href="https://youtu.be/45kwOEhKbUg">Video by Papa Jefé</a>
+    </p>
+    <p>
+      Useful links: <a href="https://pastebin.com/u/Sleipnir17">Sleipnir's Pastebin</a> (plenty of ACE codes) -
+      <a href="https://www.youtube.com/@PapaJefeYT/videos">Papa Jefé's Youtube</a> (ACE tutorials) -
+      <a href="https://github.com/E-Sh4rk/PokeGlitzer">PokeGlitzer</a> (save editor for glitchers)
+    </p>
+
+    <div id="options-modal" class="options-modal" role="dialog" aria-labelledby="options-title" aria-hidden="true">
+      <div class="options-modal__backdrop"></div>
+      <div class="options-modal__panel">
+        <div class="options-modal__header">
+          <h3 id="options-title">Options</h3>
+          <button type="button" class="options-modal__close" aria-label="Close">×</button>
+        </div>
+        <section class="options-section">
+          <h4>Theme</h4>
+          <div class="options-radio-group">
+            <label><input type="radio" name="theme" value="system" /> System</label>
+            <label><input type="radio" name="theme" value="light" /> Light</label>
+            <label><input type="radio" name="theme" value="dark" /> Dark</label>
+          </div>
+        </section>
+        <section class="options-section">
+          <h4>Default options (this page)</h4>
+          <div class="options-row">
+            <label for="options-default-lang">Language</label>
+            <select id="options-default-lang"></select>
+          </div>
+          <div class="options-row" id="options-default-game-row">
+            <label for="options-default-game">Game</label>
+            <select id="options-default-game"></select>
+          </div>
+          <div class="options-actions">
+            <button type="button" id="options-use-current">Use current selection</button>
+            <button type="button" id="options-save-defaults">Save as default for this page</button>
+          </div>
+        </section>
+        <section class="options-section">
+          <h4>Comment colors</h4>
+          <div class="options-row">
+            <label><input type="checkbox" id="options-comments-enabled" /> Enable comment highlighting</label>
+          </div>
+          <div id="options-comment-color-fields"></div>
+        </section>
+        <section class="options-section">
+          <h4>Box name styling (output)</h4>
+          <div class="options-row">
+            <label><input type="checkbox" id="options-boxnames-enabled" /> Enable box name styling</label>
+          </div>
+          <div class="options-row">
+            <label><input type="checkbox" id="options-box-number-bold" /> Bold numbers</label>
+            <label><input type="checkbox" id="options-box-symbol-bold" /> Bold symbols</label>
+          </div>
+          <div id="options-box-color-fields"></div>
+        </section>
+      </div>
+    </div>
   </body>
 </html>
