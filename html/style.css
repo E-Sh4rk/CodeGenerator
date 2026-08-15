@@ -166,6 +166,20 @@ html[data-theme="dark"] {
   }
 }
 
+html {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+  }
+}
+
 textarea {
   font-family: "Consolas", "Yu Gothic", "Courier New";
   height: 100%;
@@ -182,6 +196,19 @@ textarea:not(.editor--highlighted) {
   border: 1px solid var(--control-border);
 }
 
+textarea:focus {
+  outline: -webkit-focus-ring-color auto 1px;
+}
+
+.editor-wrap > textarea:focus,
+.container.editor-wrap > textarea:focus {
+  outline: none;
+}
+
+.editor-wrap:focus-within {
+  outline: -webkit-focus-ring-color auto 1px;
+}
+
 .editor-wrap {
   position: relative;
   flex-grow: 1;
@@ -189,6 +216,25 @@ textarea:not(.editor--highlighted) {
   min-width: 400px;
   resize: both;
   overflow: hidden;
+}
+
+.editor-wrap::-webkit-resizer,
+textarea::-webkit-resizer {
+  background-color: var(--control-bg);
+  background-image: linear-gradient(
+    135deg,
+    transparent 0 44%,
+    var(--control-border) 44% 48%,
+    transparent 48% 56%,
+    var(--control-border) 56% 60%,
+    transparent 60% 68%,
+    var(--control-border) 68% 72%,
+    transparent 72%
+  );
+}
+
+.editor-wrap::-webkit-resizer {
+  background-color: var(--editor-bg);
 }
 
 .editor-wrap > textarea,

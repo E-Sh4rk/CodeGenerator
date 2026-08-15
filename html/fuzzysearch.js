@@ -1,7 +1,13 @@
 const FuzzySearch = (function () {
-  function normalize(s) {
+  function foldDiacritics(s) {
     return s
       .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function normalize(s) {
+    return foldDiacritics(s)
       .replace(/_/g, " ")
       .replace(/[^\w\s]/g, "")
       .replace(/\s+/g, " ")
@@ -15,10 +21,10 @@ const FuzzySearch = (function () {
   function score(query, text, id) {
     if (!query) return 0;
 
-    const q = query.toLowerCase();
+    const q = foldDiacritics(query);
     const qNorm = normalize(query);
     const qCompact = compact(query);
-    const tLower = text.toLowerCase();
+    const tLower = foldDiacritics(text);
     const tNorm = normalize(text);
     const tCompact = compact(text);
 
