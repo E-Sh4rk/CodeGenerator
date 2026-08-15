@@ -1,62 +1,60 @@
-.container {
-    position: relative;
+:root {
+  --suggestion-bg: #fff;
+  --suggestion-border: rgb(203 213 225);
+  --suggestion-hover-bg: rgb(226 232 240);
 }
-.container > #main {
-    position: relative;
+
+html[data-theme="light"] {
+  --suggestion-bg: #fff;
+  --suggestion-border: rgb(203 213 225);
+  --suggestion-hover-bg: rgb(226 232 240);
 }
-.container__mirror {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    color: transparent;
-}
-.container__suggestions {
-    border: 1px solid rgb(203 213 225);
-    background: #fff;
-    border-radius: 0.5rem;
-    display: none;
-    position: fixed;
-    width: 12rem;
-    overflow: auto;
-    max-height: 50%;
-}
-.container__suggestion {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    height: 2rem;
-    padding: 0 0.5rem;
-}
-.container__suggestion:not(:first-child) {
-    border-top: 1px solid rgb(203 213 225);
-}
-.container__suggestion--focused {
-    background: rgb(226 232 240);
+
+html[data-theme="dark"] {
+  --suggestion-bg: #2a2a2a;
+  --suggestion-border: #555;
+  --suggestion-hover-bg: #3a3a3a;
 }
 
 @media (prefers-color-scheme: dark) {
-    html:not([data-theme="light"]) .container__suggestions {
-        background: #2a2a2a;
-        border-color: #555;
-    }
-    html:not([data-theme="light"]) .container__suggestion:not(:first-child) {
-        border-color: #555;
-    }
-    html:not([data-theme="light"]) .container__suggestion--focused {
-        background: #3a3a3a;
-    }
+  html:not([data-theme="light"]) {
+    --suggestion-bg: #2a2a2a;
+    --suggestion-border: #555;
+    --suggestion-hover-bg: #3a3a3a;
+  }
 }
 
-html[data-theme="dark"] .container__suggestions {
-    background: #2a2a2a;
-    border-color: #555;
+.container {
+  position: relative;
 }
-html[data-theme="dark"] .container__suggestion:not(:first-child) {
-    border-color: #555;
+
+.container__suggestions {
+  border: 1px solid var(--suggestion-border);
+  background: var(--suggestion-bg);
+  border-radius: var(--control-border-radius);
+  display: none;
+  position: fixed;
+  width: 12rem;
+  overflow: auto;
+  max-height: 50%;
+  z-index: 1000;
+  pointer-events: auto;
+  color: var(--body-text);
 }
-html[data-theme="dark"] .container__suggestion--focused {
-    background: #3a3a3a;
+
+.container__suggestion {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  height: 2rem;
+  padding: 0 0.5rem;
+}
+
+.container__suggestion:not(:first-child) {
+  border-top: 1px solid var(--suggestion-border);
+}
+
+.container__suggestion--focused,
+.container__suggestion:hover {
+  background: var(--suggestion-hover-bg);
 }
