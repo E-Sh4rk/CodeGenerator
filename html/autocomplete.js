@@ -211,6 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   textarea.addEventListener("keydown", () => {
     suppressAutocomplete = false;
+    updateSuggestions();
+  });
+  textarea.addEventListener("click", () => {
+    suppressAutocomplete = false;
+    updateSuggestions();
   });
 
   const scrollSuggestionIntoView = (option) => {

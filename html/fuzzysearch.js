@@ -30,8 +30,7 @@ const FuzzySearch = (function () {
 
     if (id !== undefined && /^\d+$/.test(q)) {
       const num = parseInt(q, 10);
-      if (num === id) return 1000;
-      if (String(id).startsWith(q)) return 500 + q.length;
+      return num === id ? 1000 : 0;
     }
 
     if (tLower === q) return 900;
