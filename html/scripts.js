@@ -1,6 +1,7 @@
 window.addEventListener("load", () => {
   const url = new URL(window.location.href);
-  let workspace = repository + document.getElementById("script_workspace").value;
+  let workspace =
+    repository + document.getElementById("script_workspace").value;
   let prefix_for_examples = workspace + "/";
   let list_path = prefix_for_examples + "list.json";
   let empty_path = prefix_for_examples + "empty.txt";
@@ -46,8 +47,8 @@ window.addEventListener("load", () => {
     xhr.setRequestHeader("Cache-Control", "max-age=0");
     xhr.overrideMimeType("text/plain");
     xhr.addEventListener("readystatechange", () => {
-      if (xhr.readyState == 4) {
-        if (xhr.status == 200) {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
           success_callback(xhr.responseText);
         } else {
           console.log("Unknown file " + url);
@@ -102,11 +103,12 @@ window.addEventListener("load", () => {
     examples.forEach((element, index) => {
       if (
         language in element &&
-        (category == "" || ("cat" in element && element["cat"].includes(category))) &&
-        (gam == "" || ("game" in element && element["game"].includes(gam)))
+        (category === "" ||
+          ("cat" in element && element["cat"].includes(category))) &&
+        (gam === "" || ("game" in element && element["game"].includes(gam)))
       ) {
         let val = index.toString();
-        if (val == last_selected_example) newSelectedValue = val;
+        if (val === last_selected_example) newSelectedValue = val;
         options.push({ value: val, text: element["name"] });
       }
     });
@@ -173,9 +175,15 @@ window.addEventListener("load", () => {
 
 function openTab(_, id) {
   let active = document.getElementsByClassName("tabcontent-active")[0];
-  active.className = active.className.replace("tabcontent-active", "tabcontent");
+  active.className = active.className.replace(
+    "tabcontent-active",
+    "tabcontent",
+  );
   let target = document.getElementById(id);
-  target.className = target.className.replace("tabcontent", "tabcontent-active");
+  target.className = target.className.replace(
+    "tabcontent",
+    "tabcontent-active",
+  );
 }
 
 /* ===== COMPUTE ===== */
@@ -185,7 +193,12 @@ function compute() {
   let game = document.getElementById("game");
   let main = document.getElementById("main");
   let secondary = document.getElementById("secondary");
-  let [_, txt] = aceGen.build(lang.value, game.value, main.value, secondary.value);
+  let [_, txt] = aceGen.build(
+    lang.value,
+    game.value,
+    main.value,
+    secondary.value,
+  );
   let output = document.getElementById("output");
   output.value = txt;
   if (typeof Highlight !== "undefined") Highlight.refresh("output");
@@ -196,7 +209,12 @@ function computeNext() {
   let game = document.getElementById("game");
   let main = document.getElementById("main");
   let secondary = document.getElementById("secondary");
-  let [_, txt] = aceGen.buildNext(lang.value, game.value, main.value, secondary.value);
+  let [_, txt] = aceGen.buildNext(
+    lang.value,
+    game.value,
+    main.value,
+    secondary.value,
+  );
   let output = document.getElementById("output");
   output.value = txt;
   if (typeof Highlight !== "undefined") Highlight.refresh("output");

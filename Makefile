@@ -60,3 +60,6 @@ seedjs:
 
 clean:
 	dune clean
+
+serve:
+	npx --yes serve html

@@ -424,7 +424,9 @@ textarea.editor--highlighted {
 
 .ts-control {
   padding: var(--select-padding-y) var(--select-padding-x) !important;
-  min-height: calc(var(--control-line-height) + 2 * var(--select-padding-y)) !important;
+  min-height: calc(
+    var(--control-line-height) + 2 * var(--select-padding-y)
+  ) !important;
   flex-wrap: nowrap !important;
   box-sizing: border-box !important;
   border-radius: var(--select-border-radius) !important;

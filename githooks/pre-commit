@@ -1,0 +1,22 @@
+#!/bin/sh
+root=$(git rev-parse --show-toplevel)
+cd "$root" || exit 1
+
+prettier="$root/node_modules/.bin/prettier"
+eslint="$root/node_modules/.bin/eslint"
+if [ ! -x "$prettier" ] && [ ! -x "$eslint" ]; then
+  exit 0
+fi
+
+files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^html/.+\.(js|html|css)$' | grep -vE '\.bc\.js$|/ids\.js$' || true)
+[ -z "$files" ] && exit 0
+
+if [ -x "$prettier" ]; then
+  echo "$files" | tr '\n' '\0' | xargs -0 "$prettier" --write --ignore-unknown
+  echo "$files" | tr '\n' '\0' | xargs -0 git add
+fi
+
+jsfiles=$(echo "$files" | grep '\.js$' || true)
+if [ -n "$jsfiles" ] && [ -x "$eslint" ]; then
+  echo "$jsfiles" | tr '\n' '\0' | xargs -0 "$eslint" --no-warn-ignored
+fi
