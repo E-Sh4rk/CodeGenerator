@@ -363,14 +363,9 @@ textarea.editor--highlighted {
   min-width: 0;
 }
 
-.grow {
-  flex-grow: 1;
-}
-
 .page,
 .toolbar,
-.actions,
-.row {
+.actions {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -379,14 +374,11 @@ textarea.editor--highlighted {
 }
 
 .page > *,
-.row > *,
-.pane > *,
-.column > * {
+.pane > * {
   min-width: 0;
 }
 
-.pane,
-.column {
+.pane {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -394,12 +386,6 @@ textarea.editor--highlighted {
   width: 100%;
   flex-basis: auto;
   gap: 8px;
-}
-
-.left,
-.middle,
-.right {
-  flex-shrink: 1;
 }
 
 /* ===== Tabs ===== */
@@ -483,11 +469,13 @@ textarea.editor--highlighted {
   max-height: 400px;
 }
 
-/* ===== Other scripts ===== */
+/* ===== Seed tools page ===== */
 
-#enter {
-  min-width: 75px;
-  padding: 10px 0;
+.seed-input-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 
 @media (min-width: 992px) {
@@ -516,8 +504,7 @@ textarea.editor--highlighted {
 
   .page,
   .toolbar,
-  .actions,
-  .row {
+  .actions {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
@@ -525,21 +512,11 @@ textarea.editor--highlighted {
     gap: 5px;
   }
 
-  .pane,
-  .column {
+  .pane {
     width: auto;
     flex-basis: 0;
     gap: 5px;
-  }
-
-  .pane {
     flex-grow: 1;
-  }
-
-  .left,
-  .middle,
-  .right {
-    flex-basis: 0;
   }
 
   .toolbar select {
@@ -567,5 +544,22 @@ textarea.editor--highlighted {
     min-width: 0;
     width: auto;
     align-self: stretch;
+  }
+
+  .seed-input-row {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .seed-input-row input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .seed-input-row button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 75px;
+    padding: 10px 0;
   }
 }
