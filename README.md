@@ -4,21 +4,29 @@ The ACE code generator is available [here](https://e-sh4rk.github.io/CodeGenerat
 
 If you want to contribute by adding an ACE code to the generator, please make a pull request on [this repository](https://github.com/E-Sh4rk/EmeraldACE_web).
 
-## Build instructions
+## Requirements
 
+- [opam](https://opam.ocaml.org/doc/Install.html)
+
+## Build
+
+```bash
+./setup.sh
 ```
-sudo apt install opam
-opam init
-eval `opam config env`
-opam switch create 5.3.0
-eval `opam config env`
-opam install dune ppx_deriving num
+
+This creates a **local** opam switch in `_opam/` (OCaml 5.3.0), installs dependencies, and builds the native and JavaScript targets. A local switch keeps the compiler and packages inside this repository and does not change your global opam setup.
+
+From this directory, later rebuilds use that local switch:
+
+```bash
 make
-```
-
-## Build to Javascript instructions
-
-```
-opam install js_of_ocaml-compiler js_of_ocaml-ppx
 make js
+make seedjs
+```
+
+If the build is broken or you want a fresh install, wipe the local switch and `_build`, then set up again:
+
+```bash
+./clean.sh
+./setup.sh
 ```
