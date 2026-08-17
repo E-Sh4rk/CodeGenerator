@@ -1,4 +1,4 @@
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
   const url = new URL(window.location.href);
   let workspace = repository + document.getElementById("script_workspace").value;
   let prefix_for_examples = workspace + "/";
@@ -176,28 +176,4 @@ function openTab(_, id) {
   active.className = active.className.replace("tabcontent-active", "tabcontent");
   let target = document.getElementById(id);
   target.className = target.className.replace("tabcontent", "tabcontent-active");
-}
-
-/* ===== COMPUTE ===== */
-
-function compute() {
-  let lang = document.getElementById("lang");
-  let game = document.getElementById("game");
-  let main = document.getElementById("main");
-  let secondary = document.getElementById("secondary");
-  let [_, txt] = aceGen.build(lang.value, game.value, main.value, secondary.value);
-  let output = document.getElementById("output");
-  output.value = txt;
-  if (typeof Highlight !== "undefined") Highlight.refresh("output");
-}
-
-function computeNext() {
-  let lang = document.getElementById("lang");
-  let game = document.getElementById("game");
-  let main = document.getElementById("main");
-  let secondary = document.getElementById("secondary");
-  let [_, txt] = aceGen.buildNext(lang.value, game.value, main.value, secondary.value);
-  let output = document.getElementById("output");
-  output.value = txt;
-  if (typeof Highlight !== "undefined") Highlight.refresh("output");
 }
