@@ -2,14 +2,12 @@
 set -e
 cd "$(dirname "$0")"
 
-if command -v opam >/dev/null 2>&1; then
-  eval "$(opam env --switch=5.3.0 2>/dev/null)" || true
+if command -v opam >/dev/null 2>&1 && [ -d _opam ]; then
+  eval "$(opam env --switch=. --set-switch 2>/dev/null)" || true
   if command -v dune >/dev/null 2>&1; then
     make clean
   fi
-  if opam switch list --short 2>/dev/null | grep -qx 5.3.0; then
-    opam switch remove -y 5.3.0
-  fi
+  opam switch remove -y . || true
 fi
 
 rm -rf _build _opam

@@ -14,9 +14,9 @@ If you want to contribute by adding an ACE code to the generator, please make a 
 ./setup.sh
 ```
 
-This creates the OCaml 5.3.0 switch, installs dependencies, and builds the native and JavaScript targets.
+This creates a **local** opam switch in `_opam/` (OCaml 5.3.0), installs dependencies, and builds the native and JavaScript targets. A local switch keeps the compiler and packages inside this repository and does not change your global opam setup.
 
-Later rebuilds:
+From this directory, later rebuilds use that local switch:
 
 ```bash
 make
@@ -24,7 +24,7 @@ make js
 make seedjs
 ```
 
-If the build is broken or you want a fresh install, wipe the OCaml 5.3.0 switch and `_build`, then set up again:
+If the build is broken or you want a fresh install, wipe the local switch and `_build`, then set up again:
 
 ```bash
 ./clean.sh
