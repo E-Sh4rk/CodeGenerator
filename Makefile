@@ -62,6 +62,3 @@ seedjs:
 
 clean:
 	$(DUNE) clean
-
-serve:
-	xdg-open html/index.html >/dev/null 2>&1 || open html/index.html

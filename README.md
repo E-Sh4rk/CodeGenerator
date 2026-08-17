@@ -30,13 +30,3 @@ If the build is broken or you want a fresh install, wipe the local switch and `_
 ./clean.sh
 ./setup.sh
 ```
-
-## Run locally
-
-After `./setup.sh`:
-
-```bash
-make serve
-```
-
-That opens `html/index.html` in your browser. Ruby/Sapphire is `html/index_rs.html`, FireRed/LeafGreen is `html/index_frlg.html`, and seed tools are `html/scripts/seed/index.html`.
