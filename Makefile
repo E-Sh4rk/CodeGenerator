@@ -63,14 +63,5 @@ seedjs:
 clean:
 	$(DUNE) clean
 
-# `make serve` picks a free port; `make serve 8000` (or any port) forces it.
-ifneq ($(filter serve,$(MAKECMDGOALS)),)
-SERVE_PORT := $(firstword $(filter-out serve,$(MAKECMDGOALS)))
-ifneq ($(SERVE_PORT),)
-$(SERVE_PORT):
-	@:
-endif
-endif
-
 serve:
-	python3 -m http.server $(if $(SERVE_PORT),$(SERVE_PORT),0) --bind 127.0.0.1 --directory html
+	xdg-open html/index.html >/dev/null 2>&1 || open html/index.html

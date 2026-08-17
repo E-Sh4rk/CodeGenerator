@@ -39,12 +39,4 @@ After `./setup.sh`:
 make serve
 ```
 
-That picks a free port. To force one:
-
-```bash
-make serve 8000
-```
-
-Open the URL printed in the terminal.
-
-Emerald is the default page. Ruby/Sapphire is `index_rs.html`, FireRed/LeafGreen is `index_frlg.html`, and seed tools are under `scripts/seed/`.
+That opens `html/index.html` in your browser. Ruby/Sapphire is `html/index_rs.html`, FireRed/LeafGreen is `html/index_frlg.html`, and seed tools are `html/scripts/seed/index.html`.
