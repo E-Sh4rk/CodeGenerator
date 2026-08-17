@@ -32,6 +32,3 @@ setup.log
 
 # Local OPAM switch
 _opam/
-
-# Node (Prettier / ESLint)
-node_modules/

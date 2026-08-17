@@ -1,6 +1,0 @@
-# ignore everything except html/
-/*
-!html/
-
-html/**/*.bc.js
-html/ids.js

@@ -15,16 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let suppressAutocomplete = false;
 
   const clearFocusedSuggestions = () => {
-    suggestionsEle
-      .querySelectorAll(".container__suggestion--focused")
-      .forEach((el) => {
-        el.classList.remove("container__suggestion--focused");
-      });
+    suggestionsEle.querySelectorAll(".container__suggestion--focused").forEach((el) => {
+      el.classList.remove("container__suggestion--focused");
+    });
   };
 
   const getHighlightLayer = () => {
-    const editor =
-      typeof Highlight !== "undefined" ? Highlight.getEditor("main") : null;
+    const editor = typeof Highlight !== "undefined" ? Highlight.getEditor("main") : null;
     return editor ? editor.layer : null;
   };
 
@@ -42,10 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       startIndex--;
     }
     let endIndex = cursorPos;
-    while (
-      endIndex < currentValue.length &&
-      !/\s/.test(currentValue[endIndex])
-    ) {
+    while (endIndex < currentValue.length && !/\s/.test(currentValue[endIndex])) {
       endIndex++;
     }
 
@@ -58,15 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const startIndex = activeWordStart;
     const endIndex = activeWordEnd;
 
-    const newValue =
-      currentValue.substring(0, startIndex) +
-      newWord +
-      currentValue.substring(endIndex);
+    const newValue = currentValue.substring(0, startIndex) + newWord + currentValue.substring(endIndex);
     const scroll = textarea.scrollTop;
     textarea.value = newValue;
     textarea.focus();
-    textarea.selectionStart = textarea.selectionEnd =
-      startIndex + newWord.length;
+    textarea.selectionStart = textarea.selectionEnd = startIndex + newWord.length;
     textarea.scrollTop = scroll;
     hideSuggestions();
     if (typeof Highlight !== "undefined") Highlight.refresh("main");
@@ -116,9 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const pre = document.createTextNode(textBeforeWord);
-    const post = document.createTextNode(
-      textAfterWord + (textAfterWord.endsWith("\n") ? " " : ""),
-    );
+    const post = document.createTextNode(textAfterWord + (textAfterWord.endsWith("\n") ? " " : ""));
     const caretEle = document.createElement("span");
     caretEle.className = "autocomplete-caret";
     caretEle.append(document.createTextNode(currentWord));
@@ -187,8 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const remaining = currentValue.substring(endIndex);
     const lineBreak = remaining.indexOf("\n");
-    const lineEnd =
-      lineBreak >= 0 ? remaining.substring(0, lineBreak) : remaining;
+    const lineEnd = lineBreak >= 0 ? remaining.substring(0, lineBreak) : remaining;
     const tags = lineEnd.match(/@input:\w*/g);
     if (tags === null) {
       hideSuggestions();
@@ -220,9 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showSuggestions(matches, startIndex, endIndex);
   };
 
-  ["input", "selectionchange"].forEach((e) =>
-    textarea.addEventListener(e, updateSuggestions),
-  );
+  ["input", "selectionchange"].forEach((e) => textarea.addEventListener(e, updateSuggestions));
 
   textarea.addEventListener("keydown", () => {
     suppressAutocomplete = false;
@@ -247,9 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const focusSuggestionAt = (index) => {
-    const suggestions = suggestionsEle.querySelectorAll(
-      ".container__suggestion",
-    );
+    const suggestions = suggestionsEle.querySelectorAll(".container__suggestion");
     if (suggestions.length === 0) return;
 
     clearFocusedSuggestions();
@@ -264,9 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const suggestions = suggestionsEle.querySelectorAll(
-      ".container__suggestion",
-    );
+    const suggestions = suggestionsEle.querySelectorAll(".container__suggestion");
     const numSuggestions = suggestions.length;
     if (numSuggestions === 0 || suggestionsEle.style.display === "none") {
       return;
@@ -275,23 +256,15 @@ document.addEventListener("DOMContentLoaded", () => {
     switch (e.key) {
       case "Tab":
         if (e.shiftKey) {
-          focusSuggestionAt(
-            currentSuggestionIndex <= 0
-              ? numSuggestions - 1
-              : currentSuggestionIndex - 1,
-          );
+          focusSuggestionAt(currentSuggestionIndex <= 0 ? numSuggestions - 1 : currentSuggestionIndex - 1);
         } else {
           focusSuggestionAt((currentSuggestionIndex + 1) % numSuggestions);
         }
         break;
-      case "Enter": {
-        const pickIndex =
-          currentSuggestionIndex >= 0 ? currentSuggestionIndex : 0;
-        replaceCurrentWord(
-          pkmn_data_map[suggestions[pickIndex].innerText].toString(),
-        );
+      case "Enter":
+        const pickIndex = currentSuggestionIndex >= 0 ? currentSuggestionIndex : 0;
+        replaceCurrentWord(pkmn_data_map[suggestions[pickIndex].innerText].toString());
         break;
-      }
       case "Escape":
         hideSuggestions();
         break;

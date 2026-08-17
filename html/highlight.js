@@ -28,16 +28,12 @@ const Highlight = (() => {
   ];
 
   function escapeHtml(text) {
-    return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
   function charClass(ch) {
     if (/[0-9]/.test(ch)) return "number";
-    if (/[A-Za-z]/.test(ch) || /[\u3040-\u30ff\u4e00-\u9fff]/.test(ch))
-      return "letter";
+    if (/[A-Za-z]/.test(ch) || /[\u3040-\u30ff\u4e00-\u9fff]/.test(ch)) return "letter";
     if (/\s/.test(ch)) return "space";
     return "symbol";
   }
@@ -49,8 +45,7 @@ const Highlight = (() => {
     let type = cls;
     if (type === "auto") type = charClass(ch);
     let styleClass = "hl-box-" + type;
-    if (inBracket && type !== "space")
-      styleClass = "hl-box-bracket-inner hl-box-" + type;
+    if (inBracket && type !== "space") styleClass = "hl-box-bracket-inner hl-box-" + type;
     let weight = "";
     if (type === "number" && box.numberBold) weight = " hl-box-bold";
     if (type === "symbol" && box.symbolBold) weight = " hl-box-bold";
@@ -88,42 +83,24 @@ const Highlight = (() => {
     const leading = line.slice(0, line.length - trimmed.length);
 
     if (trimmed.startsWith("@@")) {
-      return (
-        escapeHtml(leading) +
-        `<span class="hl-comment-header">${escapeHtml(trimmed)}</span>`
-      );
+      return escapeHtml(leading) + `<span class="hl-comment-header">${escapeHtml(trimmed)}</span>`;
     }
     if (trimmed.startsWith("//")) {
-      return (
-        escapeHtml(leading) +
-        `<span class="hl-comment-slash">${escapeHtml(trimmed)}</span>`
-      );
+      return escapeHtml(leading) + `<span class="hl-comment-slash">${escapeHtml(trimmed)}</span>`;
     }
     if (trimmed.startsWith(";")) {
-      return (
-        escapeHtml(leading) +
-        `<span class="hl-comment-semicolon">${escapeHtml(trimmed)}</span>`
-      );
+      return escapeHtml(leading) + `<span class="hl-comment-semicolon">${escapeHtml(trimmed)}</span>`;
     }
     if (trimmed.startsWith("%%")) {
-      return (
-        escapeHtml(leading) +
-        `<span class="hl-comment-percent">${escapeHtml(trimmed)}</span>`
-      );
+      return escapeHtml(leading) + `<span class="hl-comment-percent">${escapeHtml(trimmed)}</span>`;
     }
 
     const commentIdx = line.indexOf(";");
     if (commentIdx >= 0 && !line.trimStart().startsWith("0x")) {
       const code = line.slice(0, commentIdx);
       const comment = line.slice(commentIdx);
-      if (
-        comment.match(/^;\s*\((altered|filler)\)/) ||
-        comment.includes("EXIT CODE")
-      ) {
-        return (
-          escapeHtml(code) +
-          `<span class="hl-comment-semicolon">${escapeHtml(comment)}</span>`
-        );
+      if (comment.match(/^;\s*\((altered|filler)\)/) || comment.includes("EXIT CODE")) {
+        return escapeHtml(code) + `<span class="hl-comment-semicolon">${escapeHtml(comment)}</span>`;
       }
     }
 
@@ -182,6 +159,12 @@ const Highlight = (() => {
       }
 
       const value = textarea.value;
+      if (value.length > 200000) {
+        textarea.classList.remove("editor--highlighted");
+        layer.innerHTML = "";
+        return;
+      }
+
       let html = highlightText(value, mode);
       if (value.endsWith("\n")) html += "\n";
       layer.innerHTML = html;
@@ -191,7 +174,6 @@ const Highlight = (() => {
 
     const ro = new ResizeObserver(() => {
       syncStyles();
-      update();
     });
     ro.observe(wrap);
     ro.observe(textarea);

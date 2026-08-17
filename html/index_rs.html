@@ -7,12 +7,8 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="options.css" />
     <link rel="stylesheet" href="autocomplete.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
-    <script src="ace_js.bc.js?2"></script>
     <script src="config.js"></script>
     <script src="fuzzysearch.js"></script>
     <script src="options.js"></script>
@@ -27,9 +23,7 @@
       <div id="mainTab" class="column grow tabcontent-active">
         <h2>
           <a class="tablinks-active">Main code</a> /
-          <a class="tablinks" onclick="openTab(event, 'secondaryTab')"
-            >Exit codes</a
-          >
+          <a class="tablinks" onclick="openTab(event, 'secondaryTab')">Exit codes</a>
           (<a href="doc/index.html">documentation</a>)
         </h2>
 
@@ -62,29 +56,14 @@
           <textarea id="main" spellcheck="false"></textarea>
         </div>
         <div class="row">
-          <button
-            id="compute"
-            class="left grow"
-            onclick="compute()"
-            type="button"
-          >
-            Compute
-          </button>
-          <button
-            id="computeNext"
-            class="right"
-            onclick="computeNext()"
-            type="button"
-          >
-            Compute another
-          </button>
+          <button id="compute" class="left grow" onclick="compute()" type="button">Compute</button>
+          <button id="computeNext" class="right" onclick="computeNext()" type="button">Compute another</button>
         </div>
       </div>
 
       <div id="secondaryTab" class="column grow tabcontent">
         <h2>
-          <a class="tablinks" onclick="openTab(event, 'mainTab')">Main code</a>
-          /
+          <a class="tablinks" onclick="openTab(event, 'mainTab')">Main code</a> /
           <a class="tablinks-active">Exit codes</a>
           (<a href="doc/index.html">documentation</a>)
         </h2>
@@ -103,57 +82,35 @@
     </div>
     <p><button id="options-button" type="button">Options</button></p>
     <p>
-      Generator for <a href="index.html">Emerald</a> /
-      <a href="index_frlg.html">FRLG</a> /
-      <a href="index_rs.html">RS</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a
-        href="https://github.com/E-Sh4rk/CodeGeneratorOffline"
+      Generator for <a href="index.html">Emerald</a> / <a href="index_frlg.html">FRLG</a> /
+      <a href="index_rs.html">RS</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="https://github.com/E-Sh4rk/CodeGeneratorOffline"
         >Offline version</a
       >
     </p>
     <p>
-      RS ACE tutorials:
-      <a href="https://youtu.be/3RFTRL22xxo">Video by Sleipnir17</a> -
-      <a
-        href="https://e-sh4rk.github.io/EmeraldACE_web/doc/RS_Short_Exit_Codes_Guide.pdf"
+      RS ACE tutorials: <a href="https://youtu.be/3RFTRL22xxo">Video by Sleipnir17</a> -
+      <a href="https://e-sh4rk.github.io/EmeraldACE_web/doc/RS_Short_Exit_Codes_Guide.pdf"
         >Short exit code guide by Sleipnir17</a
       >
     </p>
     <p>
-      Useful links:
-      <a href="https://pastebin.com/u/Sleipnir17">Sleipnir's Pastebin</a>
-      (plenty of ACE codes) -
-      <a href="https://www.youtube.com/@PapaJefeYT/videos"
-        >Papa Jefé's Youtube</a
-      >
-      (ACE tutorials) -
-      <a href="https://github.com/E-Sh4rk/PokeGlitzer">PokeGlitzer</a> (save
-      editor for glitchers)
+      Useful links: <a href="https://pastebin.com/u/Sleipnir17">Sleipnir's Pastebin</a> (plenty of ACE codes) -
+      <a href="https://www.youtube.com/@PapaJefeYT/videos">Papa Jefé's Youtube</a> (ACE tutorials) -
+      <a href="https://github.com/E-Sh4rk/PokeGlitzer">PokeGlitzer</a> (save editor for glitchers)
     </p>
 
-    <div
-      id="options-modal"
-      class="options-modal"
-      role="dialog"
-      aria-labelledby="options-title"
-      aria-hidden="true"
-    >
+    <div id="options-modal" class="options-modal" role="dialog" aria-labelledby="options-title" aria-hidden="true">
       <div class="options-modal__backdrop"></div>
       <div class="options-modal__panel">
         <div class="options-modal__header">
           <h3 id="options-title">Options</h3>
-          <button type="button" class="options-modal__close" aria-label="Close">
-            ×
-          </button>
+          <button type="button" class="options-modal__close" aria-label="Close">×</button>
         </div>
         <section class="options-section">
           <h4>Theme</h4>
           <div class="options-radio-group">
-            <label
-              ><input type="radio" name="theme" value="system" /> System</label
-            >
-            <label
-              ><input type="radio" name="theme" value="light" /> Light</label
-            >
+            <label><input type="radio" name="theme" value="system" /> System</label>
+            <label><input type="radio" name="theme" value="light" /> Light</label>
             <label><input type="radio" name="theme" value="dark" /> Dark</label>
           </div>
         </section>
@@ -168,41 +125,25 @@
             <select id="options-default-game"></select>
           </div>
           <div class="options-actions">
-            <button type="button" id="options-use-current">
-              Use current selection
-            </button>
-            <button type="button" id="options-save-defaults">
-              Save as default for this page
-            </button>
+            <button type="button" id="options-use-current">Use current selection</button>
+            <button type="button" id="options-save-defaults">Save as default for this page</button>
           </div>
         </section>
         <section class="options-section">
           <h4>Comment colors</h4>
           <div class="options-row">
-            <label
-              ><input type="checkbox" id="options-comments-enabled" /> Enable
-              comment highlighting</label
-            >
+            <label><input type="checkbox" id="options-comments-enabled" /> Enable comment highlighting</label>
           </div>
           <div id="options-comment-color-fields"></div>
         </section>
         <section class="options-section">
           <h4>Box name styling (output)</h4>
           <div class="options-row">
-            <label
-              ><input type="checkbox" id="options-boxnames-enabled" /> Enable
-              box name styling</label
-            >
+            <label><input type="checkbox" id="options-boxnames-enabled" /> Enable box name styling</label>
           </div>
           <div class="options-row">
-            <label
-              ><input type="checkbox" id="options-box-number-bold" /> Bold
-              numbers</label
-            >
-            <label
-              ><input type="checkbox" id="options-box-symbol-bold" /> Bold
-              symbols</label
-            >
+            <label><input type="checkbox" id="options-box-number-bold" /> Bold numbers</label>
+            <label><input type="checkbox" id="options-box-symbol-bold" /> Bold symbols</label>
           </div>
           <div id="options-box-color-fields"></div>
         </section>

@@ -12,5 +12,5 @@ if command -v opam >/dev/null 2>&1; then
   fi
 fi
 
-rm -rf _build _opam node_modules
+rm -rf _build _opam
 rm -f html/ace_js.bc.js html/scripts/seed/seed_tools_js.bc.js

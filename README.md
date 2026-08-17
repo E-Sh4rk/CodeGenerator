@@ -7,7 +7,6 @@ If you want to contribute by adding an ACE code to the generator, please make a 
 ## Requirements
 
 - [opam](https://opam.ocaml.org/doc/Install.html)
-- [Node.js](https://nodejs.org/en/download)
 
 ## Build
 
@@ -25,7 +24,7 @@ make js
 make seedjs
 ```
 
-If the build is broken or you want a fresh install, wipe the OCaml 5.3.0 switch, `_build`, and `node_modules`, then set up again:
+If the build is broken or you want a fresh install, wipe the OCaml 5.3.0 switch and `_build`, then set up again:
 
 ```bash
 ./clean.sh
@@ -40,15 +39,12 @@ After `./setup.sh`:
 make serve
 ```
 
-Open the URL printed in the terminal (usually http://localhost:3000).
-
-Emerald is the default page. Ruby/Sapphire is `index_rs.html`, FireRed/LeafGreen is `index_frlg.html`, and seed tools are under `scripts/seed/`.
-
-## HTML / JS checks
+That picks a free port. To force one:
 
 ```bash
-npm run format
-npm run lint
+make serve 8000
 ```
 
-`npm install` (run by `./setup.sh`) also copies a git pre-commit hook that runs Prettier and ESLint on staged `html/` files.
+Open the URL printed in the terminal.
+
+Emerald is the default page. Ruby/Sapphire is `index_rs.html`, FireRed/LeafGreen is `index_frlg.html`, and seed tools are under `scripts/seed/`.

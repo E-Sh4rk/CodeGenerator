@@ -61,5 +61,14 @@ seedjs:
 clean:
 	dune clean
 
+# `make serve` picks a free port; `make serve 8000` (or any port) forces it.
+ifneq ($(filter serve,$(MAKECMDGOALS)),)
+SERVE_PORT := $(firstword $(filter-out serve,$(MAKECMDGOALS)))
+ifneq ($(SERVE_PORT),)
+$(SERVE_PORT):
+	@:
+endif
+endif
+
 serve:
-	npx --yes serve html
+	python3 -m http.server $(if $(SERVE_PORT),$(SERVE_PORT),0) --bind 127.0.0.1 --directory html
