@@ -46,7 +46,7 @@ button {
   border: 1px solid var(--button-border);
   border-radius: var(--control-border-radius);
   box-shadow: none;
-  padding: 10px 12px;
+  padding: var(--control-padding-y) var(--control-padding-x);
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;

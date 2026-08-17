@@ -36,11 +36,6 @@ html[data-theme="dark"] {
   }
 }
 
-#options-button {
-  min-width: unset;
-  padding: 10px 14px;
-}
-
 .options-modal {
   display: none;
   position: fixed;
@@ -231,16 +226,11 @@ html[data-theme="dark"] {
 .options-actions button {
   width: 100%;
   min-width: unset;
-  padding: 10px 12px;
+  padding: var(--control-padding-y) var(--control-padding-x);
   font-size: 0.85rem;
 }
 
 @media (min-width: 992px) {
-  #options-button {
-    width: auto;
-    padding: 2px 14px;
-  }
-
   .options-modal__panel {
     margin: 2rem auto;
     max-width: 640px;
