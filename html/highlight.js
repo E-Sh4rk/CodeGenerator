@@ -159,12 +159,6 @@ const Highlight = (() => {
       }
 
       const value = textarea.value;
-      if (value.length > 200000) {
-        textarea.classList.remove("editor--highlighted");
-        layer.innerHTML = "";
-        return;
-      }
-
       let html = highlightText(value, mode);
       if (value.endsWith("\n")) html += "\n";
       layer.innerHTML = html;
@@ -174,6 +168,7 @@ const Highlight = (() => {
 
     const ro = new ResizeObserver(() => {
       syncStyles();
+      update();
     });
     ro.observe(wrap);
     ro.observe(textarea);

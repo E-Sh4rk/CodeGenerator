@@ -43,7 +43,7 @@ window.addEventListener("load", () => {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", url);
     // xhr.setRequestHeader("Cache-Control", "no-cache");
-    //xhr.setRequestHeader("Cache-Control", "max-age=0");
+    xhr.setRequestHeader("Cache-Control", "max-age=0");
     xhr.overrideMimeType("text/plain");
     xhr.addEventListener("readystatechange", () => {
       if (xhr.readyState == 4) {
@@ -180,227 +180,24 @@ function openTab(_, id) {
 
 /* ===== COMPUTE ===== */
 
-const ACE_JS_SRC = "ace_js.bc.js?2";
-const ACE_WORKER_SRC = "ace_worker.js";
-
-let aceWorker = null;
-let aceWorkerReady = false;
-let aceWorkerFailed = false;
-let aceRequestId = 0;
-let aceQueued = null;
-let aceComputing = false;
-let aceMainScriptLoading = null;
-
-function aceButtons() {
-  return {
-    compute: document.getElementById("compute"),
-    computeNext: document.getElementById("computeNext"),
-  };
-}
-
-function setComputing(busy) {
-  aceComputing = busy;
-  document.body.classList.toggle("computing", busy);
-  const { compute, computeNext } = aceButtons();
-  if (compute) {
-    if (!compute.dataset.label) {
-      compute.dataset.label = compute.textContent.trim();
-    }
-    compute.disabled = false;
-    compute.textContent = busy ? "Cancel" : compute.dataset.label;
-    compute.title = busy ? "Cancel the current computation" : "";
-  }
-  if (computeNext) computeNext.disabled = busy;
-}
-
-function applyComputeResult(txt) {
-  const output = document.getElementById("output");
+function compute() {
+  let lang = document.getElementById("lang");
+  let game = document.getElementById("game");
+  let main = document.getElementById("main");
+  let secondary = document.getElementById("secondary");
+  let [_, txt] = aceGen.build(lang.value, game.value, main.value, secondary.value);
+  let output = document.getElementById("output");
   output.value = txt;
   if (typeof Highlight !== "undefined") Highlight.refresh("output");
 }
 
-function finishCompute(data) {
-  if (!data || data.id !== aceRequestId) return;
-  aceQueued = null;
-  setComputing(false);
-  if (data.ok) {
-    applyComputeResult(data.txt);
-  } else {
-    applyComputeResult(data.error || "Computation failed.");
-  }
-}
-
-function runOnMainThread(msg) {
-  const { compute } = aceButtons();
-  if (compute) {
-    compute.disabled = true;
-    compute.textContent = compute.dataset.label || "Compute";
-    compute.title = "";
-  }
-  const run = () => {
-    try {
-      if (typeof aceGen === "undefined") {
-        throw new Error("Generator failed to load");
-      }
-      const result = msg.next
-        ? aceGen.buildNext(msg.lang, msg.game, msg.code, msg.exitCodes)
-        : aceGen.build(msg.lang, msg.game, msg.code, msg.exitCodes);
-      const txt = result && result[1] != null ? String(result[1]) : "";
-      finishCompute({ id: msg.id, ok: true, txt });
-    } catch (error) {
-      finishCompute({
-        id: msg.id,
-        ok: false,
-        error: error && error.message ? error.message : String(error),
-      });
-    }
-  };
-  window.setTimeout(run, 20);
-}
-
-function loadAceGenOnMainThread() {
-  if (typeof aceGen !== "undefined") return Promise.resolve();
-  if (aceMainScriptLoading) return aceMainScriptLoading;
-  aceMainScriptLoading = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = ACE_JS_SRC;
-    script.onload = () => resolve();
-    script.onerror = () =>
-      reject(new Error("Failed to load " + ACE_JS_SRC.split("?")[0]));
-    document.head.appendChild(script);
-  });
-  return aceMainScriptLoading;
-}
-
-function stopWorker() {
-  if (!aceWorker) return;
-  aceWorker.onerror = null;
-  aceWorker.onmessage = null;
-  aceWorker.terminate();
-  aceWorker = null;
-  aceWorkerReady = false;
-}
-
-function fallbackToMainThread(msg) {
-  aceWorkerFailed = true;
-  stopWorker();
-  loadAceGenOnMainThread()
-    .then(() => runOnMainThread(msg))
-    .catch((error) => {
-      finishCompute({
-        id: msg.id,
-        ok: false,
-        error: error && error.message ? error.message : String(error),
-      });
-    });
-}
-
-function startWorker() {
-  if (aceWorker || aceWorkerFailed || typeof Worker === "undefined") {
-    if (typeof Worker === "undefined") aceWorkerFailed = true;
-    return;
-  }
-  try {
-    aceWorker = new Worker(ACE_WORKER_SRC);
-  } catch (_error) {
-    aceWorkerFailed = true;
-    return;
-  }
-  aceWorker.onmessage = (event) => {
-    const data = event.data;
-    if (data && data.type === "ready") {
-      aceWorkerReady = true;
-      if (aceQueued) {
-        const queued = aceQueued;
-        aceQueued = null;
-        aceWorker.postMessage(queued);
-      }
-      return;
-    }
-    finishCompute(data);
-  };
-  aceWorker.onerror = () => {
-    if (!aceWorkerReady) {
-      const queued = aceQueued;
-      aceQueued = null;
-      if (queued) fallbackToMainThread(queued);
-      else {
-        aceWorkerFailed = true;
-        stopWorker();
-      }
-      return;
-    }
-    if (aceComputing) {
-      finishCompute({
-        id: aceRequestId,
-        ok: false,
-        error: "The generator worker crashed.",
-      });
-    }
-    restartWorker();
-  };
-}
-
-function restartWorker() {
-  stopWorker();
-  aceQueued = null;
-  if (!aceWorkerFailed) startWorker();
-}
-
-function cancelCompute() {
-  aceRequestId += 1;
-  aceQueued = null;
-  setComputing(false);
-  restartWorker();
-}
-
-function runCompute(next) {
-  const lang = document.getElementById("lang");
-  const game = document.getElementById("game");
-  const main = document.getElementById("main");
-  const secondary = document.getElementById("secondary");
-  aceRequestId += 1;
-  const msg = {
-    id: aceRequestId,
-    next,
-    lang: lang.value,
-    game: game.value,
-    code: main.value,
-    exitCodes: secondary.value,
-  };
-  setComputing(true);
-  if (aceWorkerFailed) {
-    loadAceGenOnMainThread()
-      .then(() => runOnMainThread(msg))
-      .catch((error) => {
-        finishCompute({
-          id: msg.id,
-          ok: false,
-          error: error && error.message ? error.message : String(error),
-        });
-      });
-    return;
-  }
-  startWorker();
-  if (!aceWorker) {
-    fallbackToMainThread(msg);
-    return;
-  }
-  if (aceWorkerReady) aceWorker.postMessage(msg);
-  else aceQueued = msg;
-}
-
-function compute() {
-  if (aceComputing) {
-    cancelCompute();
-    return;
-  }
-  runCompute(false);
-}
-
 function computeNext() {
-  if (aceComputing) return;
-  runCompute(true);
+  let lang = document.getElementById("lang");
+  let game = document.getElementById("game");
+  let main = document.getElementById("main");
+  let secondary = document.getElementById("secondary");
+  let [_, txt] = aceGen.buildNext(lang.value, game.value, main.value, secondary.value);
+  let output = document.getElementById("output");
+  output.value = txt;
+  if (typeof Highlight !== "undefined") Highlight.refresh("output");
 }
-
-startWorker();

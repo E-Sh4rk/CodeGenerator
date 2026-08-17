@@ -1,6 +1,8 @@
 open Ace_common
 open Js_of_ocaml
 
+module Html = Dom_html
+
 let is_blank_str s =  
   let rec empty i =
     if i < 0 then true

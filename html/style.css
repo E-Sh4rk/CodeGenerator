@@ -50,20 +50,6 @@ button:hover {
   border-color: var(--button-hover-border);
 }
 
-button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-button:disabled:hover {
-  background-color: var(--button-bg);
-  border-color: var(--button-border);
-}
-
-body.computing {
-  cursor: progress;
-}
-
 @font-face {
   font-family: "Consolas";
   src: url("./consola.ttf") format("truetype");
