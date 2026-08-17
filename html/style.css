@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 * {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -5,6 +11,7 @@
 h2 {
   font-size: large;
   margin: 5px;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -18,20 +25,21 @@ body {
 }
 
 select {
+  width: 100%;
   background-color: var(--control-bg);
   color: var(--control-text);
   border: 1px solid var(--control-border);
   border-radius: var(--select-border-radius);
   padding: var(--select-padding-y) var(--select-padding-x);
   height: unset;
-  box-sizing: border-box;
   font-family: inherit;
   font-size: var(--control-font-size);
   line-height: var(--control-line-height);
 }
 
 button {
-  min-width: 200px;
+  width: 100%;
+  min-width: 0;
   appearance: none;
   background-color: var(--button-bg);
   color: var(--button-text);
@@ -48,6 +56,16 @@ button {
 button:hover {
   background-color: var(--button-hover-bg);
   border-color: var(--button-hover-border);
+}
+
+button.blocked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button.blocked:hover {
+  background-color: var(--button-bg);
+  border-color: var(--button-border);
 }
 
 @font-face {
@@ -212,9 +230,10 @@ textarea:focus {
 .editor-wrap {
   position: relative;
   flex-grow: 1;
-  min-height: 400px;
-  min-width: 400px;
-  resize: both;
+  width: 100%;
+  min-width: 0;
+  min-height: 240px;
+  resize: none;
   overflow: hidden;
 }
 
@@ -337,56 +356,36 @@ textarea.editor--highlighted {
   font-weight: bold;
 }
 
-#output {
-  min-height: 400px;
-  min-width: 400px;
-}
-
-#main {
-  min-height: 400px;
-  min-width: 400px;
-}
-
+#output,
+#main,
 #secondary {
-  min-height: 400px;
-  min-width: 400px;
+  min-height: 240px;
+  min-width: 0;
 }
 
-.grow {
-  flex-grow: 1;
-}
-
-.row {
+.page,
+.toolbar,
+.actions {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: stretch;
-  flex-wrap: wrap;
-  gap: 5px;
+  gap: 8px;
 }
 
-.column {
-  flex-basis: 0;
+.page > *,
+.pane > * {
+  min-width: 0;
+}
+
+.pane {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  gap: 5px;
-}
-
-.left {
-  flex-basis: 0;
-  flex-shrink: 1;
-}
-
-.middle {
-  flex-basis: 0;
-  flex-shrink: 1;
-}
-
-.right {
-  flex-basis: 0;
-  flex-shrink: 1;
+  width: 100%;
+  flex-basis: auto;
+  gap: 8px;
 }
 
 /* ===== Tabs ===== */
@@ -410,7 +409,8 @@ textarea.editor--highlighted {
 /* ===== Tom Select ===== */
 
 .ts-wrapper {
-  align-self: center;
+  width: 100%;
+  align-self: stretch;
 }
 
 .ts-control,
@@ -469,9 +469,97 @@ textarea.editor--highlighted {
   max-height: 400px;
 }
 
-/* ===== Other scripts ===== */
+/* ===== Seed tools page ===== */
 
-#enter {
-  min-width: 75px;
-  padding: 10px 0;
+.seed-input-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+@media (min-width: 992px) {
+  select {
+    width: auto;
+  }
+
+  button {
+    width: auto;
+    min-width: 200px;
+    padding: var(--control-padding-y) var(--control-padding-x);
+  }
+
+  .editor-wrap {
+    min-width: 400px;
+    min-height: 400px;
+    resize: both;
+  }
+
+  #output,
+  #main,
+  #secondary {
+    min-height: 400px;
+    min-width: 400px;
+  }
+
+  .page,
+  .toolbar,
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 5px;
+  }
+
+  .pane {
+    width: auto;
+    flex-basis: 0;
+    gap: 5px;
+    flex-grow: 1;
+  }
+
+  .toolbar select {
+    flex: 0 1 auto;
+    width: auto;
+  }
+
+  .actions {
+    flex-wrap: nowrap;
+  }
+
+  .actions button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .ts-wrapper {
+    width: auto;
+    align-self: center;
+  }
+
+  .toolbar #select,
+  .toolbar .ts-wrapper {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    align-self: stretch;
+  }
+
+  .seed-input-row {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .seed-input-row input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .seed-input-row button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 75px;
+    padding: 10px 0;
+  }
 }

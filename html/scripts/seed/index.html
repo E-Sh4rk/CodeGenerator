@@ -9,15 +9,17 @@
     <script src="scripts.js"></script>
   </head>
   <body>
-    <div class="row">
-        <div class="column grow">
+    <div class="page">
+      <div class="pane">
         <h2>Seed Tools</h2>
-        <textarea id="output" class="grow" readonly></textarea>
-        <div class="row">
-            <input id="input" class="grow" type="text" autofocus>
-            <button id="enter" type="button">Enter</button>
+        <div class="editor-wrap">
+          <textarea id="output" readonly></textarea>
         </div>
+        <div class="seed-input-row">
+          <input id="input" type="text" autofocus>
+          <button id="enter" type="button">Enter</button>
         </div>
+      </div>
     </div>
   </body>
 </html>
