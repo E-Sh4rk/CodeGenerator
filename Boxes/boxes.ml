@@ -24,7 +24,7 @@ let default_fillers () = {
     ;
   nop_code_alt =
     if !Settings.lang = JAP then
-      [0xBB ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFBB *)
+      [0xBB ; 0xBB ; 0xBB ; 0xBB] (* BBBBBBBB *)
     else
       [0xBB ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFBB *)
     ;
