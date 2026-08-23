@@ -17,34 +17,23 @@ type fillers =
   { nop_code:int list ; nop_code_alt:int list; fillers:int list array; rewriting:rewrite_rules }
 let default_fillers () = {
   nop_code =
-    if !Settings.game = Ruby || !Settings.game = Sapphire then
-      [0xFF ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFFF *)
-    else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen then
-      [0xFF ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFFF *)
+    if !Settings.lang = JAP then
+      [0x00 ; 0X00 ; 0x00 ; 0x00] (* 00000000 *)
     else
       [0xFF ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFFF *)
     ;
   nop_code_alt =
-    if !Settings.game = Ruby || !Settings.game = Sapphire then
-      [0xBB ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFBB *)
-    else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen then
+    if !Settings.lang = JAP then
       [0xBB ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFBB *)
     else
       [0xBB ; 0XFF ; 0xFF ; 0xFF] (* FFFFFFBB *)
     ;
-  fillers = if !Settings.game = Ruby || !Settings.game = Sapphire
-    then [|
+  fillers =
+    if !Settings.lang = JAP then [|
       [0xFF ; 0xBB ; 0xBB ; 0xBB](* BBBBBBFF *) ;
       [0xFF ; 0xFF ; 0xBB ; 0xBB](* BBBBFFFF *) ;
       [0xFF ; 0xFF ; 0xFF ; 0xBB](* BBFFFFFF *) ;
-      [0xFF ; 0xFF ; 0xFF ; 0xFF](* FFFFFFFF *) ;
-    |]
-    else if !Settings.game = FireRed || !Settings.game = Settings.LeafGreen
-    then [|
-      [0xFF ; 0xBB ; 0xBB ; 0xBB](* BBBBBBFF *) ;
-      [0xFF ; 0xFF ; 0xBB ; 0xBB](* BBBBFFFF *) ;
-      [0xFF ; 0xFF ; 0xFF ; 0xBB](* BBFFFFFF *) ;
-      [0xFF ; 0xFF ; 0xFF ; 0xFF](* FFFFFFFF *) ;
+      [0xBB ; 0xFF ; 0xFF ; 0xFF](* FFFFFFBB *) ;
     |]
     else [|
       [0xFF ; 0xBB ; 0xBB ; 0xBB](* BBBBBBFF *) ;
@@ -53,7 +42,10 @@ let default_fillers () = {
       [0xFF ; 0xFF ; 0xFF ; 0xFF](* FFFFFFFF *) ;
     |]
     ;
-    rewriting = [
+  rewriting =
+    if !Settings.lang = JAP then [
+    ]
+    else [
       parse_rewrite_rule "FFBBBBBB00000000FFFFBBBB:FFBBFFFFFFFFFFFFFFFFBBBB" ;
       parse_rewrite_rule "FFFFBBBB00000000FFFFFFBB:FFFFBBFFFFFFFFFFFFFFFFBB"
     ]
