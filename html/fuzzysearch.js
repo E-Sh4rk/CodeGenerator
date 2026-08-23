@@ -37,12 +37,12 @@ const FuzzySearch = (function () {
     if (tNorm === qNorm) return 850;
 
     if (tLower.startsWith(q)) return 800;
-    if (tNorm.startsWith(qNorm)) return 750;
-    if (tCompact.startsWith(qCompact)) return 700;
+    if (qNorm && tNorm.startsWith(qNorm)) return 750;
+    if (qCompact && tCompact.startsWith(qCompact)) return 700;
 
     if (tLower.includes(q)) return 600;
-    if (tNorm.includes(qNorm)) return 550;
-    if (tCompact.includes(qCompact)) return 500;
+    if (qNorm && tNorm.includes(qNorm)) return 550;
+    if (qCompact && tCompact.includes(qCompact)) return 500;
 
     const qWords = qNorm.split(" ").filter(Boolean);
     const tWords = tNorm.split(" ").filter(Boolean);

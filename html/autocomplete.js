@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mirror.style.pointerEvents = "none";
     mirror.style.whiteSpace = "pre-wrap";
     mirror.style.wordWrap = "break-word";
+    mirror.style.overflow = "hidden";
 
     const textareaStyles = window.getComputedStyle(textarea);
     [
