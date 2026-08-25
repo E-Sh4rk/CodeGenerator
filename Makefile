@@ -36,6 +36,9 @@ runp:
 js:
 	$(DUNE) build --profile release Main/ace_js.bc.js
 	cp -f _build/default/Main/ace_js.bc.js html/ace_js.bc.js
+	# Workaround: js_of_ocaml emits a line break after 'static' in class bodies,
+	# which Safari mis-parses as an instance field (breaks MlInt64.UNSIGNED_MAX).
+	perl -0777 -pi -e 's/([{};])static\r?\n/$$1static /g' html/ace_js.bc.js
 
 data: buildd rund
 
@@ -59,6 +62,9 @@ runseed:
 seedjs:
 	$(DUNE) build --profile release Main/seed_tools_js.bc.js
 	cp -f _build/default/Main/seed_tools_js.bc.js html/scripts/seed/seed_tools_js.bc.js
+	# Workaround: js_of_ocaml emits a line break after 'static' in class bodies,
+	# which Safari mis-parses as an instance field (breaks MlInt64.UNSIGNED_MAX).
+	perl -0777 -pi -e 's/([{};])static\r?\n/$$1static /g' html/scripts/seed/seed_tools_js.bc.js
 
 clean:
 	$(DUNE) clean
